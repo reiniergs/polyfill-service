@@ -3,3 +3,5 @@ jdk:
   - oraclejdk8
 install:
 - mvn clean install
+notifications:
+  slack: 90milesbridge:zcDoVijZRgXXzpnUFMsOAx3Z
