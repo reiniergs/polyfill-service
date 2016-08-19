@@ -27,7 +27,7 @@ public class HelloWorld extends HttpServlet {
 
         // Actual logic goes here.
         PrintWriter out = response.getWriter();
-        out.println("<h1>" + message + thing + "</h1>");
+        out.println("<h4>" + message + thing + "</h4>");
     }
 
     public void destroy()
