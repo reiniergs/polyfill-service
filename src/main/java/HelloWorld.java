@@ -9,29 +9,25 @@ import javax.servlet.http.*;
  */
 public class HelloWorld extends HttpServlet {
 
-    private String message;
+    private final String message = "Hello ";
 
-    public void init() throws ServletException
-    {
+    public void init() throws ServletException {
         // Do required initialization
-        message = "Hello ";
     }
 
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         String thing = request.getParameter("thing");
         // Set response content type
         response.setContentType("text/html");
 
         // Actual logic goes here.
         PrintWriter out = response.getWriter();
-        out.println("<h4>" + message + thing + "</h4>");
+        out.println("<h4>" + message + (thing != null ? thing : "World") + "</h4>");
     }
 
-    public void destroy()
-    {
+    public void destroy() {
         // do nothing.
     }
 }
