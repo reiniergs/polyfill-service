@@ -17,3 +17,6 @@ http://localhost:8080/hello?thing=Jose
 ```
 mvn test
 ```
+
+
+[![Coverage Status](https://coveralls.io/repos/github/reiniergs/polyfill-service/badge.svg)](https://coveralls.io/github/reiniergs/polyfill-service)
