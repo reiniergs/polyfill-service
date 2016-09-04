@@ -1,8 +1,10 @@
 language: java
 jdk:
-- oraclejdk8
+  - oraclejdk8
 install:
-- mvn clean install
+  - mvn clean install
+after_success:
+  - mvn clean test jacoco:report coveralls:jacoco
 notifications:
   slack:
     secure: "X9fFBm78fEmCz9G40MNM4qxItvxPGDawbxom2at+8M4ui834+zB8/rF33wesPi2+ORuPXGzHcYj1SpKDJekDTl/uqiTmAaSBGyyxhiYVOXQccZ6jsjmRVZ67OL7lb7UVwR/HfkX37P6ZL+xUwzMD910AnAVPKhWk4oZmlGMMMm04PtfidnvajKad+Qc5Uqm6A2RdSQ+b/zODkNK2BXAMjjhbERzo7oGfmYGM6wZrVjnv8oh1/EW4UfyKmnO0bCiwVdx8daXx2hGwpAikkHSabCrcwr8wwF4riirA0Y5c1lW/AmtjLVWb9e0zebsNJx/OxynxMVy2F+2/qmcKBqnefN8KsRQcvOvF28lpkzaLMm4vdztzJ4E2r/66orOXUa/uk7GmO/8mAdIk45JQL3WpTzXh3+2wKKWrjJ6e9EY2W6gofunUMshhyJSnrnCLIim5//iV0glU1C+i/WHtZizoksKXKf89plXw64dcRJAmVpyEic4QlR+O+/XEuygy5V1l0536Oj4677EN/iFGA9Cl8szI7w38FsxYf+n0C9PhEub2hg4Z8ryuQRtzeN2aVUdpUOZXM8ta5GOJSqH98f6w3l8V+P+g5Oboq4ibLcoowFg9mYo7dLS/VD32raP9tf/lU2lc69tRSYwh9GR2MUoBusZNGDS+RQliwRBNuPjODTI="

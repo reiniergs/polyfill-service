@@ -9,7 +9,7 @@ import javax.servlet.http.*;
  */
 public class HelloWorld extends HttpServlet {
 
-    private final String message = "Hello ";
+    private final String message = "Hello";
 
     public void init() throws ServletException {
         // Do required initialization
@@ -24,7 +24,7 @@ public class HelloWorld extends HttpServlet {
 
         // Actual logic goes here.
         PrintWriter out = response.getWriter();
-        out.println("<h4>" + message + (thing != null ? thing : "World") + "</h4>");
+        out.println(String.format("<h4>%s %s</h4>", message, (thing == null) ? "World" : thing));
     }
 
     public void destroy() {
