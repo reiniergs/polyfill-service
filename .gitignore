@@ -12,3 +12,5 @@ target/
 
 out/
 lib/
+polyfills/__dist
+node_modules
