@@ -60,6 +60,11 @@
             <version>1.10.8</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sf.uadetector</groupId>
+            <artifactId>uadetector-resources</artifactId>
+            <version>2014.10</version>
+        </dependency>
     </dependencies>
 
     <build>
