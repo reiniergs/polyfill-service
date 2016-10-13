@@ -1,10 +1,10 @@
-package org.polyfill.utils;
+package org.polyfill.components.services;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.polyfill.Interfaces.UserAgent;
-import org.polyfill.Services.UserAgentParserService;
+import org.polyfill.interfaces.UserAgent;
+import org.polyfill.services.UserAgentParserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by smo on 10/11/16.
  */
-public class UserAgentImplTest {
+public class UserAgentParserServiceTest {
 
     private final static Map<String, String> UAStrings;
 

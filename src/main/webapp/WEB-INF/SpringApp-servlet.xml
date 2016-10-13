@@ -8,4 +8,13 @@
 
     <!-- the application context definition for the springapp DispatcherServlet -->
     <context:component-scan base-package="org.polyfill" />
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/pages/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
 </beans>
