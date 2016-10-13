@@ -1,11 +1,11 @@
-package org.polyfill.Services;
+package org.polyfill.services;
 
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.polyfill.Interfaces.UserAgent;
-import org.polyfill.UserAgentImpl;
+import org.polyfill.interfaces.UserAgent;
+import org.polyfill.components.userAgent.UserAgentImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
