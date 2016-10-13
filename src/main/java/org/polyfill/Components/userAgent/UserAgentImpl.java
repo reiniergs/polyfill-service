@@ -1,11 +1,11 @@
-package org.polyfill;
+package org.polyfill.components.userAgent;
 
 import net.sf.uadetector.OperatingSystem;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.polyfill.Interfaces.UserAgent;
+import org.polyfill.interfaces.UserAgent;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -243,6 +243,16 @@ public class UserAgentImpl implements UserAgent {
 
     private OperatingSystem getOperatingSystem () {
         return (OperatingSystem) uaMap.get("operatingSystem");
+    }
+
+    public String getOperatingSystemName () {
+        OperatingSystem operatingSystem = getOperatingSystem();
+        return operatingSystem != null ? operatingSystem.getFamilyName() : null;
+    }
+
+    public String getOperatingSystemVersion () {
+        OperatingSystem operatingSystem = getOperatingSystem();
+        return operatingSystem != null ? operatingSystem.getVersionNumber().toVersionString() : null;
     }
 
     /**
