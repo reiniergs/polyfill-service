@@ -1,15 +1,16 @@
-package org.polyfill.utils;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+package org.polyfill;
 
 import net.sf.uadetector.OperatingSystem;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
+import org.polyfill.Interfaces.UserAgent;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 // TODO: cache user agent output
 public class UserAgentImpl implements UserAgent {
@@ -97,13 +98,11 @@ public class UserAgentImpl implements UserAgent {
         aliases = Collections.unmodifiableMap(aliasesInit);
     }
 
-    public static String normalize(String uaString) {
-        if (isNormalized(uaString)) {
-            return uaString.toLowerCase();
-        } else {
-            UserAgent ua = new UserAgentImpl(uaString);
-            return ua.toString();
-        }
+    private HashMap<String, Object> uaMap;
+
+    public UserAgentImpl(HashMap<String, Object> uaMap) {
+        this.uaMap = uaMap;
+        resolveAlias();
     }
 
     public static Map<String, String> getBaselineVersions() {
@@ -121,32 +120,20 @@ public class UserAgentImpl implements UserAgent {
     private String minorVersion;
     private String version;
 
-    public UserAgentImpl(String userAgentString) {
-        this.ua = uaParser.parse(stripiOSWebViewBrowsers(userAgentString));
-        this.family = this.ua.getName().toLowerCase();
-
-        VersionNumber versionNumber = this.ua.getVersionNumber();
-        this.majorVersion = versionNumber.getMajor();
-        this.minorVersion = versionNumber.getMinor();
-        this.version = versionNumber.toVersionString();
-
-        resolveAlias();
-    }
-    
     public String getFamily() {
-        return this.family;
+        return (String) uaMap.get("family");
     }
 
     public String getMajorVersion() {
-        return this.majorVersion;
+        return (String) uaMap.get("majorVersion");
     }
 
     public String getMinorVersion() {
-        return this.minorVersion;
+        return (String) uaMap.get("minorVersion");
     }
 
     public String getVersion() {
-        return this.version;
+        return (String) uaMap.get("version");
     }
 
     public boolean isUnknown() {
@@ -254,6 +241,10 @@ public class UserAgentImpl implements UserAgent {
         }
     }
 
+    private OperatingSystem getOperatingSystem () {
+        return (OperatingSystem) uaMap.get("operatingSystem");
+    }
+
     /**
      * convert ua family to caniuse name equivalents
      */
@@ -266,7 +257,7 @@ public class UserAgentImpl implements UserAgent {
 
         // if facebook mobile is on iOS, it's using native webview
         if ("facebook".equals(getFamily()) || "ios_saf".equals(userAgent)) {
-            OperatingSystem os = this.ua.getOperatingSystem();
+            OperatingSystem os = getOperatingSystem();
             if (os.getFamilyName().toLowerCase().equals("ios")) {
                 VersionNumber osVersion = os.getVersionNumber();
                 userAgent = userAgent + "/" + osVersion.toVersionString();
