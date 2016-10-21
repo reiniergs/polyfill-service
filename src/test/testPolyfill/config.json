@@ -1,0 +1,27 @@
+{
+
+  "my": {
+    "ie": "<12",
+    "firefox": "<29",
+    "safari": "<8",
+    "ios_saf": "<7.1",
+    "chrome": "<38",
+    "firefox_mob": "<29",
+    "myBrowser": {
+      "ie": "ab",
+      "firefox": "cd",
+      "safari": "ef",
+      "ios_saf": [
+                    {
+                      "hi" : {
+                       "english" : "hello",
+                        "french" : "bonjour"
+                    }},
+                    "First one",
+                    "Second one"
+                  ],
+      "chrome": "ij",
+      "firefox_mob": "kl"
+    }
+  }
+}
