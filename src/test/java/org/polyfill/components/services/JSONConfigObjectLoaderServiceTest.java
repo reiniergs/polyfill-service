@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.polyfill.services.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -23,16 +24,19 @@ public class JSONConfigObjectLoaderServiceTest {
     public void setup() {
 
         jsonConfigLoaderService = new JSONConfigLoaderService();
+
     }
 
     @Test
     public void testInvalidFileFormat() throws Exception {
 
+        HashMap<String, Object> resultantConfigMap = new HashMap<String, Object>();
         String filePath = "./polyfills/Element/config.jsosn";
         try {
-            HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
+            resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
         }
         catch (Exception e) {
+            assertEquals("Retrieved config map should be null", 0, resultantConfigMap.size());
             assertEquals(filePath + " (No such file or directory)", e.getMessage());
         }
 
@@ -41,12 +45,14 @@ public class JSONConfigObjectLoaderServiceTest {
     @Test
     public void testInvalidFile() throws Exception {
 
+        HashMap<String, Object> resultantConfigMap = new HashMap<String, Object>();
         String filePath = "./polyfills/Element/detect.json";
         try {
-            HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
+            resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
         }
         catch (Exception e) {
-            assertEquals("Not a config file", e.getMessage());
+            assertEquals("Retrieved config map should be null", 0, resultantConfigMap.size());
+            assertEquals(filePath + " (No such file or directory)", e.getMessage());
         }
 
     }
@@ -54,77 +60,27 @@ public class JSONConfigObjectLoaderServiceTest {
     @Test
     public void testRetrieveConfigMap() throws Exception {
 
-            String filePath = "./polyfills/Element/config.json";
+            String filePath = "./src/test/testPolyfill/simpleConfig.json";
+
+            String firstItem = "First";
+
+            ArrayList<String> secondItem = new ArrayList<String>();
+            secondItem.add("first");
+            secondItem.add("second");
+
+            HashMap<String, Object> thirdItem = new HashMap<String, Object>();
+            thirdItem.put("one", "1");
+            thirdItem.put("two", "2");
+
+            HashMap<String, Object> mockConfigMap = new HashMap<String, Object>();
+            mockConfigMap.put("one", firstItem);
+            mockConfigMap.put("two", secondItem);
+            mockConfigMap.put("three", thirdItem);
+
             HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
+
             assertNotNull("HashMap returned should not be empty", resultantConfigMap);
-    }
-
-    @Test
-    public void testGetInConfigArrays() throws Exception {
-
-        String filePath = "./polyfills/Map/config.json";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty",  resultantConfigMap);
-
-        assertEquals("Alias config mismatch", "default", jsonConfigLoaderService.getInConfig(resultantConfigMap, "aliases.1"));
-        assertEquals("Dependencies config mismatch", "Symbol.species", jsonConfigLoaderService.getInConfig(resultantConfigMap, "dependencies.3"));
-    }
-
-    @Test
-    public void testGetInConfigMaps() throws Exception {
-
-        String filePath = "./polyfills/Map/config.json";
-        String expectedValue = "<12";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty",  resultantConfigMap);
-
-        assertEquals("IE config mismatch", expectedValue, jsonConfigLoaderService.getInConfig(resultantConfigMap, "browsers.ie"));
-    }
-
-    @Test
-    public void testGetInConfigSingleValue() throws Exception {
-
-        String filePath = "./polyfills/Math/acosh/config.json";
-        String expectedValue = "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-math.acosh";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty", resultantConfigMap);
-
-        assertEquals("Attribute value does not match", expectedValue, jsonConfigLoaderService.getInConfig(resultantConfigMap, "spec"));
-
-    }
-
-
-    @Test
-    public void testGetInConfigMultipleLayers() throws Exception {
-
-        String filePath = "./src/test/testPolyfill/config.json";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty", resultantConfigMap);
-
-        assertEquals("Attribute value does not match", "bonjour", jsonConfigLoaderService.getInConfig(resultantConfigMap, "my.myBrowser.ios_saf.0.hi.french"));
-    }
-
-    @Test
-    public void testInvalidAttributeMultipleLayer() throws Exception {
-
-        String filePath = "./src/test/testPolyfill/config.json";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty", resultantConfigMap);
-
-        assertNull(jsonConfigLoaderService.getInConfig(resultantConfigMap, "my.myBrowser.ios_saf.7"));
-
-    }
-
-    @Test
-    public void testIntermediateValue() throws Exception {
-
-        String filePath = "./src/test/testPolyfill/config.json";
-        String expectedValue = "[{hi={english=hello, french=bonjour}}, First one, Second one]";
-        HashMap<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        assertNotNull("HashMap returned should not be empty", resultantConfigMap);
-
-        assertEquals("Attribute value mismatch", expectedValue, jsonConfigLoaderService.getInConfig(resultantConfigMap, "my.myBrowser.ios_saf").toString());
-
+            assertTrue("The two config maps do not match", mockConfigMap.equals(resultantConfigMap));
     }
 
 

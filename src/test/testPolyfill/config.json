@@ -23,5 +23,15 @@
       "chrome": "ij",
       "firefox_mob": "kl"
     }
-  }
+  },
+  "aliases": ["default", "default-2.0", "defautl-3.0"],
+  "dependencies": [
+    "Array.prototype.indexOf",
+    "Symbol",
+    "Symbol.iterator",
+    "Symbol.species",
+    "Object.defineProperty",
+    "Number.isNaN"
+  ],
+  "spec": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-math.acosh"
 }

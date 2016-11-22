@@ -11,6 +11,4 @@ public interface ConfigLoaderServiceInterface {
 
     HashMap<String, Object> getConfig(String path) throws Exception;
 
-    Object getInConfig(HashMap<String, Object> configMap, String keyPath) throws Exception;
-
 }
