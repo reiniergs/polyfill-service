@@ -12,8 +12,18 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>PolyfillServiceServlet</servlet-name>
+        <servlet-class>App.PolyfillServiceServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>SpringApp</servlet-name>
         <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PolyfillServiceServlet</servlet-name>
+        <url-pattern>/polyfill.js</url-pattern>
     </servlet-mapping>
 </web-app>
