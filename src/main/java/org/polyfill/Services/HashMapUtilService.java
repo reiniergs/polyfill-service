@@ -22,7 +22,7 @@ public class HashMapUtilService {
      * @return object - Object can be of type HashMap or ArrayList or String, depending on the attribute being retrieved
      * @throws Exception
      */
-    public Object getFromMap(HashMap<String,Object> configMap, String keyPath) throws Exception {
+    public static Object getFromMap(HashMap<String,Object> configMap, String keyPath) throws Exception {
         String[] keys = keyPath.split("\\.");
         Object obj = configMap.get(keys[0]);
 

@@ -24,14 +24,12 @@ public class HashMapUtilServiceTest {
     @Autowired
     HashMapUtilService hashMapUtilService;
 
-    String testConfigFilePath, realConfigFilePath;
+    private String testConfigFilePath, realConfigFilePath;
 
     @Before
     public void setup() {
 
         jsonConfigLoaderService = new JSONConfigLoaderService();
-
-        hashMapUtilService = new HashMapUtilService();
 
         testConfigFilePath = "./src/test/testPolyfill/config.json";
 
