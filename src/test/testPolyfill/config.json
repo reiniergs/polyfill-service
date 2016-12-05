@@ -1,0 +1,37 @@
+{
+
+  "my": {
+    "ie": "<12",
+    "firefox": "<29",
+    "safari": "<8",
+    "ios_saf": "<7.1",
+    "chrome": "<38",
+    "firefox_mob": "<29",
+    "myBrowser": {
+      "ie": "ab",
+      "firefox": "cd",
+      "safari": "ef",
+      "ios_saf": [
+                    {
+                      "hi" : {
+                       "english" : "hello",
+                        "french" : "bonjour"
+                    }},
+                    "First one",
+                    "Second one"
+                  ],
+      "chrome": "ij",
+      "firefox_mob": "kl"
+    }
+  },
+  "aliases": ["default", "default-2.0", "defautl-3.0"],
+  "dependencies": [
+    "Array.prototype.indexOf",
+    "Symbol",
+    "Symbol.iterator",
+    "Symbol.species",
+    "Object.defineProperty",
+    "Number.isNaN"
+  ],
+  "spec": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-math.acosh"
+}
