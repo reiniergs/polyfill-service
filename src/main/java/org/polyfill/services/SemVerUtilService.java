@@ -29,7 +29,7 @@ public class SemVerUtilService {
      * @param range - range of user agent version (e.g. 4 - 6, >=5, >4, *, 10 - *).
      *                return false if range is invalid
      */
-    public static boolean isVersionInRange(String checkVersion, String range) {
+    public boolean isVersionInRange(String checkVersion, String range) {
         if (isAnyVersionAllowed(range)) {
             return true;
         }
@@ -62,7 +62,7 @@ public class SemVerUtilService {
     /**
      * Check if (@param range) is *, allowing all versions
      */
-    private static boolean isAnyVersionAllowed(String range) {
+    private boolean isAnyVersionAllowed(String range) {
         return range.equals("*");
     }
 
@@ -72,7 +72,7 @@ public class SemVerUtilService {
      * @param comparator - <, <=, >, >=, ==
      * @param range - either upper or lower bound depending on the comparator
      */
-    private static boolean compareVersionRange(String checkVersion, String comparator, String range) {
+    private boolean compareVersionRange(String checkVersion, String comparator, String range) {
         List<String> checkGroups = parseVersionToList(checkVersion, "0");
         List<String> rangeGroups = parseVersionToList(range);
 
@@ -110,7 +110,7 @@ public class SemVerUtilService {
      * @param filler - backup we use for missing groups
      * @return a list of version groups extracted from (@param version)
      */
-    private static List<String> parseVersionToList(String version, String filler) {
+    private List<String> parseVersionToList(String version, String filler) {
          List<String> versionGroups = Arrays.asList(version.split(VERSION_DELIMITER_REGEX));
         if (filler != null && MAX_VERSION_GROUPS > versionGroups.size()) {
             // create a new ArrayList to make it modifiable because asList creates an unmodifiable list
@@ -122,7 +122,7 @@ public class SemVerUtilService {
         return versionGroups;
     }
 
-    private static List<String> parseVersionToList(String version) {
+    private List<String> parseVersionToList(String version) {
         return parseVersionToList(version, null);
     }
 }
