@@ -24,11 +24,11 @@ public class UserAgentParserService {
 
     private static final String USER_AGENT_ALIAS_PATH = "./configs/userAgentAliases.json";
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
-    private Map<String, Object> browserFamilyAliases;
+    private Map<String, Object> userAgentAliases;
 
     @Autowired
     public UserAgentParserService(JSONConfigLoaderService jsonConfigLoaderService) {
-        this.browserFamilyAliases = getConfig(jsonConfigLoaderService, USER_AGENT_ALIAS_PATH);
+        this.userAgentAliases = getConfig(jsonConfigLoaderService, USER_AGENT_ALIAS_PATH);
     }
 
     public UserAgent parse(String userAgentString) {
@@ -67,7 +67,7 @@ public class UserAgentParserService {
 
     private String[] getUserAgentAlias(String family, VersionNumber version) {
         String[] userAgentAlias = null;
-        Object alias = browserFamilyAliases.get(family);
+        Object alias = userAgentAliases.get(family);
         if (alias instanceof Map) {
             String versionKey = version.getMajor() + "." + version.getMinor();
             List userAgentAliasGroups = (List)((Map)alias).get(versionKey);
