@@ -4,23 +4,14 @@ package org.polyfill.interfaces;
  * Created by reinier.guerra on 10/12/16.
  */
 public interface UserAgent {
-    public String getFamily();
 
-    public String getMajorVersion();
+    String getFamily();
 
-    public String getMinorVersion();
+    String getMajorVersion();
 
-    public String getVersion();
+    String getMinorVersion();
 
-    public String getOperatingSystemName();
-
-    public String getOperatingSystemVersion();
+    String getVersion();
 
     String toString();
-
-    boolean isUnknown();
-
-    boolean meetsBaseline();
-
-    boolean satisfies(String range);
 }
