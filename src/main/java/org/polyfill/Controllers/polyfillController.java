@@ -26,8 +26,6 @@ public class polyfillController {
 
         model.addAttribute("browserName", userAgent.getFamily());
         model.addAttribute("browserVersion", userAgent.getVersion());
-        model.addAttribute("osName", userAgent.getOperatingSystemName());
-        model.addAttribute("osVersion", userAgent.getOperatingSystemVersion());
 
         return new HandlebarView("userAgentDetector", model);
     }

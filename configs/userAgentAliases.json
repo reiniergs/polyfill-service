@@ -4,7 +4,7 @@
 
     "pale moon (firefox variant)": "firefox",
     "firefox mobile": "firefox_mob",
-    "firefox namoroka": "firefox",
+    "firefox (namoroka)": "firefox",
     "firefox shiretoko": "firefox",
     "firefox minefield": "firefox",
     "firefox alpha": "firefox",
@@ -28,7 +28,9 @@
     "internet explorer": "ie",
     "edge": "ie",
     "edge mobile": "ie",
-    "uc browser/9.9.*": "ie/10",
+    "uc browser": {
+        "9.9": ["ie", "10"]
+    },
 
     "chrome mobile ios": "ios_chr",
 
@@ -41,12 +43,14 @@
 
     "phantomjs": "safari/5",
 
-    "yandex browser/14.10": "chrome/37",
-    "yandex browser/14.8": "chrome/36",
-    "yandex browser/14.7": "chrome/35",
-    "yandex browser/14.5": "chrome/34",
-    "yandex browser/14.4": "chrome/33",
-    "yandex browser/14.2": "chrome/32",
-    "yandex browser/13.12": "chrome/30",
-    "yandex browser/13.10": "chrome/28"
+    "yandex browser": {
+        "14.10": ["chrome", "37"],
+        "14.8": ["chrome", "36"],
+        "14.7": ["chrome", "35"],
+        "14.5": ["chrome", "34"],
+        "14.4": ["chrome", "33"],
+        "14.2": ["chrome", "32"],
+        "13.12": ["chrome", "30"],
+        "13.10": ["chrome", "28"]
+    }
 }

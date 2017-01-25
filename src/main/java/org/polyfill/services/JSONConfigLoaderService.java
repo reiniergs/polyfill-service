@@ -26,10 +26,10 @@ public class JSONConfigLoaderService implements ConfigLoaderServiceInterface{
      * @return configMap - Returns the JSON config in a HashMap format
      * @throws Exception
      */
-    public HashMap<String, Object> getConfig(String path) throws Exception {
+    public Map<String, Object> getConfig(String path) throws IOException {
 
         File configFile = new File(path);
-        HashMap<String,Object> configMap = convertJSONConfigToMap(configFile);
+        Map<String,Object> configMap = convertJSONConfigToMap(configFile);
 
         return configMap;
     }
@@ -41,11 +41,8 @@ public class JSONConfigLoaderService implements ConfigLoaderServiceInterface{
      * @return map - HashMap which was converted from the JSON file
      * @throws IOException
      */
-    private HashMap<String, Object> convertJSONConfigToMap(File JsonConfigFile) throws IOException{
-        HashMap<String,Object> map = new ObjectMapper().readValue(JsonConfigFile, HashMap.class);
+    private Map<String, Object> convertJSONConfigToMap(File JsonConfigFile) throws IOException {
+        Map<String,Object> map = new ObjectMapper().readValue(JsonConfigFile, HashMap.class);
         return map;
     }
-
-
-
 }

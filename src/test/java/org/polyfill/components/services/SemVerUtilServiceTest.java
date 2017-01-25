@@ -12,10 +12,12 @@ import static org.junit.Assert.assertEquals;
 public class SemVerUtilServiceTest {
 
     private String version323;
+    private SemVerUtilService semVerUtilService;
 
     @Before
     public void setup() {
         version323 = "3.2.3";
+        semVerUtilService = new SemVerUtilService();
     }
 
     /******************************
@@ -173,7 +175,7 @@ public class SemVerUtilServiceTest {
      * Helper Functions
      ******************************/
     private void assertVersionInRange(boolean expectInRange, String version, String range) {
-        boolean actualInRange = SemVerUtilService.isVersionInRange(version, range);
+        boolean actualInRange = semVerUtilService.isVersionInRange(version, range);
         String shouldOrShouldNot = expectInRange ? " should " : " should not ";
         String errorMessage = "Version " + version + shouldOrShouldNot + "be in range " + range;
         assertEquals(errorMessage, expectInRange, actualInRange);
