@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by reinier.guerra on 10/12/16.
  */
@@ -34,12 +31,7 @@ public class PolyfillController {
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,
                             @PathVariable String type) {
         if (type.equals("js")) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("features", "default");
-            params.put("minify", false);
-            params.put("ua", uaString);
-
-            return new PolyfillsView(polyfillService.getPolyfillString(params));
+            return new PolyfillsView("Here goes the polyfill implementation.");
         } else
             return new BadRequestView("Sorry we just support javascript polyfills.");
     }
@@ -48,7 +40,7 @@ public class PolyfillController {
     public View polyfillMinApi(@RequestHeader("User-Agent") String uaString,
                                @PathVariable String type) {
         if (type.equals("js")) {
-            return new PolyfillsView("alert('OK')");
+            return new PolyfillsView("Here goes the polyfill minify implementation");
         } else
             return new BadRequestView("Sorry we just support javascript polyfills.");
     }

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class PolyfillConfig {
 
     @Bean
-    public SourceService SourceServiceAdapter() {
+    public SourceService SourceServiceAdapter() throws Exception {
         return new SourceServiceImpl();
     }
 }
