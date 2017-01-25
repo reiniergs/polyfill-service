@@ -1,4 +1,4 @@
-package org.polyfill.controllers;
+package org.polyfill.controller;
 
 import org.polyfill.views.HandlebarView;
 import org.springframework.stereotype.Controller;
