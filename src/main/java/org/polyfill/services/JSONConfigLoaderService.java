@@ -1,22 +1,19 @@
 package org.polyfill.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.polyfill.interfaces.ConfigLoaderServiceInterface;
-import org.springframework.expression.ExpressionException;
+import org.polyfill.interfaces.ConfigLoaderService;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by bvenkataraman on 10/13/16.
  */
-@Service
-public class JSONConfigLoaderService implements ConfigLoaderServiceInterface{
+@Service("json")
+public class JSONConfigLoaderService implements ConfigLoaderService {
 
 
     /**

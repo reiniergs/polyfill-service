@@ -1,4 +1,4 @@
-package org.polyfill.components.userAgent;
+package org.polyfill.components;
 
 import net.sf.uadetector.VersionNumber;
 import org.polyfill.interfaces.UserAgent;

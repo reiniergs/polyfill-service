@@ -1,4 +1,4 @@
-package org.polyfill.components.services;
+package org.polyfill.services;
 
 import org.junit.Before;
 import org.junit.Test;

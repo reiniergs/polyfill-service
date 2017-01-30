@@ -5,30 +5,39 @@ import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.polyfill.components.userAgent.UserAgentImpl;
-import org.polyfill.interfaces.ConfigLoaderServiceInterface;
+import org.polyfill.components.UserAgentImpl;
+import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by reinier.guerra on 10/12/16.
- */
 @Service
 public class UserAgentParserService {
 
-    private static final String USER_AGENT_ALIAS_PATH = "./configs/userAgentAliases.json";
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
-    private Map<String, Object> userAgentAliases;
+    private final String USER_AGENT_ALIASES_FILE = "./configs/userAgentAliases.json";
 
     @Autowired
-    public UserAgentParserService(JSONConfigLoaderService jsonConfigLoaderService) {
-        this.userAgentAliases = getConfig(jsonConfigLoaderService, USER_AGENT_ALIAS_PATH);
+    @Qualifier("json")
+    private ConfigLoaderService configLoaderService;
+
+    private Map<String, Object> userAgentAliases;
+
+    @PostConstruct
+    public void loadUserAgentAliases() {
+        try {
+            this.userAgentAliases = configLoaderService.getConfig(USER_AGENT_ALIASES_FILE);
+        } catch(IOException e) {
+            e.printStackTrace();
+            this.userAgentAliases = new HashMap<>();
+        }
     }
 
     public UserAgent parse(String userAgentString) {
@@ -67,7 +76,7 @@ public class UserAgentParserService {
 
     private String[] getUserAgentAlias(String family, VersionNumber version) {
         String[] userAgentAlias = null;
-        Object alias = userAgentAliases.get(family);
+        Object alias = this.userAgentAliases.get(family);
         if (alias instanceof Map) {
             String versionKey = version.getMajor() + "." + version.getMinor();
             List userAgentAliasGroups = (List)((Map)alias).get(versionKey);
@@ -79,14 +88,5 @@ public class UserAgentParserService {
             userAgentAlias[0] = (String)alias;
         }
         return userAgentAlias;
-    }
-
-    private Map<String, Object> getConfig(ConfigLoaderServiceInterface configLoader, String filePath) {
-        try {
-            return configLoader.getConfig(filePath);
-        } catch (IOException e) {
-            System.err.println("Cannot read in file: " + filePath);
-            return new HashMap<String, Object>();
-        }
     }
 }
