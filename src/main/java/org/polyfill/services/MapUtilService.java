@@ -1,5 +1,7 @@
 package org.polyfill.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,5 +43,13 @@ public class MapUtilService {
             }
         }
         return obj;
+    }
+
+    public void prettyPrintMap(Map map) {
+        try {
+            System.out.println(new ObjectMapper().writeValueAsString(map));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }
