@@ -1,4 +1,4 @@
-package org.polyfill.views;
+package org.polyfill.Views;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
@@ -13,25 +13,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * Created by reinier.guerra on 12/5/16.
+ * Created by bvenkataraman on 1/30/17.
  */
-public class BadRequestView implements View {
+public class NotFoundView implements View {
 
     private final String target;
     private Handlebars handlebars;
     private Object context;
 
-    public BadRequestView(String target) {
+    public NotFoundView(String target) {
         TemplateLoader loader = new HandlebarsTemplateLoader();
         loader.setPrefix("src/main/pages/handlebars");
         loader.setSuffix(".hbs");
         handlebars = new Handlebars(loader);
         this.target = target;
-    }
-
-    public BadRequestView(String target, Object context) {
-        this(target);
-        this.context = context;
     }
 
     @Override
@@ -44,7 +39,7 @@ public class BadRequestView implements View {
         ServletOutputStream stream = httpServletResponse.getOutputStream();
         Template template = handlebars.compile(this.target);
 
-        httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
         httpServletResponse.setContentType(getContentType());
         stream.print(template.apply(this.context));
     }

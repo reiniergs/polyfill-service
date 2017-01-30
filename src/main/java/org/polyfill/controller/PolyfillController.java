@@ -1,5 +1,6 @@
 package org.polyfill.controller;
 
+import org.polyfill.Views.NotFoundView;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.services.UserAgentParserService;
 import org.polyfill.views.BadRequestView;
@@ -25,20 +26,24 @@ public class PolyfillController {
 
     @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,
-                            @PathVariable String type) {
+                            @PathVariable String type, Model model) {
         if (type.equals("js")) {
             return new PolyfillsView("Here goes the polyfill implementation.");
-        } else
-            return new BadRequestView("Sorry we just support javascript polyfills.");
+        } else {
+            model.addAttribute("message", "Sorry we just support javascript polyfills.");
+            return new BadRequestView("badRequest", model);
+        }
+
     }
 
     @RequestMapping(value = "/polyfill.min.{type}", method = RequestMethod.GET)
     public View polyfillMinApi(@RequestHeader("User-Agent") String uaString,
-                               @PathVariable String type) {
+                               @PathVariable String type, Model model) {
         if (type.equals("js")) {
             return new PolyfillsView("Here goes the polyfill minify implementation");
         } else
-            return new BadRequestView("Sorry we just support javascript polyfills.");
+            model.addAttribute("message", "Sorry we just support minified javascript polyfills.");
+            return new BadRequestView("badRequest", model);
     }
 
     @RequestMapping(value = "/user-agent", method = RequestMethod.GET)
@@ -50,4 +55,11 @@ public class PolyfillController {
 
         return new HandlebarView("userAgentDetector", model);
     }
+
+
+    @RequestMapping(value = "/notfound", method = RequestMethod.GET)
+    public View polyfillNotFound(@RequestHeader("User-Agent") String uaString, Model model) {
+        return new NotFoundView("notFound");
+    }
+
 }

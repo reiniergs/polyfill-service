@@ -16,4 +16,10 @@
         <servlet-name>SpringApp</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
+    <error-page>
+        <exception-type>404</exception-type>
+        <location>/notfound</location>
+    </error-page>
+
 </web-app>
