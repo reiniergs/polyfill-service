@@ -26,6 +26,7 @@ public class PolyfillsView implements View {
         ServletOutputStream stream = httpServletResponse.getOutputStream();
 
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpServletResponse.setContentType(getContentType());
         stream.print(polyfills);
     }
 }
