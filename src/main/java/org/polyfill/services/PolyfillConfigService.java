@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +20,8 @@ import java.util.Map;
 public class PolyfillConfigService {
     private final String POLYFILLS_DIR = "./polyfills/__dist/";
     private final String BASELINE_VERSIONS_FILE = "./configs/baselineVersions.json";
-    private final String POLYFILL_ALIAS_KEY = "aliases";
-    private Map<String, Object> polyfillConfigs;
+    private List<Map<String, Object>> polyfillConfigs;
     private Map<String, Object> baselineVersions;
-    private Map<String, Object> polyfillAliases;
 
     @Autowired
     @Qualifier("json")
@@ -40,34 +37,28 @@ public class PolyfillConfigService {
     public void loadConfigs() {
         List<Path> polyfillPaths = getAllConfigPaths(Paths.get(POLYFILLS_DIR));
         this.polyfillConfigs = loadPolyfills(polyfillPaths);
-
-        if (this.polyfillConfigs.get(POLYFILL_ALIAS_KEY) instanceof Map) {
-            this.polyfillAliases = (Map<String, Object>)this.polyfillConfigs.remove(POLYFILL_ALIAS_KEY);
-        } else {
-            this.polyfillAliases = new HashMap<>();
-        }
-
         this.baselineVersions = loadConfig(BASELINE_VERSIONS_FILE);
     }
 
-    public Map<String, Object> getPolyfillByFeatureName(String feature) {
-        return (Map<String, Object>)this.polyfillConfigs.get(feature);
-    }
-
-    public List<Map<String, Object>> getPolyfillsByAlias(String alias) {
-        List<Map<String, Object>> filteredPolyfillConfigs = new ArrayList<>();
-        Object featuresObj = this.polyfillAliases.get(alias);
-        if (featuresObj instanceof List) {
-            List<String> features = (List<String>)featuresObj;
-            for (String featureKey : features) {
-                Object featureConfigsObj = this.polyfillConfigs.get(featureKey);
-                if (featureConfigsObj instanceof Map) {
-                    filteredPolyfillConfigs.add((Map<String, Object>)featureConfigsObj);
-                }
-            }
-        }
-        return filteredPolyfillConfigs;
-    }
+// TODO:
+//    public Map<String, Object> getPolyfillByFeatureName(String feature) {
+//        return (Map<String, Object>)this.polyfillConfigs.get(feature);
+//    }
+//
+//    public List<Map<String, Object>> getPolyfillsByAlias(String alias) {
+//        List<Map<String, Object>> filteredPolyfillConfigs = new ArrayList<>();
+//        Object featuresObj = this.polyfillAliases.get(alias);
+//        if (featuresObj instanceof List) {
+//            List<String> features = (List<String>)featuresObj;
+//            for (String featureKey : features) {
+//                Object featureConfigsObj = this.polyfillConfigs.get(featureKey);
+//                if (featureConfigsObj instanceof Map) {
+//                    filteredPolyfillConfigs.add((Map<String, Object>)featureConfigsObj);
+//                }
+//            }
+//        }
+//        return filteredPolyfillConfigs;
+//    }
 
     public List<Map<String, Object>> getPolyfillsByUserAgent(UserAgent userAgent) {
         List<Map<String, Object>> filteredPolyfillConfigs = new ArrayList<>();
@@ -76,22 +67,17 @@ public class PolyfillConfigService {
             String browser = userAgent.getFamily();
             String browserVersion = userAgent.getVersion();
             // for each poly, check if userAgent satisfies the required browser version
-            for (String polyfillKey : this.polyfillConfigs.keySet()) {
-                Object polyfillObj = this.polyfillConfigs.get(polyfillKey);
-                if (polyfillObj instanceof Map) {
-                    Map<String, Object> polyfill = (Map<String, Object>)polyfillObj;
-                    String keyPath = String.join(".", "browsers", browser);
-                    Object requiredVersionObj = mapUtilService.getFromMap(polyfill, keyPath);
-                    if (requiredVersionObj instanceof String) {
-                        String requiredVersion = (String)requiredVersionObj;
-                        if (isVersionInRange(browserVersion, requiredVersion)) {
-                            filteredPolyfillConfigs.add(polyfill);
-                        }
+            for (Map<String, Object> polyfill : this.polyfillConfigs) {
+                String keyPath = String.join(".", "browsers", browser);
+                Object requiredVersionObj = mapUtilService.getFromMap(polyfill, keyPath);
+                if (requiredVersionObj instanceof String) {
+                    String requiredVersion = (String)requiredVersionObj;
+                    if (isVersionInRange(browserVersion, requiredVersion)) {
+                        filteredPolyfillConfigs.add(polyfill);
                     }
                 }
             }
         }
-
         return filteredPolyfillConfigs;
     }
 
@@ -111,13 +97,12 @@ public class PolyfillConfigService {
         return fileNames;
     }
 
-    private Map<String, Object> loadPolyfills(List<Path> polyfillPaths) {
-        Map<String, Object> polyfills = new HashMap<>();
+    private List<Map<String, Object>> loadPolyfills(List<Path> polyfillPaths) {
+        List<Map<String, Object>> polyfills = new ArrayList<>();
         for (Path polyfillPath : polyfillPaths) {
             Map<String, Object> featureConfigs = loadConfig(polyfillPath);
-            String key = getPolyfillKey(polyfillPath.toString());
             if (featureConfigs != null) {
-                polyfills.put(key, featureConfigs);
+                polyfills.add(featureConfigs);
             }
         }
         return polyfills;
@@ -136,17 +121,14 @@ public class PolyfillConfigService {
         }
     }
 
-    private String getPolyfillKey(Map<String, Object> featureConfigs) {
-        return ((String)featureConfigs.get("baseDir")).replace("/", ".");
-    }
-
     private String getPolyfillKey(String featurePath) {
         String key = Paths.get(featurePath).getFileName().toString();
         return key.substring(0, key.lastIndexOf("."));
     }
 
     private boolean isPolyfillFile(Path fileName) {
-        return fileName.toString().toLowerCase().endsWith(".json");
+        return fileName.toString().toLowerCase().endsWith(".json")
+                && !fileName.equals("aliases.json");
     }
 
     private boolean meetsBaseline(UserAgent userAgent) {
