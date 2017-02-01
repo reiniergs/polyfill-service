@@ -4,6 +4,7 @@ import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -13,9 +14,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
+@Service
 public class PolyfillConfigService {
     private final String POLYFILLS_DIR = "./polyfills/__dist/";
     private final String BASELINE_VERSIONS_FILE = "./configs/baselineVersions.json";
@@ -113,7 +115,7 @@ public class PolyfillConfigService {
         Map<String, Object> polyfills = new HashMap<>();
         for (Path polyfillPath : polyfillPaths) {
             Map<String, Object> featureConfigs = loadConfig(polyfillPath);
-            String key = getPolyfillKey(featureConfigs);
+            String key = getPolyfillKey(polyfillPath.toString());
             if (featureConfigs != null) {
                 polyfills.put(key, featureConfigs);
             }
