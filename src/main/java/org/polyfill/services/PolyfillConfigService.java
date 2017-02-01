@@ -78,7 +78,8 @@ public class PolyfillConfigService {
                 Object polyfillObj = this.polyfillConfigs.get(polyfillKey);
                 if (polyfillObj instanceof Map) {
                     Map<String, Object> polyfill = (Map<String, Object>)polyfillObj;
-                    Object requiredVersionObj = mapUtilService.getFromMap(polyfill, "browsers", browser);
+                    String keyPath = String.join(".", "browsers", browser);
+                    Object requiredVersionObj = mapUtilService.getFromMap(polyfill, keyPath);
                     if (requiredVersionObj instanceof String) {
                         String requiredVersion = (String)requiredVersionObj;
                         if (isVersionInRange(browserVersion, requiredVersion)) {
