@@ -45,6 +45,7 @@ public class MapUtilService {
         return obj;
     }
 
+
     public void prettyPrintMap(Map map) {
         try {
             System.out.println(new ObjectMapper().writeValueAsString(map));
