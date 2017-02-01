@@ -1,4 +1,4 @@
-package org.polyfill.Views;
+package org.polyfill.views;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;

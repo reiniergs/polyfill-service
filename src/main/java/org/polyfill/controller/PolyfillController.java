@@ -1,6 +1,6 @@
 package org.polyfill.controller;
 
-import org.polyfill.Views.NotFoundView;
+import org.polyfill.views.NotFoundView;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.services.UserAgentParserService;
 import org.polyfill.views.BadRequestView;
