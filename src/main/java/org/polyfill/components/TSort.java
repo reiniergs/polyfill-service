@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-class TSort {
+public class TSort {
 
-    static class Relation {
-        public final String from;
-        public final String to;
+     private class Relation {
+        final String from;
+        final String to;
 
-        public Relation(String from, String to) {
+        Relation(String from, String to) {
             this.from = from;
             this.to = to;
         }
     }
 
-    private static ArrayList<Relation> T;
+    private List<Relation> T;
 
     public TSort() {
-        T = new ArrayList<Relation>();
+        T = new ArrayList<>();
     }
 
     public void addRelation(String from, String to) {
@@ -30,7 +30,7 @@ class TSort {
         List<String> sortedList = new ArrayList<>();
 
         // find nodes with no incoming edges
-        ArrayList<String> S = new ArrayList<String>();
+        List<String> S = new ArrayList<String>();
         for (Relation rel: T) {
             if (!S.contains(rel.from)) S.add(rel.from);
         }
@@ -83,7 +83,7 @@ class TSort {
     }
 
     public void clear() {
-        T = new ArrayList<Relation>();
+        T = new ArrayList<>();
     }
 
     public static void main(String[] args) {
