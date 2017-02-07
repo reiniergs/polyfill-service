@@ -16,9 +16,4 @@ public class TestConfig {
     public String baselineVersionFile() {
         return "./configs/baselineVersions.json";
     }
-
-//    @Bean
-//    public String userAgentAliasesFile() {
-//        return "./configs/userAgentAliases.json";
-//    }
 }
