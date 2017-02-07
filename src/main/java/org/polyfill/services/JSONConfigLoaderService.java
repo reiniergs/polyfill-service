@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -14,7 +13,6 @@ import java.util.Map;
  */
 @Service("json")
 public class JSONConfigLoaderService implements ConfigLoaderService {
-
 
     /**
      * Retrieve JSON config file from specified path and convert it into a Map
@@ -31,6 +29,10 @@ public class JSONConfigLoaderService implements ConfigLoaderService {
         return configMap;
     }
 
+    public boolean isConfig(String fileName) {
+        return fileName.endsWith(".json");
+    }
+
     /**
      * Converts the JSON file to a HashMap
      *
@@ -39,7 +41,6 @@ public class JSONConfigLoaderService implements ConfigLoaderService {
      * @throws IOException
      */
     private Map<String, Object> convertJSONConfigToMap(File JsonConfigFile) throws IOException {
-        Map<String,Object> map = new ObjectMapper().readValue(JsonConfigFile, HashMap.class);
-        return map;
+        return new ObjectMapper().readValue(JsonConfigFile, Map.class);
     }
 }
