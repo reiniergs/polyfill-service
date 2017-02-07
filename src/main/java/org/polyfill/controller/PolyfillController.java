@@ -1,6 +1,6 @@
 package org.polyfill.controller;
 
-import org.polyfill.services.PolyfillConfigService;
+import org.polyfill.services.PreSortPolyfillQueryService;
 import org.polyfill.views.NotFoundView;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.services.UserAgentParserService;
@@ -26,7 +26,7 @@ public class PolyfillController {
     UserAgentParserService userAgentParserService;
 
     @Autowired
-    PolyfillConfigService polyfillConfigService;
+    PreSortPolyfillQueryService preSortPolyfillQueryService;
 
     @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,
