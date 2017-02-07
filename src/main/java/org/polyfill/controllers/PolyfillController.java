@@ -1,6 +1,6 @@
-package org.polyfill.controller;
+package org.polyfill.controllers;
 
-import org.polyfill.services.PreSortPolyfillQueryService;
+import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.views.NotFoundView;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.services.UserAgentParserService;
@@ -8,6 +8,7 @@ import org.polyfill.views.BadRequestView;
 import org.polyfill.views.HandlebarView;
 import org.polyfill.views.PolyfillsView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,8 @@ public class PolyfillController {
     UserAgentParserService userAgentParserService;
 
     @Autowired
-    PreSortPolyfillQueryService preSortPolyfillQueryService;
+    @Qualifier("presort")
+    PolyfillQueryService preSortPolyfillQueryService;
 
     @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Service("presort")
 public class PreSortPolyfillQueryService implements PolyfillQueryService {
     @Resource(name = "polyfillDir")
     private String polyfillsDir;
@@ -130,9 +130,6 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         return polyfills;
     }
 
-    /**
-     * Check whether a filePath is a polyfill file
-     */
     private boolean isPolyfillFile(Path filePath) {
         String fileName = filePath.getFileName().toString();
         for (String nonPolyfillFileName : nonPolyfillFiles) {
@@ -159,13 +156,6 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
-     * Mixin method for configLoaderService.getConfig
-     */
-    private Map<String, Object> getConfig(String path) throws IOException {
-        return configLoaderService.getConfig(path);
-    }
-
-    /**
      * Check if userAgent meets the minimum browser versions we support
      */
     private boolean meetsBaseline(UserAgent userAgent) {
@@ -174,6 +164,13 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             return isVersionInRange(userAgent.getVersion(), (String)baselineVersion);
         }
         return false;
+    }
+
+    /**
+     * Mixin method for configLoaderService.getConfig
+     */
+    private Map<String, Object> getConfig(String path) throws IOException {
+        return configLoaderService.getConfig(path);
     }
 
     /**
