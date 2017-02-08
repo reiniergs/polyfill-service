@@ -19,9 +19,9 @@ public class JSONConfigLoaderService implements ConfigLoaderService {
     /**
      * Retrieve JSON config file from specified path and convert it into a Map
      *
-     * @param path - File path to retrieve the config file (ex. ./polyfills/Element/config.json)
+     * @param path File path to retrieve the config file (ex. ./polyfills/Element/config.json)
      * @return configMap - Returns the JSON config in a HashMap format
-     * @throws Exception
+     * @throws IOException throws exception if file is not found at the specified path
      */
     public Map<String, Object> getConfig(String path) throws IOException {
 
