@@ -25,9 +25,9 @@ public class SemVerUtilService {
 
     /**
      * check if version is within range
-     * @param checkVersion - the version number that needs to be checked
-     * @param range - range of user agent version (e.g. 4 - 6, >=5, >4, *, 10 - *).
-     *                return false if range is invalid
+     * @param checkVersion the version number that needs to be checked
+     * @param range range of user agent version (e.g. 4 - 6, &gt;=5, &gt;4, *, 10 - *).
+     * @return return true if version is in range and return false if range is invalid
      */
     public boolean isVersionInRange(String checkVersion, String range) {
         range = range.replace(" ", "");
