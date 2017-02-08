@@ -30,6 +30,8 @@ public class SemVerUtilService {
      * @return return true if version is in range and return false if range is invalid
      */
     public boolean isVersionInRange(String checkVersion, String range) {
+        range = range.replace(" ", "");
+
         if (isAnyVersionAllowed(range)) {
             return true;
         }
