@@ -97,6 +97,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <reportOutputDirectory>/src/main</reportOutputDirectory>
+                    <destDir>src/main/webapp</destDir>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
