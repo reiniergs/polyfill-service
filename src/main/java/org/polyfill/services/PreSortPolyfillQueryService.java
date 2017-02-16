@@ -53,9 +53,9 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * Filter polyfill list by user agent, then get the requested feature from
      * polyfill list along with its dependencies.
      * The result list is ordered by dependencies.
-     * @param userAgent
-     * @param name - feature name; e.g. Array.of
-     * @return - the filtered list
+     * @param userAgent user agent object
+     * @param name feature name; e.g. Array.of
+     * @return the filtered list
      */
     public List<Polyfill> getPolyfillByFeature(UserAgent userAgent, String name) {
         List<Polyfill> filteredPolyfill = new ArrayList<>();
@@ -65,9 +65,9 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     /**
      * TODO:
      * Filter polyfill list by alias and user agent and order it by dependencies
-     * @param userAgent
-     * @param alias - polyfill set alias; e.g. es6, then we return all es6 polyfills
-     * @return - the filtered list
+     * @param userAgent user agent object
+     * @param alias polyfill set alias; e.g. es6, then we return all es6 polyfills
+     * @return the filtered list
      */
     public List<Polyfill> getPolyfillsByAlias(UserAgent userAgent, String alias) {
         List<Polyfill> filteredPolyfill = new ArrayList<>();
@@ -76,8 +76,8 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     /**
      * Filter polyfill list by user agent and order it by dependencies
-     * @param userAgent
-     * @return - the filtered list
+     * @param userAgent user agent object
+     * @return the filtered list
      */
     public List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent) {
         List<Polyfill> filteredPolyfills = new ArrayList<>();
@@ -149,7 +149,9 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
         for (Map<String, Object> polyfillMap : polyfillMaps) {
             Polyfill polyfill = new Polyfill(polyfillMap);
-            polyfills.put(polyfill.getName(), polyfill);
+            if (polyfill.getName() != null) {
+                polyfills.put(polyfill.getName(), polyfill);
+            }
         }
 
         return polyfills;
