@@ -73,12 +73,11 @@ public class Polyfill {
         return getListFromMap(this.polyfillMap, DEPENDENCIES_KEY);
     }
 
-    @Nullable
+
     public String getRawSource() {
         return getStringFromMap(this.polyfillMap, RAW_SOURCE_KEY);
     }
 
-    @Nullable
     public String getMinSource() {
         return getStringFromMap(this.polyfillMap, MIN_SOURCE_KEY);
     }

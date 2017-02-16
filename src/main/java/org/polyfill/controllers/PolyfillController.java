@@ -39,12 +39,7 @@ public class PolyfillController {
         if (type.equals("js")) {
             List<Polyfill> polyfillList = preSortPolyfillQueryService.getPolyfillsByUserAgent(userAgentParserService.parse(uaString));
 
-            String polyfillString = "";
-            for (Integer i = 0; i < polyfillList.size(); i++) {
-                polyfillString = polyfillString.concat(polyfillList.get(i).getRawSource());
-            }
-
-            return new PolyfillsView(polyfillString);
+            return new PolyfillsView(polyfillList, "raw");
         } else {
             model.addAttribute("message", "Sorry we just support javascript polyfills.");
             return new BadRequestView("badRequest", model);
@@ -58,13 +53,9 @@ public class PolyfillController {
         if (type.equals("js")) {
             List<Polyfill> polyfillList = preSortPolyfillQueryService.getPolyfillsByUserAgent(userAgentParserService.parse(uaString));
 
-            String polyfillString = "";
-            for (Integer i = 0; i < polyfillList.size(); i++) {
-                polyfillString = polyfillString.concat(polyfillList.get(i).getMinSource());
-            }
-            return new PolyfillsView(polyfillString);
+            return new PolyfillsView(polyfillList);
         } else
-            model.addAttribute("message", "Sorry we just support minified javascript polyfills.");
+            model.addAttribute("message", "Sorry we just support javascript polyfills.");
             return new BadRequestView("badRequest", model);
     }
 
