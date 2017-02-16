@@ -10,7 +10,7 @@
     <packaging>${packaging.type}</packaging>
 
     <properties>
-        <jettyVersion>8.1.16.v20140903</jettyVersion>
+        <jettyVersion>9.4.0.v20161208</jettyVersion>
         <spring.version>4.3.3.RELEASE</spring.version>
         <packaging.type>jar</packaging.type>
     </properties>
@@ -46,11 +46,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jettyVersion}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -111,8 +106,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- This plugin is needed for the servlet example -->
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jettyVersion}</version>
             </plugin>
