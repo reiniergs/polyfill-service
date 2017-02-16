@@ -1,10 +1,12 @@
 package org.polyfill.views;
 
+import org.polyfill.components.Polyfill;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,10 +14,16 @@ import java.util.Map;
  */
 
 public class PolyfillsView implements View {
-    private String polyfills;
+    private List<Polyfill> polyfills;
+    private String variant = "minify";
 
-    public PolyfillsView(String polyfills) {
+    public PolyfillsView(List<Polyfill> polyfills) {
         this.polyfills = polyfills;
+    }
+
+    public PolyfillsView(List<Polyfill> polyfills, String variant) {
+        this.polyfills = polyfills;
+        this.variant = variant.equals("raw") ? variant : "minify";
     }
 
     public String getContentType() {
@@ -23,10 +31,17 @@ public class PolyfillsView implements View {
     }
 
     public void render(Map<String, ?> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        ServletOutputStream stream = httpServletResponse.getOutputStream();
-
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpServletResponse.setContentType(getContentType());
-        stream.print(polyfills);
+
+
+        ServletOutputStream stream = httpServletResponse.getOutputStream();
+        stream.print(getPolyfillSources());
+    }
+
+    private String getPolyfillSources() {
+        return polyfills.stream()
+                .map(this.variant.equals("raw") ? Polyfill::getRawSource : Polyfill::getMinSource)
+                .reduce("", String::concat);
     }
 }
