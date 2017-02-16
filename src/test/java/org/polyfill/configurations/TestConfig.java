@@ -8,12 +8,17 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class TestConfig {
     @Bean
-    public String polyfillDir() {
+    public String polyfillsDirPath() {
         return "./src/test/testPolyfill/polyfills/";
     }
 
     @Bean
-    public String baselineVersionFile() {
+    public String baselineVersionsPath() {
         return "./configs/baselineVersions.json";
+    }
+
+    @Bean
+    public String userAgentAliasesPath() {
+        return "./configs/userAgentAliases.json";
     }
 }

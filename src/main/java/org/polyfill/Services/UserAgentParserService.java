@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,9 @@ import java.util.Map;
 public class UserAgentParserService {
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
-    private final String USER_AGENT_ALIASES_FILE = "./configs/userAgentAliases.json";
+
+    @Resource(name = "userAgentAliasesPath")
+    private String userAgentAliasesPath;
 
     @Autowired
     @Qualifier("json")
@@ -33,7 +36,7 @@ public class UserAgentParserService {
     @PostConstruct
     public void loadUserAgentAliases() {
         try {
-            this.userAgentAliases = configLoaderService.getConfig(USER_AGENT_ALIASES_FILE);
+            this.userAgentAliases = configLoaderService.getConfig(userAgentAliasesPath);
         } catch(IOException e) {
             e.printStackTrace();
             this.userAgentAliases = new HashMap<>();

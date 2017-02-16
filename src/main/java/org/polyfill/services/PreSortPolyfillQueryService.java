@@ -22,11 +22,11 @@ import java.util.Map;
 
 @Service("presort")
 public class PreSortPolyfillQueryService implements PolyfillQueryService {
-    @Resource(name = "polyfillDir")
-    private String polyfillsDir;
 
-    @Resource(name = "baselineVersionFile")
-    private String baselineVersionFile;
+    @Resource(name = "polyfillsDirPath")
+    private String polyfillsDirPath;
+    @Resource(name = "baselineVersionsPath")
+    private String baselineVersionsPath;
 
     private final String[] nonPolyfillFiles = {"aliases.json"};
 
@@ -43,9 +43,9 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     @PostConstruct
     public void loadConfigs() throws IOException {
-        this.polyfills = getPolyfillsMap(polyfillsDir);
+        this.polyfills = getPolyfillsMap(polyfillsDirPath);
         this.sortedPolyfills = getDependencySortedPolyfills();
-        this.baselineVersions = getConfig(baselineVersionFile);
+        this.baselineVersions = getConfig(baselineVersionsPath);
     }
 
     /**
