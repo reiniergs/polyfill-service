@@ -1,11 +1,12 @@
 package org.polyfill.controllers;
 
+import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.PolyfillQueryService;
-import org.polyfill.views.NotFoundView;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.services.UserAgentParserService;
 import org.polyfill.views.BadRequestView;
 import org.polyfill.views.HandlebarView;
+import org.polyfill.views.NotFoundView;
 import org.polyfill.views.PolyfillsView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
+
+import java.util.List;
 
 /**
  * Created by reinier.guerra on 10/12/16.
@@ -34,7 +37,14 @@ public class PolyfillController {
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,
                             @PathVariable String type, Model model) {
         if (type.equals("js")) {
-            return new PolyfillsView("Here goes the polyfill implementation.");
+            List<Polyfill> polyfillList = preSortPolyfillQueryService.getPolyfillsByUserAgent(userAgentParserService.parse(uaString));
+
+            String polyfillString = "";
+            for (Integer i = 0; i < polyfillList.size(); i++) {
+                polyfillString = polyfillString.concat(polyfillList.get(i).getRawSource());
+            }
+
+            return new PolyfillsView(polyfillString);
         } else {
             model.addAttribute("message", "Sorry we just support javascript polyfills.");
             return new BadRequestView("badRequest", model);
@@ -46,7 +56,13 @@ public class PolyfillController {
     public View polyfillMinApi(@RequestHeader("User-Agent") String uaString,
                                @PathVariable String type, Model model) {
         if (type.equals("js")) {
-            return new PolyfillsView("Here goes the polyfill minify implementation");
+            List<Polyfill> polyfillList = preSortPolyfillQueryService.getPolyfillsByUserAgent(userAgentParserService.parse(uaString));
+
+            String polyfillString = "";
+            for (Integer i = 0; i < polyfillList.size(); i++) {
+                polyfillString = polyfillString.concat(polyfillList.get(i).getMinSource());
+            }
+            return new PolyfillsView(polyfillString);
         } else
             model.addAttribute("message", "Sorry we just support minified javascript polyfills.");
             return new BadRequestView("badRequest", model);
