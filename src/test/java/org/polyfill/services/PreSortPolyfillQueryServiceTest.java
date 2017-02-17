@@ -52,15 +52,16 @@ public class PreSortPolyfillQueryServiceTest {
         polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
         assertNumberOfPolyfills(0, polyfills.size());
 
-        polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a");
+        polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, new String[]{"a"});
         assertNumberOfPolyfills(0, polyfills.size());
     }
 
     @Test
     public void testSearchBySingleFeature() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a");
         String[] expectedPolyfills = {"a"};
+        String[] features = {"a"};
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
@@ -69,8 +70,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMultipleFeatures() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a,b");
         String[] expectedPolyfills = {"b", "a"};
+        String[] features = {"a", "b"};
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
@@ -79,8 +81,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchBySingleAlias() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "es6");
         String[] expectedPolyfills = {"b,c", "b,c", "d.a"};
+        String[] features = {"es6"};
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
@@ -89,8 +92,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMultipleAliases() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "es6,default");
+        String[] features = {"es6", "default"};
         String[] expectedPolyfills = {"b,c", "b,c", "d.a", "a"};
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
@@ -99,8 +103,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMixingAliasAndFeature() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "foo,d.a");
+        String[] features = {"foo", "d.a"};
         String[] expectedPolyfills = {"c", "d.a", "a"};
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
