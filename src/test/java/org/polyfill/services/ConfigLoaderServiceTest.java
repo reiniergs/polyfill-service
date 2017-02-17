@@ -47,7 +47,7 @@ public class ConfigLoaderServiceTest {
     }
 
     private ConfigLoaderService configLoaderService = new ConfigLoaderServiceStub();
-    private static final String TEST_DIRECTORY_PATH = "./src/test/testPolyfill/configLoader/";
+    private static final String TEST_DIRECTORY_PATH = "./src/test/resources/configLoader/";
 
     @Test
     public void testGetAllConfigPathsNonRecursiveNoExtraTest() throws Exception {

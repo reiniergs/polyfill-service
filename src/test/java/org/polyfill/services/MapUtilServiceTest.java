@@ -2,8 +2,6 @@ package org.polyfill.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.polyfill.services.JSONConfigLoaderService;
-import org.polyfill.services.MapUtilService;
 
 import java.util.Map;
 
@@ -14,16 +12,15 @@ import static org.junit.Assert.*;
  */
 public class MapUtilServiceTest {
 
-
     private JSONConfigLoaderService jsonConfigLoaderService;
     private MapUtilService mapUtilService;
-    private String testConfigFilePath, realConfigFilePath;
+    private String testConfigFilePath;
 
     @Before
     public void setup() {
         jsonConfigLoaderService = new JSONConfigLoaderService();
         mapUtilService = new MapUtilService();
-        testConfigFilePath = "./src/test/testPolyfill/config.json";
+        testConfigFilePath = "./src/test/resources/config.json";
     }
 
     @Test
