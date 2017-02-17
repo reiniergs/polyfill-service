@@ -26,53 +26,109 @@ public class PreSortPolyfillQueryServiceTest {
 
     @Test
     public void testSearchByUserAgentMeetVersionRequirements() {
-        UserAgent chromeUA = new UserAgentImpl("chrome", "53");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByUserAgent(chromeUA);
-        String polyfillName;
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
+        String[] expectedPolyfills = {"b,c", "b,c", "d.a", "a"};
 
-        int expectedNumOfPolyfills = 4;
-        assertEquals("Number of polyfills should be " + expectedNumOfPolyfills,
-                expectedNumOfPolyfills, polyfills.size());
-
-        polyfillName = polyfills.get(0).getName();
-        assertTrue("b or c should be the 1st polyfill, but actual is " + polyfillName,
-                "b".equals(polyfillName) || "c".equals(polyfillName));
-
-        polyfillName = polyfills.get(1).getName();
-        assertTrue("b or c should be the 2nd polyfill, but actual is " + polyfillName,
-                "b".equals(polyfillName) || "c".equals(polyfillName));
-
-        polyfillName = polyfills.get(2).getName();
-        assertEquals("d.a should be the 3rd polyfill, but actual is " + polyfillName, "d.a", polyfillName);
-
-        polyfillName = polyfills.get(3).getName();
-        assertEquals("a should be the 4th polyfill, but actual is " + polyfillName, "a", polyfillName);
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
     }
 
     @Test
     public void testSearchByUserAgentSomeNotMeetVersionRequirement() {
         UserAgent userAgent = new UserAgentImpl("firefox", "5");
         List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
-        String polyfillName;
+        String[] expectedPolyfills = {"c", "a"};
 
-        int expectedNumOfPolyfills = 2;
-        assertEquals("Number of polyfills should be " + expectedNumOfPolyfills,
-                expectedNumOfPolyfills, polyfills.size());
-
-        polyfillName = polyfills.get(0).getName();
-        assertEquals("c should be the 1st polyfill, but actual is " + polyfillName, "c", polyfillName);
-
-        polyfillName = polyfills.get(1).getName();
-        assertEquals("a should be the 2nd polyfill, but actual is " + polyfillName, "a", polyfillName);
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
     }
 
     @Test
-    public void testSearchByUserAgentNotMeetBaseline() {
+    public void testUserAgentNotMeetBaseline() {
         UserAgent userAgent = new UserAgentImpl("firefox", "1");
-        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
+        List<Polyfill> polyfills;
 
-        int expectedNumOfPolyfills = 0;
-        assertEquals("Number of polyfills should be " + expectedNumOfPolyfills,
-                expectedNumOfPolyfills, polyfills.size());
+        polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
+        assertNumberOfPolyfills(0, polyfills.size());
+
+        polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a");
+        assertNumberOfPolyfills(0, polyfills.size());
+    }
+
+    @Test
+    public void testSearchBySingleFeature() {
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a");
+        String[] expectedPolyfills = {"a"};
+
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
+    }
+
+    @Test
+    public void testSearchByMultipleFeatures() {
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "a,b");
+        String[] expectedPolyfills = {"b", "a"};
+
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
+    }
+
+    @Test
+    public void testSearchBySingleAlias() {
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "es6");
+        String[] expectedPolyfills = {"b,c", "b,c", "d.a"};
+
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
+    }
+
+    @Test
+    public void testSearchByMultipleAliases() {
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "es6,default");
+        String[] expectedPolyfills = {"b,c", "b,c", "d.a", "a"};
+
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
+    }
+
+    @Test
+    public void testSearchByMixingAliasAndFeature() {
+        UserAgent userAgent = new UserAgentImpl("chrome", "53");
+        List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, "foo,d.a");
+        String[] expectedPolyfills = {"c", "d.a", "a"};
+
+        assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
+        assertPolyfillsOrder(expectedPolyfills, polyfills);
+    }
+
+    /****************************************************************
+     * Helper
+     ****************************************************************/
+
+    private void assertNumberOfPolyfills(int expected, int actual) {
+        assertEquals("Number of polyfills should be " + expected, expected, actual);
+    }
+
+    private void assertPolyfillsOrder(String[] expectedPolyfills, List<Polyfill> polyfillsRetrieved) {
+
+        for (int i = 0; i < expectedPolyfills.length; i++) {
+            String actualPolyfillName = polyfillsRetrieved.get(i).getName();
+            boolean isPolyfillIndexCorrect = false;
+            String[] expectedPolyfillsList = expectedPolyfills[i].split(",");
+
+            for (String expectedPolyfillName : expectedPolyfillsList) {
+                if (expectedPolyfillName.equals(actualPolyfillName)) {
+                    isPolyfillIndexCorrect = true;
+                    break;
+                }
+            }
+            assertTrue(expectedPolyfills[i].replace(",", " or ") + " should be #" + (i + 1) +
+                    " in the list, but actual is " + actualPolyfillName, isPolyfillIndexCorrect);
+        }
     }
 }

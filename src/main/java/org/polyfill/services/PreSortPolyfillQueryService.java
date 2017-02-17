@@ -10,15 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("presort")
 public class PreSortPolyfillQueryService implements PolyfillQueryService {
@@ -27,12 +26,15 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     private String polyfillsDirPath;
     @Resource(name = "baselineVersionsPath")
     private String baselineVersionsPath;
+    @Resource(name = "aliasesPath")
+    private String aliasesPath;
 
     private final String[] nonPolyfillFiles = {"aliases.json"};
 
     private Map<String, Polyfill> polyfills;
     private List<Polyfill> sortedPolyfills;
     private Map<String, Object> baselineVersions;
+    private Map<String, Object> aliases;
 
     @Autowired
     @Qualifier("json")
@@ -46,32 +48,37 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         this.polyfills = getPolyfillsMap(polyfillsDirPath);
         this.sortedPolyfills = getDependencySortedPolyfills();
         this.baselineVersions = getConfig(baselineVersionsPath);
+        this.aliases = getConfig(aliasesPath);
     }
 
     /**
-     * TODO:
-     * Filter polyfill list by user agent, then get the requested feature from
-     * polyfill list along with its dependencies.
-     * The result list is ordered by dependencies.
-     * @param userAgent user agent object
-     * @param name feature name; e.g. Array.of
-     * @return the filtered list
-     */
-    public List<Polyfill> getPolyfillByFeature(UserAgent userAgent, String name) {
-        List<Polyfill> filteredPolyfill = new ArrayList<>();
-        return filteredPolyfill;
-    }
-
-    /**
-     * TODO:
      * Filter polyfill list by alias and user agent and order it by dependencies
      * @param userAgent user agent object
-     * @param alias polyfill set alias; e.g. es6, then we return all es6 polyfills
+     * @param featureNames list of feature group alias names or feature names, delimited by ","
+     *                     e.g. "es6,es5,Array.of"
      * @return the filtered list
      */
-    public List<Polyfill> getPolyfillsByAlias(UserAgent userAgent, String alias) {
-        List<Polyfill> filteredPolyfill = new ArrayList<>();
-        return filteredPolyfill;
+    public List<Polyfill> getPolyfillsByFeatures(UserAgent userAgent, String featureNames) {
+        if (meetsBaseline(userAgent)) {
+            Set<String> featureSet = new HashSet<>();
+
+            List<String> featureNamesList = Arrays.asList(featureNames.split(","));
+            for (String featureName : featureNamesList) {
+                List<String> featureGroup = resolveAlias(featureName);
+                if (featureGroup != null) {
+                    featureSet.addAll(featureGroup);
+                } else {
+                    featureSet.add(featureName);
+                }
+            }
+
+            return this.sortedPolyfills.stream()
+                    .filter(polyfill -> featureSet.contains(polyfill.getName()))
+                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -80,21 +87,13 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * @return the filtered list
      */
     public List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent) {
-        List<Polyfill> filteredPolyfills = new ArrayList<>();
-
         if (meetsBaseline(userAgent)) {
-            String browser = userAgent.getFamily();
-            String browserVersion = userAgent.getVersion();
-
-            // for each poly, check if userAgent satisfies the required browser version
-            for (Polyfill polyfill : this.sortedPolyfills) {
-                String requiredVersion = polyfill.getBrowserRequirement(browser);
-                if (requiredVersion != null && isVersionInRange(browserVersion, requiredVersion)) {
-                    filteredPolyfills.add(polyfill);
-                }
-            }
+            return this.sortedPolyfills.stream()
+                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
         }
-        return filteredPolyfills;
     }
 
     /**************************** Helpers **************************/
@@ -180,5 +179,15 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      */
     private boolean isVersionInRange(String version, String range) {
         return semVerUtilService.isVersionInRange(version, range);
+    }
+
+    private boolean isPolyfillNeeded(Polyfill polyfill, UserAgent ua) {
+        String requiredVersion = polyfill.getBrowserRequirement(ua.getFamily());
+        return requiredVersion != null && isVersionInRange(ua.getVersion(), requiredVersion);
+    }
+
+    private List<String> resolveAlias(String aliasName) {
+        Object featureGroup = this.aliases.get(aliasName);
+        return (featureGroup instanceof List) ? (List<String>)featureGroup : null;
     }
 }
