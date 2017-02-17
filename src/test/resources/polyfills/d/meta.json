@@ -10,11 +10,11 @@
     ],
     "browsers": {
         "chrome": "*",
-        "firefox": "4 - 31"
+        "firefox": "31"
     },
     "dependencies": [
         "b",
-        "d.a"
+        "c"
     ],
-    "baseDir": "a"
+    "baseDir": "d"
 }
