@@ -51,17 +51,32 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
+     * Filter polyfill list by user agent and order it by dependencies
+     * @param userAgent user agent object
+     * @return the filtered list
+     */
+    public List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent) {
+        if (meetsBaseline(userAgent)) {
+            return this.sortedPolyfills.stream()
+                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
      * Filter polyfill list by alias and user agent and order it by dependencies
      * @param userAgent user agent object
      * @param featureNames list of feature group alias names or feature names, delimited by ","
      *                     e.g. "es6,es5,Array.of"
      * @return the filtered list
      */
-    public List<Polyfill> getPolyfillsByFeatures(UserAgent userAgent, String featureNames) {
+    public List<Polyfill> getPolyfillsByFeatures(UserAgent userAgent, String[] featureNames) {
         if (meetsBaseline(userAgent)) {
             Set<String> featureSet = new HashSet<>();
 
-            List<String> featureNamesList = Arrays.asList(featureNames.split(","));
+            List<String> featureNamesList = Arrays.asList(featureNames);
             for (String featureName : featureNamesList) {
                 List<String> featureGroup = resolveAlias(featureName);
                 if (featureGroup != null) {
@@ -73,21 +88,6 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
             return this.sortedPolyfills.stream()
                     .filter(polyfill -> featureSet.contains(polyfill.getName()))
-                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
-                    .collect(Collectors.toList());
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Filter polyfill list by user agent and order it by dependencies
-     * @param userAgent user agent object
-     * @return the filtered list
-     */
-    public List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent) {
-        if (meetsBaseline(userAgent)) {
-            return this.sortedPolyfills.stream()
                     .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
                     .collect(Collectors.toList());
         } else {
