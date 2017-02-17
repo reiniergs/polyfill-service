@@ -54,7 +54,7 @@ public class JSONConfigLoaderServiceTest {
     @Test
     public void testRetrieveConfigMap() throws Exception {
 
-        String filePath = "./src/test/testPolyfill/simpleConfig.json";
+        String filePath = "./src/test/resources/simpleConfig.json";
         String firstItem = "First";
 
         List<String> secondItem = new ArrayList<String>();
