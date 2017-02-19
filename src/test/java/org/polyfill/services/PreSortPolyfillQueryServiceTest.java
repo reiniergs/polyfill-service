@@ -43,10 +43,10 @@ public class PreSortPolyfillQueryServiceTest {
                 "b".equals(polyfillName) || "c".equals(polyfillName));
 
         polyfillName = polyfills.get(2).getName();
-        assertEquals("d.a should be the 3rd polyfill, but actual is " + polyfillName, "d.a", polyfillName);
+        assertEquals("a should be the 3rd polyfill, but actual is " + polyfillName, "a", polyfillName);
 
         polyfillName = polyfills.get(3).getName();
-        assertEquals("a should be the 4th polyfill, but actual is " + polyfillName, "a", polyfillName);
+        assertEquals("d should be the 4th polyfill, but actual is " + polyfillName, "d", polyfillName);
     }
 
     @Test

@@ -1,13 +1,21 @@
 package org.polyfill.components;
 
+import org.polyfill.interfaces.ConfigLoaderService;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Wrapper for polyfill metadata
  */
+@Configurable
 public class Polyfill {
+
     private static final String BROWSER_REQUIREMENTS_KEY = "browsers";
     private static final String RAW_SOURCE_KEY = "rawSource";
     private static final String MIN_SOURCE_KEY = "minSource";
@@ -31,6 +39,22 @@ public class Polyfill {
         if (name != null) {
             this.name = name.replace("/", ".");
         }
+    }
+
+    /**
+     * Construct a polyfill given a polyfill directory
+     * Name of polyfill is extracted from the directory name
+     * @param polyfillDir directory containing all the info about the polyfill, meta.json, min.js and raw.js file
+     * @param configLoaderService TODO: remove the configLoaderService, I tried to injected it but it doesn't work
+     */
+    public Polyfill(File polyfillDir, ConfigLoaderService configLoaderService) throws IOException {
+        Map<String, Object> meta = configLoaderService.getConfig(new File(polyfillDir, "meta.json").getPath());
+        File min = new File(polyfillDir.getPath(), "min.js");
+        File raw = new File(polyfillDir.getPath(), "raw.js");
+        meta.put(RAW_SOURCE_KEY, getFileSource(raw));
+        meta.put(MIN_SOURCE_KEY, getFileSource(min));
+        this.name = polyfillDir.getName();
+        this.polyfillMap = meta;
     }
 
     /*********************** Public Interface ************************/
@@ -118,6 +142,19 @@ public class Polyfill {
     }
 
     /**************************** Helpers **************************/
+
+    private String getFileSource(File file) {
+        StringBuilder source = new StringBuilder("");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            int content;
+            while ((content = fis.read()) != -1) {
+                source.append((char) content);
+            }
+        } catch (IOException e) {
+            return "";
+        }
+        return source.toString();
+    }
 
     private String getSource(boolean minify, boolean gated) {
         StringBuilder outputSource = new StringBuilder();

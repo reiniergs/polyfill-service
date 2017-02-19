@@ -87,6 +87,7 @@ describe('Error handling', function () {
 			Object.defineProperty(object, property, undefined);
 		});
 
+		// Crashes Edge 14 on Sauce Labs, works on BrowserStack
 		proclaim.throws(function () {
 			Object.defineProperty(object, property, null);
 		});
@@ -94,6 +95,10 @@ describe('Error handling', function () {
 		proclaim.throws(function () {
 			Object.defineProperty(object, property, '');
 		});
+
+		proclaim.throws(function () {
+			Object.defineProperty(object, property);
+		}, /^Property description must be an object/);
 	});
 
 	it('Throws an error when both an accessor and a value are specified', function () {

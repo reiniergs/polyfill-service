@@ -10,7 +10,11 @@
     },
     "scripts": {
         "start": "bin/polyfill-service",
-        "prepublish": "grunt build",
+        "prepublish": "npm run build",
+        "clean-dist": "rm -rf ./polyfills/__dist",
+        "clean-testdata": "rm -rf ./test/results",
+        "clean": "npm run clean-dist && npm run clean-testdata",
+        "build": "npm run clean && node tasks/node/updatesources && node tasks/node/buildsources",
         "container-build": "docker build -t registry.heroku.com/ft-polyfill-service-qa/web .",
         "container-test": "npm run container-build && docker run -p 3000:3000 -it registry.heroku.com/ft-polyfill-service-qa/web",
         "deploy": "npm run container-build && docker push registry.heroku.com/ft-polyfill-service-qa/web && grunt deployvcl:qa && ./tasks/purge.js",
@@ -63,7 +67,8 @@
         "tsort": "0.0.1",
         "useragent": "^2.1.9",
         "usertiming": "^0.1.8",
-        "yaku": "^0.16.6"
+        "yaku": "^0.16.6",
+        "mutationobserver-shim": "^0.3.2"
     },
     "devDependencies": {
         "batch": "^0.5.1",
