@@ -37,5 +37,17 @@ public class TSortTest {
         Assert.assertEquals(expected, actual);
     }
 
-
+    @Test
+    public void testTSortVarianTwo() throws Exception {
+        TSort tsort = new TSort();
+        tsort.addRelation("b", "a");
+        tsort.addRelation("c", "a");
+        tsort.addRelation("a", null);
+        tsort.addRelation("d", null);
+        tsort.addRelation("b", "d");
+        tsort.addRelation("c", "d");
+        List<String> expected = Arrays.asList("b", "c", "a", "d");
+        List<String> actual = tsort.sort();
+        Assert.assertEquals(expected, actual);
+    }
 }

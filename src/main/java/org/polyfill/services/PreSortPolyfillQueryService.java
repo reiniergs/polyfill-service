@@ -5,7 +5,6 @@ import org.polyfill.components.TSort;
 import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -107,9 +106,9 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         for (Polyfill polyfill : this.polyfills.values()) {
             String polyfillName = polyfill.getName();
             List<String> dependencies = polyfill.getDependencies();
-            if (dependencies == null) {
-                dependencyGraph.addRelation(polyfillName, null);
-            } else {
+            dependencyGraph.addRelation(polyfillName, null);
+
+            if (dependencies != null) {
                 for (String dependency : dependencies) {
                     dependencyGraph.addRelation(dependency, polyfillName);
                 }
@@ -143,15 +142,23 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
         Map<String, Polyfill> polyfills = new HashMap<>();
 
-        List<Map<String, Object>> polyfillMaps = configLoaderService.getConfigsFromDirectory(
-                        polyfillsDir, false, path -> isPolyfillFile(path));
-
-        for (Map<String, Object> polyfillMap : polyfillMaps) {
-            Polyfill polyfill = new Polyfill(polyfillMap);
-            if (polyfill.getName() != null) {
-                polyfills.put(polyfill.getName(), polyfill);
+        File[] files = new File(polyfillsDir).listFiles();
+        for (File dir : files) {
+            if (dir.isDirectory()) {
+                Polyfill polyfill = new Polyfill(dir, configLoaderService);
+                polyfills.put(dir.getName(), polyfill);
             }
         }
+
+//        List<Map<String, Object>> polyfillMaps = configLoaderService.getConfigsFromDirectory(
+//                        polyfillsDir, false, path -> isPolyfillFile(path));
+//
+//        for (Map<String, Object> polyfillMap : polyfillMaps) {
+//            Polyfill polyfill = new Polyfill(polyfillMap);
+//            if (polyfill.getName() != null) {
+//                polyfills.put(polyfill.getName(), polyfill);
+//            }
+//        }
 
         return polyfills;
     }
