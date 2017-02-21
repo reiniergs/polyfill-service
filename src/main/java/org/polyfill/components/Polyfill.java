@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -144,16 +144,11 @@ public class Polyfill {
     /**************************** Helpers **************************/
 
     private String getFileSource(File file) {
-        StringBuilder source = new StringBuilder("");
-        try (FileInputStream fis = new FileInputStream(file)) {
-            int content;
-            while ((content = fis.read()) != -1) {
-                source.append((char) content);
-            }
+        try {
+            return new String(Files.readAllBytes(file.toPath()));
         } catch (IOException e) {
             return "";
         }
-        return source.toString();
     }
 
     private String getSource(boolean minify, boolean gated) {
