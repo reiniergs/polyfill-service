@@ -9,7 +9,7 @@
     },
     "dependencies": [
         "b",
-        "c"
+        "d"
     ],
     "baseDir": "a"
 }

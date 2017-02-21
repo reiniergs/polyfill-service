@@ -28,7 +28,7 @@ public class PreSortPolyfillQueryServiceTest {
     public void testSearchByUserAgentMeetVersionRequirements() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
         List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByUserAgent(userAgent);
-        String[] expectedPolyfills = {"b,c", "b,c", "d.a", "a"};
+        String[] expectedPolyfills = {"b,c", "b,c", "d", "a"};
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
         assertPolyfillsOrder(expectedPolyfills, polyfills);
@@ -81,7 +81,7 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchBySingleAlias() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        String[] expectedPolyfills = {"b,c", "b,c", "d.a"};
+        String[] expectedPolyfills = {"b,c", "b,c", "d"};
         String[] features = {"es6"};
         List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
@@ -93,7 +93,7 @@ public class PreSortPolyfillQueryServiceTest {
     public void testSearchByMultipleAliases() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
         String[] features = {"es6", "default"};
-        String[] expectedPolyfills = {"b,c", "b,c", "d.a", "a"};
+        String[] expectedPolyfills = {"b,c", "b,c", "d", "a"};
         List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
@@ -103,8 +103,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMixingAliasAndFeature() {
         UserAgent userAgent = new UserAgentImpl("chrome", "53");
-        String[] features = {"foo", "d.a"};
-        String[] expectedPolyfills = {"c", "d.a", "a"};
+        String[] features = {"foo", "d"};
+        String[] expectedPolyfills = {"c", "d", "a"};
         List<Polyfill> polyfills = polyfillQueryService.getPolyfillsByFeatures(userAgent, features);
 
         assertNumberOfPolyfills(expectedPolyfills.length, polyfills.size());
@@ -116,7 +116,7 @@ public class PreSortPolyfillQueryServiceTest {
      ****************************************************************/
 
     private void assertNumberOfPolyfills(int expected, int actual) {
-        assertEquals("Number of polyfills should be " + expected, expected, actual);
+        assertEquals("Number of polyfills is not correct", expected, actual);
     }
 
     private void assertPolyfillsOrder(String[] expectedPolyfills, List<Polyfill> polyfillsRetrieved) {
