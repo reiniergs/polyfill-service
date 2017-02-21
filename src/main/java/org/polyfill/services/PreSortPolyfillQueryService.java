@@ -134,10 +134,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      */
     private boolean meetsBaseline(UserAgent userAgent) {
         Object baselineVersion = baselineVersions.get(userAgent.getFamily());
-        if (baselineVersion instanceof String) {
-            return isVersionInRange(userAgent.getVersion(), (String)baselineVersion);
-        }
-        return false;
+        return baselineVersion instanceof String && isVersionInRange(userAgent.getVersion(), (String)baselineVersion);
     }
 
     /**
