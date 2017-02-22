@@ -9,7 +9,20 @@ import java.util.List;
  */
 // TODO: need to decide the shape later
 public interface PolyfillQueryService {
+
+    /**
+     * Filter polyfill list by user agent and order it by dependencies
+     * @param userAgent user agent object
+     * @return the filtered list
+     */
     List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent);
-    List<Polyfill> getPolyfillsByAlias(UserAgent userAgent, String alias);
-    List<Polyfill> getPolyfillByFeature(UserAgent userAgent, String name);
+
+    /**
+     * Filter polyfill list by alias and user agent and order it by dependencies
+     * @param userAgent user agent object
+     * @param featureNames list of feature group alias names or feature names, delimited by ","
+     *                     e.g. "es6,es5,Array.of"
+     * @return the filtered list
+     */
+    List<Polyfill> getPolyfillsByFeatures(UserAgent userAgent, String[] featureNames);
 }

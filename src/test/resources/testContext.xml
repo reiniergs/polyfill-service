@@ -17,7 +17,7 @@
     </bean>
 
     <bean id="aliasesPath" class="java.lang.String">
-        <constructor-arg type="String" value="./polyfills/__dist/aliases.json" />
+        <constructor-arg type="String" value="./src/test/resources/polyfills/aliases.json" />
     </bean>
 
     <bean id="polyfillsDirPath" class="java.lang.String">

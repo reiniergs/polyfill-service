@@ -25,12 +25,7 @@ public class JSONConfigLoaderService implements ConfigLoaderService {
 
         File configFile = new File(path);
         Map<String,Object> configMap = convertJSONConfigToMap(configFile);
-
         return configMap;
-    }
-
-    public boolean isConfig(String fileName) {
-        return fileName.endsWith(".json");
     }
 
     /**
