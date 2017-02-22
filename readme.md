@@ -1,22 +1,23 @@
-## How build the project
+## Build the Project
 
 ```
 mvn clean install
 ```
 
-## How start the app
+## Start the App Server
 
 ```
-mvn jetty:start
+mvn jetty:run
 ```
+After the server starts up, navigate to `http://localhost:8080` to test that it is up
 
-http://localhost:8080/hello?thing=Jose
-
-## How run test of the app
+## Run Tests
 
 ```
 mvn test
 ```
+## Documentation
+Start the app server and navigate to `http://localhost:8080/docs/index.html`
 
 
 [![Coverage Status](https://coveralls.io/repos/github/reiniergs/polyfill-service/badge.svg)](https://coveralls.io/github/reiniergs/polyfill-service)
