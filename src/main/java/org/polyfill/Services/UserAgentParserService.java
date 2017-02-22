@@ -24,22 +24,22 @@ public class UserAgentParserService {
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
 
-    @Resource(name = "userAgentAliasesPath")
-    private String userAgentAliasesPath;
+    @Resource(name = "browserAliasesPath")
+    private String browserAliasesPath;
 
     @Autowired
     @Qualifier("json")
     private ConfigLoaderService configLoaderService;
 
-    private Map<String, Object> userAgentAliases;
+    private Map<String, Object> browserAliases;
 
     @PostConstruct
     public void loadUserAgentAliases() {
         try {
-            this.userAgentAliases = configLoaderService.getConfig(userAgentAliasesPath);
+            this.browserAliases = configLoaderService.getConfig(browserAliasesPath);
         } catch(IOException e) {
             e.printStackTrace();
-            this.userAgentAliases = new HashMap<>();
+            this.browserAliases = new HashMap<>();
         }
     }
 
@@ -79,7 +79,7 @@ public class UserAgentParserService {
 
     private String[] getUserAgentAlias(String family, VersionNumber version) {
         String[] userAgentAlias = null;
-        Object alias = this.userAgentAliases.get(family);
+        Object alias = this.browserAliases.get(family);
         if (alias instanceof Map) {
             String versionKey = version.getMajor() + "." + version.getMinor();
             List userAgentAliasGroups = (List)((Map)alias).get(versionKey);

@@ -71,6 +71,21 @@ function writeAliasFile(polyfills, dir) {
     return writeFile(path.join(dir, 'aliases.json'), JSON.stringify(aliases));
 }
 
+function writeConfigFile(filename, srcDir, destDir) {
+    const configPath = path.join(srcDir, filename);
+    return readFile(configPath)
+        .catch(error => {
+            throw {
+                name: "Invalid config",
+                message: `Unable to read config from ${configPath}`,
+                error
+            };
+        })
+        .then(data => {
+            return writeFile(path.join(destDir, filename), JSON.stringify(JSON.parse(data)));
+        });
+}
+
 class Polyfill {
     constructor(absolute, relative) {
         this.path = { absolute, relative };
@@ -245,6 +260,8 @@ Promise.resolve()
             polyfills.map(polyfill => polyfill.writeOutput(dest))
         ))
     )
+    .then(() => writeConfigFile("browserAliases.json", src, dest))
+    .then(() => writeConfigFile("browserBaselines.json", src, dest))
     .then(() => console.log('Sources built successfully'))
     .catch(e => {
         console.log(e);

@@ -8,12 +8,12 @@
         <constructor-arg type="String" value="./src/test/resources/" />
     </bean>
 
-    <bean id="baselineVersionsPath" class="java.lang.String">
-        <constructor-arg type="String" value="./configs/baselineVersions.json" />
+    <bean id="browserBaselinesPath" class="java.lang.String">
+        <constructor-arg type="String" value="./polyfills/__dist/browserBaselines.json" />
     </bean>
 
-    <bean id="userAgentAliasesPath" class="java.lang.String">
-        <constructor-arg type="String" value="./configs/userAgentAliases.json" />
+    <bean id="browserAliasesPath" class="java.lang.String">
+        <constructor-arg type="String" value="./polyfills/__dist/browserAliases.json" />
     </bean>
 
     <bean id="aliasesPath" class="java.lang.String">
