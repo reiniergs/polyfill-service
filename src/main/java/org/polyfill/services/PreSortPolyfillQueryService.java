@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
@@ -22,14 +21,14 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     @Resource(name = "polyfillsDirPath")
     private String polyfillsDirPath;
-    @Resource(name = "baselineVersionsPath")
-    private String baselineVersionsPath;
+    @Resource(name = "browserBaselinesPath")
+    private String browserBaselinesPath;
     @Resource(name = "aliasesPath")
     private String aliasesPath;
 
     private Map<String, Polyfill> polyfills;
     private List<Polyfill> sortedPolyfills;
-    private Map<String, Object> baselineVersions;
+    private Map<String, Object> browserBaselines;
     private Map<String, Object> aliases;
 
     @Autowired
@@ -43,7 +42,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     public void loadConfigs() throws IOException {
         this.polyfills = getPolyfillsMap(polyfillsDirPath);
         this.sortedPolyfills = getDependencySortedPolyfills(this.polyfills);
-        this.baselineVersions = getConfig(baselineVersionsPath);
+        this.browserBaselines = getConfig(browserBaselinesPath);
         this.aliases = getConfig(aliasesPath);
     }
 
@@ -133,7 +132,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * Check if userAgent meets the minimum browser versions we support
      */
     private boolean meetsBaseline(UserAgent userAgent) {
-        Object baselineVersion = baselineVersions.get(userAgent.getFamily());
+        Object baselineVersion = browserBaselines.get(userAgent.getFamily());
         return baselineVersion instanceof String && isVersionInRange(userAgent.getVersion(), (String)baselineVersion);
     }
 
