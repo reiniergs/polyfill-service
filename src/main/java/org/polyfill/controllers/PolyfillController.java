@@ -3,7 +3,7 @@ package org.polyfill.controllers;
 import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
-import org.polyfill.services.UserAgentParserService;
+import org.polyfill.interfaces.UserAgentParserService;
 import org.polyfill.views.BadRequestView;
 import org.polyfill.views.HandlebarView;
 import org.polyfill.views.NotFoundView;

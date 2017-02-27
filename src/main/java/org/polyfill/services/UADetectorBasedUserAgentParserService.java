@@ -8,8 +8,10 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.polyfill.components.UserAgentImpl;
 import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.UserAgent;
+import org.polyfill.interfaces.UserAgentParserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -19,8 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class UserAgentParserService {
+/**
+ * Created by smo
+ * Service to parse user agent string.
+ */
+@Service("uadetector")
+@Primary
+public class UADetectorBasedUserAgentParserService implements UserAgentParserService {
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
 
@@ -43,6 +50,7 @@ public class UserAgentParserService {
         }
     }
 
+    @Override
     public UserAgent parse(String userAgentString) {
         ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(userAgentString));
         String family = readableUA.getName().toLowerCase();

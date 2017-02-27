@@ -2,18 +2,19 @@ package org.polyfill.interfaces;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Created by bvenkataraman on 10/19/16.
  */
 public interface ConfigLoaderService {
+
+    /**
+     * Retrieve JSON config file from specified path and convert it into a Map
+     *
+     * @param path File path to retrieve the config file (ex. ./polyfills/Element/config.json)
+     * @return configMap - Returns the JSON config in a HashMap format
+     * @throws IOException throws exception if file is not found at the specified path
+     */
     Map<String, Object> getConfig(String path) throws IOException;
 }

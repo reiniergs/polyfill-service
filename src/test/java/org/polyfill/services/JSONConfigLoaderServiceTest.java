@@ -5,10 +5,9 @@ import org.junit.Test;
 import org.polyfill.services.JSONConfigLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +15,8 @@ import static org.junit.Assert.*;
  * Created by bvenkataraman on 10/13/16.
  */
 public class JSONConfigLoaderServiceTest {
+
+    private static final String TEST_RESOURCES = "./src/test/resources/";
 
     @Autowired
     JSONConfigLoaderService jsonConfigLoaderService;
@@ -26,53 +27,57 @@ public class JSONConfigLoaderServiceTest {
     }
 
     @Test
-    public void testInvalidFileFormat() throws Exception {
-
-        Map<String, Object> resultantConfigMap = new HashMap<String, Object>();
-        String filePath = "./polyfills/Element/config.jsosn";
+    public void testInvalidFilePath() {
+        Map<String, Object> resultantConfigMap = null;
+        String filePath = TEST_RESOURCES + "config.jsosn";
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        } catch (Exception e) {
-            assertEquals("Retrieved config map should be null", 0, resultantConfigMap.size());
-            assertEquals(filePath + " (No such file or directory)", e.getMessage());
+            fail("JSONConfigLoaderService::getConfig should throw IOException when file path is incorrect");
+        } catch (IOException e) {
+            assertNull("JSONConfigLoaderService::getConfig should not return anything when there's IOException",
+                    resultantConfigMap);
         }
     }
 
     @Test
-    public void testInvalidFile() throws Exception {
-
-        Map<String, Object> resultantConfigMap = new HashMap<String, Object>();
-        String filePath = "./polyfills/Element/detect.json";
+    public void testInvalidFileFormat() {
+        Map<String, Object> resultantConfigMap = null;
+        String filePath = TEST_RESOURCES + "polyfills/a/min.js";
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-        } catch (Exception e) {
-            assertEquals("Retrieved config map should be null", 0, resultantConfigMap.size());
-            assertEquals(filePath + " (No such file or directory)", e.getMessage());
+            fail("JSONConfigLoaderService::getConfig should throw IOException when file type is incorrect");
+        } catch (IOException e) {
+            assertNull("JSONConfigLoaderService::getConfig should not return anything when there's IOException",
+                    resultantConfigMap);
         }
     }
 
     @Test
-    public void testRetrieveConfigMap() throws Exception {
+    public void testValidFile() {
+        String filePath = TEST_RESOURCES + "simpleConfig.json";
+        Map<String, Object> expectedConfigMap = getSimpleConfig();
+        try {
+            Map<String, Object> actualConfigMap = jsonConfigLoaderService.getConfig(filePath);
+            assertTrue("The two config maps do not match", expectedConfigMap.equals(actualConfigMap));
+        } catch (IOException e) {
+            fail("JSONConfigLoaderService::getConfig should not throw IOException when file exists");
+        }
+    }
 
-        String filePath = "./src/test/resources/simpleConfig.json";
+    private Map<String, Object> getSimpleConfig() {
         String firstItem = "First";
 
-        List<String> secondItem = new ArrayList<String>();
-        secondItem.add("first");
-        secondItem.add("second");
+        List<String> secondItem = Arrays.asList("first", "second");
 
-        Map<String, Object> thirdItem = new HashMap<String, Object>();
+        Map<String, Object> thirdItem = new HashMap<>();
         thirdItem.put("one", "1");
         thirdItem.put("two", "2");
 
-        Map<String, Object> mockConfigMap = new HashMap<String, Object>();
-        mockConfigMap.put("one", firstItem);
-        mockConfigMap.put("two", secondItem);
-        mockConfigMap.put("three", thirdItem);
+        Map<String, Object> simpleConfigMap = new HashMap<>();
+        simpleConfigMap.put("one", firstItem);
+        simpleConfigMap.put("two", secondItem);
+        simpleConfigMap.put("three", thirdItem);
 
-        Map<String, Object> resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-
-        assertNotNull("Map returned should not be empty", resultantConfigMap);
-        assertTrue("The two config maps do not match", mockConfigMap.equals(resultantConfigMap));
+        return simpleConfigMap;
     }
 }

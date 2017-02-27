@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.polyfill.interfaces.UserAgentParserService;
 import org.polyfill.services.PreSortPolyfillQueryService;
-import org.polyfill.services.UserAgentParserService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -18,8 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by bvenkataraman on 1/24/17.
  */
 public class PolyfillControllerTest {
-
-
 
     @InjectMocks
     PolyfillController polyfillController;

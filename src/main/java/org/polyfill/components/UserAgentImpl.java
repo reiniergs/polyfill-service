@@ -17,22 +17,27 @@ public class UserAgentImpl implements UserAgent {
         this.version = version;
     }
 
+    @Override
     public String getFamily() {
         return this.family;
     }
 
+    @Override
     public String getVersion() {
         return version.toVersionString();
     }
 
+    @Override
     public String getMajorVersion() {
         return version.getMajor();
     }
 
+    @Override
     public String getMinorVersion() {
         return version.getMinor();
     }
 
+    @Override
     public String toString() {
         return getFamily() + "/" + getVersion();
     }
