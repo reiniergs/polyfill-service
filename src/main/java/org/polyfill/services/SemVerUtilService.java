@@ -103,12 +103,12 @@ public class SemVerUtilService implements VersionUtilService {
     }
 
     /**
-     * Extract major, minor, patch groups from {@param version} and store them in a list
-     * If {@param filler} is not null, any missing groups is supplemented with the {@param filler}
-     * Normally {@param filler} should be "0", so from 3.2 we would get 3.2.0
+     * Extract major, minor, patch groups from {@code version} and store them in a list
+     * If {@code filler} is not null, any missing groups is supplemented with the {@code filler}
+     * Normally {@code filler} should be "0", so from 3.2 we would get 3.2.0
      * @param version - version string to extract the groups from
      * @param filler - backup we use for missing groups
-     * @return a list of version groups extracted from {@param version}
+     * @return a list of version groups extracted from {@code version}
      */
     private List<String> parseVersionToList(String version, String filler) {
          List<String> versionGroups = Arrays.asList(version.split(VERSION_DELIMITER_REGEX));
