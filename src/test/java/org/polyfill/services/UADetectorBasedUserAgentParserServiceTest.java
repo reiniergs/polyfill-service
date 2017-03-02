@@ -15,15 +15,15 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserAgentParserServiceTest {
+public class UADetectorBasedUserAgentParserServiceTest {
 
     private Map<String, String> UAStrings;
 
     @InjectMocks
-    private UserAgentParserService uaUtilService;
+    private UADetectorBasedUserAgentParserService uaUtilService;
 
     @Mock
-    private ConfigLoaderService configLoaderService = Mockito.mock(ConfigLoaderService.class);
+    private ConfigLoaderService configLoaderService;
 
     @Before
     public void setup() throws IOException {

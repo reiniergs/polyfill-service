@@ -1,5 +1,7 @@
 package org.polyfill.services;
 
+import org.polyfill.interfaces.VersionUtilService;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,10 +12,11 @@ import java.util.regex.Pattern;
 
 /**
  * Created by scottmo on 10/20/16
+ * Service to check version number
  */
-
-@Service
-public class SemVerUtilService {
+@Service("semver")
+@Primary
+public class SemVerUtilService implements VersionUtilService {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)((\\.\\d+)+)?");
     private static final Pattern RANGE_PATTERN = Pattern.compile("(\\d+|\\*)\\s*-\\s*(\\d+|\\*)");
@@ -23,12 +26,7 @@ public class SemVerUtilService {
 
     private static final String VERSION_DELIMITER_REGEX = "\\.";
 
-    /**
-     * check if version is within range
-     * @param checkVersion the version number that needs to be checked
-     * @param range range of user agent version (e.g. 4 - 6, &gt;=5, &gt;4, *, 10 - *).
-     * @return return true if version is in range and return false if range is invalid
-     */
+    @Override
     public boolean isVersionInRange(String checkVersion, String range) {
         range = range.replace(" ", "");
 
@@ -62,7 +60,7 @@ public class SemVerUtilService {
     }
 
     /**
-     * Check if (@param range) is *, allowing all versions
+     * Check if {@code range} is *, allowing all versions
      */
     private boolean isAnyVersionAllowed(String range) {
         return range.equals("*");
@@ -105,12 +103,12 @@ public class SemVerUtilService {
     }
 
     /**
-     * Extract major, minor, patch groups from (@param version) and store them in a list
-     * If (@param filler) is not null, any missing groups is supplemented with the (@param filler)
-     * Normally (@param filler) should be "0", so from 3.2 we would get 3.2.0
+     * Extract major, minor, patch groups from {@code version} and store them in a list
+     * If {@code filler} is not null, any missing groups is supplemented with the {@code filler}
+     * Normally {@code filler} should be "0", so from 3.2 we would get 3.2.0
      * @param version - version string to extract the groups from
      * @param filler - backup we use for missing groups
-     * @return a list of version groups extracted from (@param version)
+     * @return a list of version groups extracted from {@code version}
      */
     private List<String> parseVersionToList(String version, String filler) {
          List<String> versionGroups = Arrays.asList(version.split(VERSION_DELIMITER_REGEX));
