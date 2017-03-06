@@ -42,40 +42,122 @@ public class PolyfillTest {
     }
 
     @Test
-    public void testGoodPolyfill() {
-        Polyfill polyfill = new Polyfill(polyfillMap);
-
-        String detectMinSource = "if(!(" + detectSource + ")){" + minSource + "}";
-        String detectRawSource = "if(!(" + detectSource + ")){\n" + rawSource + "\n}\n\n";
-
+    public void testGetName() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
         assertEquals(name, polyfill.getName());
-        assertEquals(minSource, polyfill.getMinSource());
-        assertEquals(rawSource, polyfill.getRawSource());
-        assertEquals(detectMinSource, polyfill.getMinSource(true));
-        assertEquals(detectRawSource, polyfill.getRawSource(true));
+    }
+
+    @Test
+    public void testGetAliases() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
         assertEquals(aliases, polyfill.getAliases());
+    }
+
+    @Test
+    public void testGetDependencies() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
         assertEquals(dependencies, polyfill.getDependencies());
+    }
+
+    @Test
+    public void testGetAllBrowserRequirements() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
         assertEquals(browserRequirements, polyfill.getAllBrowserRequirements());
     }
 
     @Test
+    public void testGetSpecificBrowserRequirement() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        assertEquals(browserRequirements.get("a"), polyfill.getBrowserRequirement("a"));
+    }
+
+    @Test
+    public void testGetMinSource() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        assertEquals(minSource, polyfill.getSource(true, false));
+    }
+
+    @Test
+    public void testGetMinSourceGated() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        String detectMinSource = "if(!(" + detectSource + ")){" + minSource + "}";
+        assertEquals(detectMinSource, polyfill.getSource(true, true));
+    }
+
+    @Test
+    public void testGetRawSource() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        assertEquals(rawSource, polyfill.getSource(false, false));
+    }
+
+    @Test
+    public void testGetRawSourceGated() {
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        String detectRawSource = "if(!(" + detectSource + ")){\n" + rawSource + "\n}\n\n";
+        assertEquals(detectRawSource, polyfill.getSource(false, true));
+    }
+
+    @Test
+    public void testNoDetectSource() {
+        polyfillMap.remove("detectSource");
+        Polyfill polyfill = new Polyfill(name, polyfillMap);
+        assertEquals(minSource, polyfill.getSource(true, true));
+        assertEquals(rawSource, polyfill.getSource(false, true));
+    }
+
+    @Test
     public void testEmptyPolyfill() {
-        Polyfill polyfill = new Polyfill(new HashMap<>());
+        Polyfill polyfill = new Polyfill(null, new HashMap<>());
         assertEquals(null, polyfill.getName());
-        assertEquals("", polyfill.getMinSource());
-        assertEquals("", polyfill.getRawSource());
-        assertEquals("", polyfill.getMinSource(true));
-        assertEquals("", polyfill.getRawSource(true));
+        assertEquals("", polyfill.getSource(true, true));
         assertEquals(null, polyfill.getAliases());
         assertEquals(null, polyfill.getDependencies());
         assertEquals(null, polyfill.getAllBrowserRequirements());
     }
 
     @Test
-    public void testNoDetectSource() {
-        polyfillMap.remove("detectSource");
-        Polyfill polyfill = new Polyfill(polyfillMap);
-        assertEquals(minSource, polyfill.getMinSource(true));
-        assertEquals(rawSource, polyfill.getRawSource(true));
+    public void testEqual() {
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name, new HashMap<>(polyfillMap));
+        assertEquals(polyfillA, polyfillB);
+    }
+
+    @Test
+    public void testNotEqualPolyfillMap() {
+        Map<String, Object> polyfillMapClone = new HashMap<>(polyfillMap);
+        polyfillMapClone.replace("baseDir", name + "a");
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name, polyfillMapClone);
+        assertNotEquals(polyfillA, polyfillB);
+    }
+
+    @Test
+    public void testNotEqualName() {
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name + "a", polyfillMap);
+        assertNotEquals(polyfillA, polyfillB);
+    }
+
+    @Test
+    public void testHashCodeEqual() {
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name, new HashMap<>(polyfillMap));
+        assertEquals(polyfillA.hashCode(), polyfillB.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotEqualPolyfillMap() {
+        Map<String, Object> polyfillMapClone = new HashMap<>(polyfillMap);
+        polyfillMapClone.replace("baseDir", name + "a");
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name, polyfillMapClone);
+        assertNotEquals(polyfillA.hashCode(), polyfillB.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotEqualName() {
+        Polyfill polyfillA = new Polyfill(name, polyfillMap);
+        Polyfill polyfillB = new Polyfill(name + "a", polyfillMap);
+        assertNotEquals(polyfillA.hashCode(), polyfillB.hashCode());
     }
 }

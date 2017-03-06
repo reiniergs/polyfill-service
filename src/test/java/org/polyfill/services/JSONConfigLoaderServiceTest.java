@@ -2,10 +2,13 @@ package org.polyfill.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.polyfill.services.JSONConfigLoaderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.runner.RunWith;
+import org.polyfill.configurations.TestConfigs;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import java.io.File;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
@@ -14,11 +17,15 @@ import static org.junit.Assert.*;
 /**
  * Created by bvenkataraman on 10/13/16.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(
+        loader=AnnotationConfigContextLoader.class,
+        classes={TestConfigs.class})
 public class JSONConfigLoaderServiceTest {
 
-    private static final String TEST_RESOURCES = "./src/test/resources/";
+    @Resource(name = "testRootPath")
+    private String testRootPath;
 
-    @Autowired
     JSONConfigLoaderService jsonConfigLoaderService;
 
     @Before
@@ -29,7 +36,7 @@ public class JSONConfigLoaderServiceTest {
     @Test
     public void testInvalidFilePath() {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = TEST_RESOURCES + "config.jsosn";
+        String filePath = testRootPath + "config.jsosn";
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
             fail("JSONConfigLoaderService::getConfig should throw IOException when file path is incorrect");
@@ -42,7 +49,7 @@ public class JSONConfigLoaderServiceTest {
     @Test
     public void testInvalidFileFormat() {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = TEST_RESOURCES + "polyfills/a/min.js";
+        String filePath = testRootPath + "polyfills/a/min.js";
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
             fail("JSONConfigLoaderService::getConfig should throw IOException when file type is incorrect");
@@ -53,8 +60,8 @@ public class JSONConfigLoaderServiceTest {
     }
 
     @Test
-    public void testValidFile() {
-        String filePath = TEST_RESOURCES + "simpleConfig.json";
+    public void testGetConfigWithStringPath() {
+        String filePath = testRootPath + "simpleConfig.json";
         Map<String, Object> expectedConfigMap = getSimpleConfig();
         try {
             Map<String, Object> actualConfigMap = jsonConfigLoaderService.getConfig(filePath);
