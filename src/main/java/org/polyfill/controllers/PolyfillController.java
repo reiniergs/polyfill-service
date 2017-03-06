@@ -87,23 +87,32 @@ public class PolyfillController {
     private String getPolyfillsSource(String uaString,
             String features, String excludes, String globalFlags, boolean doMinify) {
 
+        UserAgent userAgent = userAgentParserService.parse(uaString);
+        List<String> excludeList = buildExcludeList(excludes);
+        List<FeatureOptions> featureList = buildFeatureList(features, globalFlags);
+
+        return polyfillQueryService.getPolyfillsSource(userAgent, doMinify, featureList, excludeList);
+    }
+
+    private List<String> buildExcludeList(String excludes) {
+        return splitToList(excludes, ",");
+    }
+
+    private List<FeatureOptions> buildFeatureList(String features, String globalFlags) {
         if (features == null) {
             features = "default";
         }
 
-        UserAgent userAgent = userAgentParserService.parse(uaString);
-        List<String> excludeList = splitToList(excludes, ",");
-
-        List<FeatureOptions> featureOptionsList = splitToList(features, ",").stream()
+        List<FeatureOptions> featureList = splitToList(features, ",").stream()
                 .map(FeatureOptions::new)
                 .collect(Collectors.toList());
 
         if (globalFlags != null) {
             FeatureOptions globalOptions = new FeatureOptions("global", splitToList(globalFlags, ","));
-            featureOptionsList.forEach(featureOption -> featureOption.copyOptions(globalOptions));
+            featureList.forEach(featureOption -> featureOption.copyOptions(globalOptions));
         }
 
-        return polyfillQueryService.getPolyfillsSource(userAgent, doMinify, featureOptionsList, excludeList);
+        return featureList;
     }
 
     private List<String> splitToList(String string, String delimiter) {
