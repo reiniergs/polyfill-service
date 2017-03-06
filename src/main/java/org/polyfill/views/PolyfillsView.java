@@ -1,47 +1,64 @@
 package org.polyfill.views;
 
-import org.polyfill.components.Polyfill;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by reinier.guerra on 10/12/16.
  */
-
 public class PolyfillsView implements View {
-    private List<Polyfill> polyfills;
-    private String variant = "minify";
 
-    public PolyfillsView(List<Polyfill> polyfills) {
-        this.polyfills = polyfills;
+    private boolean doMinify;
+    private String polyfillsSource;
+
+    public PolyfillsView(String polyfillsSource, boolean doMinify) {
+        this.polyfillsSource = polyfillsSource;
+        this.doMinify = doMinify;
     }
 
-    public PolyfillsView(List<Polyfill> polyfills, String variant) {
-        this.polyfills = polyfills;
-        this.variant = variant.equals("raw") ? variant : "minify";
-    }
-
+    @Override
     public String getContentType() {
         return "text/javascript;charset=UTF-8";
     }
 
-    public void render(Map<String, ?> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-        httpServletResponse.setContentType(getContentType());
+    @Override
+    public void render(Map<String, ?> map, HttpServletRequest request, HttpServletResponse response) {
 
+        String comments = this.doMinify ? "" : getHeaderComments();
+        String sources = "".equals(this.polyfillsSource) ? "" : wrapInClosure(this.polyfillsSource);
 
-        ServletOutputStream stream = httpServletResponse.getOutputStream();
-        stream.print(getPolyfillSources());
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setContentType(getContentType());
+
+        try (ServletOutputStream stream = response.getOutputStream()) {
+            stream.print(comments);
+            stream.print(sources);
+        } catch (IOException e) {
+            System.err.println("Failed to send response!");
+        }
     }
 
-    private String getPolyfillSources() {
-        return polyfills.stream()
-                .map(this.variant.equals("raw") ? Polyfill::getRawSource : Polyfill::getMinSource)
-                .reduce("", String::concat);
+    // wrap source in closure to hide private functions
+    private String wrapInClosure(String source) {
+        String lf = doMinify ? "" : "\n";
+        return "(function(undefined) {" + lf
+                    + source
+                + "})" + lf
+                + ".call("
+                    + "'object' === typeof window && window" // bind `this` to window in a browser
+                    + "|| 'object' === typeof self && self" // bind `this` to self in a web worker
+                    + "|| 'object' === typeof global && global" // bind `this` to global in Node
+                    + "|| {}"
+                + ");" + lf;
+    }
+
+    // TODO: add header comment
+    private String getHeaderComments() {
+        return "/* Polyfill service */\n";
     }
 }

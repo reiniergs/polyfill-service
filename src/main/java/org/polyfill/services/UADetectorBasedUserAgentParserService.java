@@ -6,18 +6,12 @@ import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.polyfill.components.UserAgentImpl;
-import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,24 +25,8 @@ public class UADetectorBasedUserAgentParserService implements UserAgentParserSer
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
 
-    @Resource(name = "browserAliasesPath")
-    private String browserAliasesPath;
-
-    @Autowired
-    @Qualifier("json")
-    private ConfigLoaderService configLoaderService;
-
+    @Resource(name = "browserAliases")
     private Map<String, Object> browserAliases;
-
-    @PostConstruct
-    public void loadUserAgentAliases() {
-        try {
-            this.browserAliases = configLoaderService.getConfig(browserAliasesPath);
-        } catch(IOException e) {
-            e.printStackTrace();
-            this.browserAliases = new HashMap<>();
-        }
-    }
 
     @Override
     public UserAgent parse(String userAgentString) {

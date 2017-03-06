@@ -1,162 +1,208 @@
 package org.polyfill.services;
 
+import org.polyfill.components.FeatureOptions;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.TSort;
-import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
+import org.polyfill.interfaces.VersionUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Created by smo
+ * Service to handle polyfill queries. This service presorts all the polyfills based on
+ * dependencies to avoid doing topological sorting on every query.
+ */
 @Service("presort")
+@Primary
 public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
-    @Resource(name = "polyfillsDirPath")
-    private String polyfillsDirPath;
-    @Resource(name = "browserBaselinesPath")
-    private String browserBaselinesPath;
-    @Resource(name = "aliasesPath")
-    private String aliasesPath;
-
+    @Resource(name = "polyfills")
     private Map<String, Polyfill> polyfills;
-    private List<Polyfill> sortedPolyfills;
+
+    @Resource(name = "browserBaselines")
     private Map<String, Object> browserBaselines;
+
+    @Resource(name = "aliases")
     private Map<String, Object> aliases;
 
     @Autowired
-    @Qualifier("json")
-    private ConfigLoaderService configLoaderService;
+    private VersionUtilService versionChecker;
 
-    @Autowired
-    private SemVerUtilService semVerUtilService;
+    private List<String> sortedPolyfills;
 
     @PostConstruct
-    public void loadConfigs() throws IOException {
-        this.polyfills = getPolyfillsMap(polyfillsDirPath);
+    public void init() {
         this.sortedPolyfills = getDependencySortedPolyfills(this.polyfills);
-        this.browserBaselines = getConfig(browserBaselinesPath);
-        this.aliases = getConfig(aliasesPath);
+    }
+
+    @Override
+    public String getPolyfillsSource(UserAgent userAgent, boolean doMinify,
+            List<FeatureOptions> featureOptionsList, List<String> excludeList) {
+
+        List<FeatureOptions> finalFeatureOptionsList = getFinalFeatureOptionsList(userAgent, featureOptionsList, excludeList);
+        return finalFeatureOptionsList.stream()
+                .map(featureOptions ->
+                        this.polyfills.get(featureOptions.getName()).getSource(doMinify, featureOptions.isGated()))
+                .collect(Collectors.joining());
     }
 
     /**
-     * Filter polyfill list by user agent and order it by dependencies
+     * Compose and return the final feature options list by filtering with excludes and user agent
      * @param userAgent user agent object
-     * @return the filtered list
+     * @param featureOptionsList list of polyfill/alias names with options like always and/or gated
+     * @param excludeList list of names of features to exclude
+     * @return the final feature options list used to build the polyfill sources
      */
-    public List<Polyfill> getPolyfillsByUserAgent(UserAgent userAgent) {
+    private List<FeatureOptions> getFinalFeatureOptionsList(UserAgent userAgent,
+            List<FeatureOptions> featureOptionsList, List<String> excludeList) {
         if (meetsBaseline(userAgent)) {
-            return this.sortedPolyfills.stream()
-                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
-                    .collect(Collectors.toList());
-        } else {
-            return new ArrayList<>();
-        }
-    }
 
-    /**
-     * Filter polyfill list by alias and user agent and order it by dependencies
-     * @param userAgent user agent object
-     * @param featureNames list of feature group alias names or feature names, delimited by ","
-     *                     e.g. "es6,es5,Array.of"
-     * @return the filtered list
-     */
-    public List<Polyfill> getPolyfillsByFeatures(UserAgent userAgent, String[] featureNames) {
-        if (meetsBaseline(userAgent)) {
-            Set<String> featureSet = new HashSet<>();
+            List<FeatureOptions> requestedFeatures = new ArrayList<>(featureOptionsList);
+            Map<String, FeatureOptions> featureSet = new HashMap<>();
+            Set<String> excludeSet = new HashSet<>(excludeList);
+            for (int i = 0; i < requestedFeatures.size(); i++) {
+                FeatureOptions featureOptions = requestedFeatures.get(i);
 
-            List<String> featureNamesList = Arrays.asList(featureNames);
-            for (String featureName : featureNamesList) {
-                List<String> featureGroup = resolveAlias(featureName);
-                if (featureGroup != null) {
-                    featureSet.addAll(featureGroup);
-                } else {
-                    featureSet.add(featureName);
+                List<FeatureOptions> featureOptionsGroup = resolveAlias(featureOptions);
+                if (featureOptionsGroup != null) {
+                    // featureOptions is an alias group, append to list to handle later
+                    requestedFeatures.addAll(featureOptionsGroup);
+
+                } else if(shouldIncludeFeature(featureOptions, userAgent, excludeSet)) {
+                    String featureName = featureOptions.getName();
+                    if (featureSet.containsKey(featureName)) {
+                        // feature set already has this featureOptions, just add new flags
+                        featureSet.get(featureName).copyOptions(featureOptions);
+                    } else {
+                        // add it to featureOptions set
+                        featureSet.put(featureOptions.getName(), featureOptions);
+
+                        // if featureOptions has dependencies, append to list to handle later
+                        List<FeatureOptions> dependencies = resolveDependencies(featureOptions);
+                        if (dependencies != null) {
+                            requestedFeatures.addAll(dependencies);
+                        }
+                    }
                 }
             }
 
+            // use presorted list's order to create sorted feature list
             return this.sortedPolyfills.stream()
-                    .filter(polyfill -> featureSet.contains(polyfill.getName()))
-                    .filter(polyfill -> isPolyfillNeeded(polyfill, userAgent))
+                    .filter(featureSet::containsKey)
+                    .map(featureSet::get)
                     .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
         }
     }
 
-    /**************************** Helpers **************************/
-
-    private List<Polyfill> getDependencySortedPolyfills(Map<String, Polyfill> polyfillMap) {
-        List<String> polyfillNames = getDependencyGraph(polyfillMap).sort();
-        return polyfillNames.stream().map(polyfillMap::get).collect(Collectors.toList());
+    /**
+     * Return a list of polyfill names sorted by dependencies
+     * @param polyfillMap map of polyfills with key=polyfill name, value=polyfill
+     * @return a list of polyfill names sorted by dependencies
+     */
+    private List<String> getDependencySortedPolyfills(Map<String, Polyfill> polyfillMap) {
+        return buildDependencyGraph(polyfillMap).sort();
     }
 
-    private TSort getDependencyGraph(Map<String, Polyfill> polyfillMap) {
+    /**
+     * Return a topological graph of polyfills
+     * @param polyfillMap map of polyfills with key=polyfill name, value=polyfill
+     * @return a topological graph of polyfills
+     */
+    private TSort buildDependencyGraph(Map<String, Polyfill> polyfillMap) {
         TSort dependencyGraph = new TSort();
         for (Polyfill polyfill : polyfillMap.values()) {
             String polyfillName = polyfill.getName();
-            List<String> dependencies = polyfill.getDependencies();
             dependencyGraph.addRelation(polyfillName, null);
 
+            List<String> dependencies = polyfill.getDependencies();
             if (dependencies != null) {
-                dependencies.stream().filter(polyfillMap::containsKey)
+                dependencies.stream()
+                        .filter(polyfillMap::containsKey)
                         .forEach(dependency -> dependencyGraph.addRelation(dependency, polyfillName));
             }
         }
         return dependencyGraph;
     }
 
-    private Map<String, Polyfill> getPolyfillsMap(String polyfillsDir) throws IOException {
-        Map<String, Polyfill> polyfills = new HashMap<>();
-        File[] files = new File(polyfillsDir).listFiles();
-        if (files != null) {
-            for (File dir : files) {
-                if (dir.isDirectory()) {
-                    Polyfill polyfill = new Polyfill(dir, configLoaderService);
-                    polyfills.put(polyfill.getName(), polyfill);
-                }
-            }
-        }
-
-        return polyfills;
-    }
-
     /**
-     * Check if userAgent meets the minimum browser versions we support
+     * Check if {@code userAgent} meets the minimum browser versions we support
      */
     private boolean meetsBaseline(UserAgent userAgent) {
         Object baselineVersion = browserBaselines.get(userAgent.getFamily());
-        return baselineVersion instanceof String && isVersionInRange(userAgent.getVersion(), (String)baselineVersion);
+        String clientUAVersion = userAgent.getVersion();
+        return baselineVersion instanceof String
+                && versionChecker.isVersionInRange(clientUAVersion, (String)baselineVersion);
     }
 
     /**
-     * Mixin method for configLoaderService.getConfig
+     * Check if a polyfill should be shown for {@code userAgent}
      */
-    private Map<String, Object> getConfig(String path) throws IOException {
-        return configLoaderService.getConfig(path);
+    private boolean isFeatureNeededForUA(FeatureOptions featureOptions, UserAgent userAgent) {
+        Polyfill polyfill = this.polyfills.get(featureOptions.getName());
+        if (polyfill != null) {
+            String requiredVersion = polyfill.getBrowserRequirement(userAgent.getFamily());
+            String clientUAVersion = userAgent.getVersion();
+            return featureOptions.isAlways()
+                    || (requiredVersion != null && versionChecker.isVersionInRange(clientUAVersion, requiredVersion));
+        }
+        return false;
     }
 
     /**
-     * Mixin method for semVerUtilService.isVersionInRange
+     * Determine whether we should include feature
+     * @param featureOptions featureOptions for the feature to test
+     * @param userAgent user agent object
+     * @param excludeSet features to exclude
+     * @return true if should include feature, else false
      */
-    private boolean isVersionInRange(String version, String range) {
-        return semVerUtilService.isVersionInRange(version, range);
+    private boolean shouldIncludeFeature(FeatureOptions featureOptions, UserAgent userAgent, Set<String> excludeSet) {
+        return this.polyfills.containsKey(featureOptions.getName()) // if we have this polyfill
+                && !excludeSet.contains(featureOptions.getName())   // if should not exclude
+                && isFeatureNeededForUA(featureOptions, userAgent); // if needed for user agent
     }
 
-    private boolean isPolyfillNeeded(Polyfill polyfill, UserAgent ua) {
-        String requiredVersion = polyfill.getBrowserRequirement(ua.getFamily());
-        return requiredVersion != null && isVersionInRange(ua.getVersion(), requiredVersion);
+    /**
+     * Expand the alias featureOptions
+     * @param featureOptions
+     * @return return a list of features represented by the alias featureOptions;
+     *         return null if alias featureOptions doesn't exist
+     */
+    private List<FeatureOptions> resolveAlias(FeatureOptions featureOptions) {
+        Object featureGroup = this.aliases.get(featureOptions.getName());
+        if (featureGroup instanceof List) {
+            return ((List<String>) featureGroup).stream()
+                    .map(featureName -> new FeatureOptions(featureName, featureOptions))
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
-    private List<String> resolveAlias(String aliasName) {
-        Object featureGroup = this.aliases.get(aliasName);
-        return (featureGroup instanceof List) ? (List<String>)featureGroup : null;
+    /**
+     * Return a list of features depended by {@code featureOptions}
+     * @param featureOptions
+     * @return return a list of features depended by {@code featureOptions}
+     *         return null if there's no dependency
+     */
+    private List<FeatureOptions> resolveDependencies(FeatureOptions featureOptions) {
+        Polyfill polyfill = this.polyfills.get(featureOptions.getName());
+        if (polyfill != null) {
+            List<String> featureGroup = polyfill.getDependencies();
+            if (featureGroup != null) {
+                return featureGroup.stream()
+                        .map(featureName -> new FeatureOptions(featureName, featureOptions))
+                        .collect(Collectors.toList());
+            }
+        }
+        return null;
     }
 }

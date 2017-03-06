@@ -9,5 +9,6 @@
         "firefox": "4 - 31"
     },
     "dependencies": [],
+    "detectSource": "c.detectSource",
     "baseDir": "c"
 }
