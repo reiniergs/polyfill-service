@@ -1,6 +1,7 @@
 package org.polyfill.components;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public class Polyfill {
         this.name = name;
         this.polyfillMap = polyfillMap;
     }
+
 
     /*********************** Public Interface ************************/
 
@@ -133,7 +135,19 @@ public class Polyfill {
         return hash;
     }
 
+    public static Map<String, Object> toMap(Map.Entry<String, Polyfill> stringPolyfillEntry) {
+        Map<String, Object> polyfillMap = new HashMap<>();
+        polyfillMap.put("name", stringPolyfillEntry.getKey());
+        polyfillMap.put("sizeRaw", getSourceSize(stringPolyfillEntry.getValue().getSource(false, false)));
+        polyfillMap.put("sizeMin", getSourceSize(stringPolyfillEntry.getValue().getSource(true, false)));
+        return polyfillMap;
+    }
+
     /**************************** Helpers **************************/
+
+    private static Integer getSourceSize(String source) {
+        return source.getBytes().length;
+    }
 
     @Nullable
     private String getStringFromMap(Map<String, Object> map, String key) {
