@@ -17,6 +17,7 @@ import org.springframework.web.servlet.View;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,36 +34,20 @@ public class PolyfillController {
 
     @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
     public View polyfillApi(@RequestHeader("User-Agent") String uaString,
-                            @RequestParam(value = "features", required = false) String features,
-                            @RequestParam(value = "excludes", required = false) String excludes,
-                            @RequestParam(value = "flags", required = false) String flags,
-                            @PathVariable String type, Model model) {
+                            @RequestParam Map<String, String> params,
+                            @PathVariable String type,
+                            Model model) {
 
-        if (type.equals("js")) {
-            boolean doMinify = false;
-            String polyfillsSource = getPolyfillsSource(uaString, features, excludes, flags, doMinify);
-            return new PolyfillsView(polyfillsSource, doMinify);
-        } else {
-            model.addAttribute("message", "Sorry we just support javascript polyfills.");
-            return new BadRequestView("badRequest", model);
-        }
+        return handlePolyfillsRequest(uaString, params, type, model, false);
     }
 
     @RequestMapping(value = "/polyfill.min.{type}", method = RequestMethod.GET)
     public View polyfillMinApi(@RequestHeader("User-Agent") String uaString,
-                               @RequestParam(value = "features", required = false) String features,
-                               @RequestParam(value = "excludes", required = false) String excludes,
-                               @RequestParam(value = "flags", required = false) String flags,
-                               @PathVariable String type, Model model) {
+                               @RequestParam Map<String, String> params,
+                               @PathVariable String type,
+                               Model model) {
 
-        if (type.equals("js")) {
-            boolean doMinify = true;
-            String polyfillsSource = getPolyfillsSource(uaString, features, excludes, flags, doMinify);
-            return new PolyfillsView(polyfillsSource, doMinify);
-        } else {
-            model.addAttribute("message", "Sorry we just support javascript polyfills.");
-            return new BadRequestView("badRequest", model);
-        }
+        return handlePolyfillsRequest(uaString, params, type, model, true);
     }
 
     @RequestMapping(value = "/user-agent", method = RequestMethod.GET)
@@ -84,12 +69,23 @@ public class PolyfillController {
      * Helpers
      ******************************************************/
 
-    private String getPolyfillsSource(String uaString,
-            String features, String excludes, String globalFlags, boolean doMinify) {
+    private View handlePolyfillsRequest(String uaString, Map<String, String> params,
+            String type, Model model, boolean doMinify) {
+
+        if (type.equals("js")) {
+            String polyfillsSource = getPolyfillsSource(uaString, params, doMinify);
+            return new PolyfillsView(polyfillsSource, doMinify);
+        } else {
+            model.addAttribute("message", "Sorry we just support javascript polyfills.");
+            return new BadRequestView("badRequest", model);
+        }
+    }
+
+    private String getPolyfillsSource(String uaString, Map<String, String> params, boolean doMinify) {
 
         UserAgent userAgent = userAgentParserService.parse(uaString);
-        List<String> excludeList = buildExcludeList(excludes);
-        List<FeatureOptions> featureList = buildFeatureList(features, globalFlags);
+        List<String> excludeList = buildExcludeList(params.get("excludes"));
+        List<FeatureOptions> featureList = buildFeatureList(params.get("features"), params.get("flags"));
 
         return polyfillQueryService.getPolyfillsSource(userAgent, doMinify, featureList, excludeList);
     }
