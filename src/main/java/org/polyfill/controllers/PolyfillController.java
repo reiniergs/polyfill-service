@@ -26,6 +26,13 @@ import java.util.stream.Collectors;
 @Controller
 public class PolyfillController {
 
+    // supported query params
+    private static final String FEATURES = "features";
+    private static final String EXCLUDES = "excludes";
+    private static final String GLOBAL_FLAGS = "flags";
+    private static final String UA_OVERRIDE = "ua";
+    private static final String UNKNOWN_OVERRIDE = "unknown";
+
     @Autowired
     UserAgentParserService userAgentParserService;
 
@@ -84,8 +91,8 @@ public class PolyfillController {
     private String getPolyfillsSource(String uaString, Map<String, String> params, boolean doMinify) {
 
         UserAgent userAgent = userAgentParserService.parse(uaString);
-        List<String> excludeList = buildExcludeList(params.get("excludes"));
-        List<FeatureOptions> featureList = buildFeatureList(params.get("features"), params.get("flags"));
+        List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
+        List<FeatureOptions> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
 
         return polyfillQueryService.getPolyfillsSource(userAgent, doMinify, featureList, excludeList);
     }
