@@ -26,6 +26,9 @@ public class AppConfig {
     @Resource(name = "aliasesPath")
     private String aliasesPath;
 
+    @Resource(name = "browserAliasesPath")
+    private String browserAliasesPath;
+
     @Autowired
     private ConfigLoaderService configLoaderService;
 
@@ -35,6 +38,11 @@ public class AppConfig {
     @Bean
     public Map<String, Object> aliases() throws IOException {
         return configLoaderService.getConfig(aliasesPath);
+    }
+
+    @Bean
+    public Map<String, Object> browserAliases() throws IOException {
+        return configLoaderService.getConfig(browserAliasesPath);
     }
 
     @Bean
