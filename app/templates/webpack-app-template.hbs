@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="ie=edge" http-equiv="x-ua-compatible"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+
+        {{#if htmlWebpackPlugin.options.baseHref }}
+            <base href="{{ htmlWebpackPlugin.options.baseHref }}"/>
+        {{/if}}
+
+        {{#each htmlWebpackPlugin.options.meta }}
+            <meta content="{{ this }}" name="{{@key}}"/>
+        {{/each}}
+
+        <title>{{ htmlWebpackPlugin.options.title }}</title>
+
+        {{#if htmlWebpackPlugin.files.favicon }}
+            <link href="{{ htmlWebpackPlugin.files.favicon }}" rel="shortcut icon"/>
+        {{/if}}
+
+        {{#if htmlWebpackPlugin.options.mobile }}
+            <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        {{/if}}
+
+        <link rel="stylesheet" href="assets/styles/salesforce-lightning-design-system.min.css"/>
+    </head>
+    <body>
+        {{#if htmlWebpackPlugin.options.appMountId }}
+            <div id="{{ htmlWebpackPlugin.options.appMountId }}"></div>
+        {{/if}}
+
+        {{#each htmlWebpackPlugin.files.chunks }}
+            <script src="assets/js/{{getFilenameHelper this.entry}}" type="text/javascript"></script>
+        {{/each}}
+    </body>
+</html>

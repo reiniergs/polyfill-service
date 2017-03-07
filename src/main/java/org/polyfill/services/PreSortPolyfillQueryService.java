@@ -205,4 +205,8 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         }
         return null;
     }
+
+    public Map<String, Polyfill> getAllPolyfills() {
+        return polyfills;
+    }
 }

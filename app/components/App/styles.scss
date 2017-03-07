@@ -1,0 +1,15 @@
+.app-container {
+
+    .app-content-container {
+        position: fixed;
+        top: 50px;
+        width: 100%;
+        height: calc(100% - 50px);
+        overflow: auto;
+
+        .app-content {
+            max-width: 1024px;
+            margin: auto;
+        }
+    }
+}
