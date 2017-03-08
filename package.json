@@ -9,11 +9,10 @@
     "url": "https://github.com/reiniergs/polyfill-service/issues"
   },
   "scripts": {
-    "start": "mvn jetty:start",
     "prepublish": "npm run build",
-    "build": "node tasks/node/updatesources && node tasks/node/buildsources && npm run build",
-    "build-app": "webpack",
-    "dev-app": "webpack"
+    "build": "node tasks/node/updatesources && node tasks/node/buildsources",
+    "build-web": "webpack",
+    "dev-web": "webpack"
   },
   "license": "MIT",
   "engines": {
@@ -60,6 +59,7 @@
     "react-redux": "^5.0.2",
     "react-router": "^3.0.2",
     "redux": "^3.6.0",
+    "tsort": "0.0.1",
     "usertiming": "^0.1.8",
     "yaku": "^0.16.6"
   },
