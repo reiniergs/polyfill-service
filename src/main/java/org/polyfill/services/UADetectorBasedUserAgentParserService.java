@@ -1,6 +1,5 @@
 package org.polyfill.services;
 
-import net.sf.uadetector.OperatingSystem;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by smo
@@ -24,58 +25,62 @@ import java.util.Map;
 public class UADetectorBasedUserAgentParserService implements UserAgentParserService {
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
+    private final Pattern normalizePattern = Pattern.compile("^(\\w+)\\/(\\d+(\\.\\d+(\\.\\d+)?)?)$");
 
     @Resource(name = "browserAliases")
     private Map<String, Object> browserAliases;
 
     @Override
     public UserAgent parse(String userAgentString) {
-        ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(userAgentString));
-        String family = readableUA.getName().toLowerCase();
-        VersionNumber version = readableUA.getVersionNumber();
-        OperatingSystem os = readableUA.getOperatingSystem();
-        String[] userAgentAlias = getUserAgentAlias(family, version);
+        userAgentString = userAgentString.trim();
 
-        if (userAgentAlias == null) {
-            // unsupported browser or browser that already uses acceptable names, return as is
-            return new UserAgentImpl(family, version);
+        String family, versionString;
 
-        } else if (userAgentAlias.length == 1) {
-            // common case, user caniuse family name
-            if (userAgentAlias[0].equals("ios_saf")) {
-                // ios webview version uses os version
-                return new UserAgentImpl(userAgentAlias[0], os.getVersionNumber());
-            } else {
-                return new UserAgentImpl(userAgentAlias[0], version);
-            }
+        // normalized user agent e.g. firefox/1.2.3
+        Matcher uaMatcher = normalizePattern.matcher(userAgentString);
+        if (uaMatcher.find()) {
+            family = uaMatcher.group(1);
+            versionString = uaMatcher.group(2);
 
+        // normal user agent, need to parse
         } else {
-            // some browsers use another browser's engine, so use the config info for user agent
-            return new UserAgentImpl(userAgentAlias[0], userAgentAlias[1]);
+            ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(userAgentString));
+            VersionNumber version = readableUA.getVersionNumber();
+            family = readableUA.getName().toLowerCase();
+            versionString = version.toVersionString();
+
+            // resolve alias
+            Object aliasObj = this.browserAliases.get(family);
+            if (aliasObj != null) {
+                if (aliasObj instanceof Map) {
+                    // e.g. "yandex browser": {"14.10": ["chrome", "37"], ...}
+                    String versionKey = version.getMajor() + "." + version.getMinor();
+                    List userAgentAliasGroups = (List)((Map)aliasObj).get(versionKey);
+                    if (userAgentAliasGroups != null) {
+                        family = (String)userAgentAliasGroups.get(0);
+                        versionString = (String)userAgentAliasGroups.get(1);
+                    }
+                } else if (aliasObj instanceof String) {
+                    // "chrome mobile ios": "ios_chr"
+                    family = (String)aliasObj;
+                    if ("ios_saf".equals(family)) {
+                        VersionNumber osVersion = readableUA.getOperatingSystem().getVersionNumber();
+                        versionString = osVersion.toVersionString();
+                    }
+                }
+            }
         }
+
+        return new UserAgentImpl(family, versionString);
     }
 
     /**
      * Chrome, Opera, and Firefox on iOS use webview, so stripping them away so that uaDetector
      * falls back to mobile safari and we can map it to ios_saf for more accurate results
+     * @param uaString user agent string
+     * @return user agent string with CriOS/OPiOS/FxiOS removed
      */
     private String stripIOSWebViewBrowsers(String uaString) {
         return uaString.replaceAll("((CriOS|OPiOS)\\/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)|(FxiOS\\/(\\d+)\\.(\\d+)))", "");
-    }
-
-    private String[] getUserAgentAlias(String family, VersionNumber version) {
-        String[] userAgentAlias = null;
-        Object alias = this.browserAliases.get(family);
-        if (alias instanceof Map) {
-            String versionKey = version.getMajor() + "." + version.getMinor();
-            List userAgentAliasGroups = (List)((Map)alias).get(versionKey);
-            userAgentAlias = new String[2];
-            userAgentAlias[0] = (String)userAgentAliasGroups.get(0);
-            userAgentAlias[1] = (String)userAgentAliasGroups.get(1);
-        } else if (alias instanceof String) {
-            userAgentAlias = new String[1];
-            userAgentAlias[0] = (String)alias;
-        }
-        return userAgentAlias;
     }
 }
