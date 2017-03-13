@@ -35,39 +35,5 @@ Fetch a polyfill bundle.
 * `ua`
     * User agent string to override the `User-Agent` header on the request. Useful if the polyfill service is being used from the server-side, and in that scenario, this is preferable to setting an inaccurate `User-Agent` header (the User-Agent header should properly be set to a string identifying the client you are using to make the request - for server side requests that might be cURL, for example).
     * Normally, responses from the service will Vary on User-Agent. Setting the `ua` parameter means responses no longer differ between user agents, so the `Vary` header will not list User-Agent as a vary value.
-* `callback`
-    * Name of JavaScript function to call after polyfills are loaded. Must match the PCRE expression `^[\w\.]+$` otherwise will have no effect. Note that this feature differs from normal JSONp in that nothing is passed to the function - it is simply a way of triggering your own code when the polyfills have loaded, intended to allow the polyfill service to be more easily loaded asynchronously with `async` and `defer` attributes.
 * `unknown`
     * What to do when the user agent is not recognised. Set to `polyfill` to return default polyfill variants of all qualifying features, `ignore` to return nothing. Use caution when setting this argument to 'polyfill' on large feature sets, since huge polyfill bundles may cause crashes or lockups in extremely old or underpowered user agents. Defaults to `ignore`.
-* `rum`
-    * Set to `1` to enable [real user monitoring](https://en.wikipedia.org/wiki/Real_user_monitoring), allowing the polyfill service to gather performance data about itself using the [resource timing API](https://developer.mozilla.org/en-US/docs/Web/API/Resource_Timing_API/Using_the_Resource_Timing_API), where available, and to perform feature detection to improve our browser targeting. Turning this on will help us improve the service, and tune our browser targeting to better serve your particular users. Defaults to 0\. In a future release this will be on by default, so if you want to opt out permanently, set it explicitly to `0` now.
-
-## GET /v2/getRumPerfData
-
-Reports network performance data from real user monitoring. Data includes separate statistics for each phase of the connection.
-
-This endpoint is only available because real user monitoring is enabled. See README for details.
-
-### Query Parameters
-* `header`
-    * Whether to include a header row in the CSV output (`1` for yes, `0` for no). Default no.
-* `metrics`
-    * Which connection metrics to report on. Comma-delimited list. Choose from 'perf_dns', 'perf_connect', 'perf_req', 'perf_resp', 'perf_total'
-* `dimensions`
-    * How to group results. Comma-delimited list. Choose from 'data_center', 'country', 'refer_domain'
-* `stats`
-    * Aggregation functions to run on grouped metrics. Comma-delimited list. Choose from 'mean', 'median', '95P', '99P', 'std', 'min', 'max', 'count'
-* `period`
-    * Number of days to draw data from, ending now. Must be in range 1-60.
-* `minSample`
-    * Minimum number of records to require for a result to be created. Must be at least 500.
-
-## GET /v2/getRumCompatData
-
-Reports compatibility data from Real user monitoring, grouped by browser family and version, covering the last 30 days.
-
-This endpoint is only available if Real user monitoring is enabled.
-
-### Query Parameters
-* `header`
-    * Whether to include a header row in the CSV output (`1` for yes, `0` for no). Default no.
