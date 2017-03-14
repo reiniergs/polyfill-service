@@ -3,6 +3,7 @@ import { Router, Route, hashHistory, IndexRedirect } from 'react-router';
 import { Provider } from 'react-redux';
 import App from './components/App';
 import Home from './components/Home';
+import Polyfill from './components/Polyfill';
 
 const Root = ({ store }) => (
     <Provider store={ store }>
@@ -10,6 +11,7 @@ const Root = ({ store }) => (
             <Route path="/" component={ App }>
                 <IndexRedirect to="home"/>
                 <Route path="home" component={ Home }/>
+                <Route path="polyfill/:pName" component={ Polyfill }/>
             </Route>
         </Router>
     </Provider>

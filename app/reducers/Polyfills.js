@@ -10,7 +10,8 @@ const initialState = fromJS({
 export default (state = initialState, action) => {
     switch (action.type) {
         case LOAD_POLYFILLS:
-            state = state.set('items', fromJS(action.polyfills));
+            const polyfills = fromJS(action.polyfills);
+            state = state.set('items', polyfills.sort());
             return makeFilter(state);
 
         case QUICK_FILTER_CHANGED:

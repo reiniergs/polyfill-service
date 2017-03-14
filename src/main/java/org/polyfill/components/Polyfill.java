@@ -16,6 +16,8 @@ public class Polyfill {
     public static final String DETECT_SOURCE_KEY = "detectSource";
     public static final String DEPENDENCIES_KEY = "dependencies";
     public static final String ALIASES_KEY = "aliases";
+    public static final String LICENSE = "license";
+    public static final String REPO = "repo";
 
     private Map<String, Object> polyfillMap;
     private String name;
@@ -133,6 +135,35 @@ public class Polyfill {
         hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 53 * hash + (this.polyfillMap != null ? this.polyfillMap.hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * Gets the type of license of the polyfill implementation e.g. MIT | Apache
+     * @return {String} - The type of license
+     */
+    public String getLicense() {
+        return getStringFromMap(this.polyfillMap, LICENSE);
+    }
+
+    /**
+     * Gets the URL to the polyfill repository
+     * @return {String} - The URl to the repository
+     */
+    public String getRepository() {
+        return getStringFromMap(this.polyfillMap, REPO);
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> polyfillMap = new HashMap<>();
+        polyfillMap.put("name", this.getName());
+        polyfillMap.put("sizeRaw", getSourceSize(this.getSource(false, false)));
+        polyfillMap.put("sizeMin", getSourceSize(this.getSource(true, false)));
+        polyfillMap.put("dependencies", this.getDependencies());
+        polyfillMap.put("browsers", this.getAllBrowserRequirements());
+        polyfillMap.put("sourceRaw", this.getSource(false, false));
+        polyfillMap.put("license", this.getLicense());
+        polyfillMap.put("repo", this.getRepository());
+        return polyfillMap;
     }
 
     public static Map<String, Object> toMap(Map.Entry<String, Polyfill> stringPolyfillEntry) {
