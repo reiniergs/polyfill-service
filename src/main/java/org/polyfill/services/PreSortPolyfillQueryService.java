@@ -209,4 +209,8 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     public Map<String, Polyfill> getAllPolyfills() {
         return polyfills;
     }
+
+    public Polyfill getPolyfillByName(String name) {
+        return this.polyfills.get(name);
+    }
 }

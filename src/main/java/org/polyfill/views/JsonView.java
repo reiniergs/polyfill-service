@@ -16,9 +16,15 @@ import java.util.Map;
 public class JsonView implements View {
 
     private Object data;
+    private Integer statusCode;
 
     public JsonView(Object data) {
         this.data = data;
+    }
+
+    public JsonView(Object data, Integer statusCode) {
+        this.data = data;
+        this.statusCode = statusCode;
     }
 
     public String getContentType() {
@@ -27,6 +33,10 @@ public class JsonView implements View {
 
     public void render(Map<String, ?> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         httpServletResponse.setContentType(getContentType());
+
+        if (statusCode != null) {
+           httpServletResponse.setStatus(this.statusCode);
+        }
 
         ServletOutputStream stream = httpServletResponse.getOutputStream();
         GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
