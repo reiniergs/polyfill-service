@@ -41,9 +41,7 @@
 
     "samsung internet": "samsung_mob",
 
-    "phantomjs": "safari/5",
-
-    "yandex browser": {
+    "yandex.browser": {
         "14.10": ["chrome", "37"],
         "14.8": ["chrome", "36"],
         "14.7": ["chrome", "35"],

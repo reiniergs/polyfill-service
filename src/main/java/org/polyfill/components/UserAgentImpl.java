@@ -9,12 +9,8 @@ public class UserAgentImpl implements UserAgent {
     private VersionNumber version;
 
     public UserAgentImpl(String family, String versionString) {
-        this(family, new VersionNumber(versionString));
-    }
-
-    public UserAgentImpl(String family, VersionNumber version) {
         this.family = family;
-        this.version = version;
+        this.version = VersionNumber.parseVersion(versionString);
     }
 
     @Override

@@ -49,12 +49,12 @@ public class PolyfillController {
     }
 
     @RequestMapping(value = "/polyfill.min.{type}", method = RequestMethod.GET)
-    public View polyfillMinApi(@RequestHeader("User-Agent") String uaString,
+    public View polyfillMinApi(@RequestHeader("User-Agent") String headerUA,
                                @RequestParam Map<String, String> params,
                                @PathVariable String type,
                                Model model) {
 
-        return handlePolyfillsRequest(uaString, params, type, model, true);
+        return handlePolyfillsRequest(headerUA, params, type, model, true);
     }
 
     @RequestMapping(value = "/user-agent", method = RequestMethod.GET)
@@ -88,8 +88,8 @@ public class PolyfillController {
         }
     }
 
-    private String getPolyfillsSource(String uaString, Map<String, String> params, boolean doMinify) {
-
+    private String getPolyfillsSource(String headerUA, Map<String, String> params, boolean doMinify) {
+        String uaString = params.get(UA_OVERRIDE) != null ? params.get(UA_OVERRIDE) : headerUA;
         UserAgent userAgent = userAgentParserService.parse(uaString);
         List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
         List<FeatureOptions> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
