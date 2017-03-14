@@ -53,6 +53,15 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
                         this.polyfills.get(featureOptions.getName()).getSource(doMinify, featureOptions.isGated()))
                 .collect(Collectors.joining());
     }
+    @Override
+    public Map<String, Polyfill> getAllPolyfills() {
+        return polyfills;
+    }
+
+    @Override
+    public Polyfill getPolyfillByName(String name) {
+        return this.polyfills.get(name);
+    }
 
     /**
      * Compose and return the final feature options list by filtering with excludes and user agent
@@ -204,13 +213,5 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             }
         }
         return null;
-    }
-
-    public Map<String, Polyfill> getAllPolyfills() {
-        return polyfills;
-    }
-
-    public Polyfill getPolyfillByName(String name) {
-        return this.polyfills.get(name);
     }
 }

@@ -35,7 +35,7 @@ public class JsonView implements View {
         httpServletResponse.setContentType(getContentType());
 
         if (statusCode != null) {
-           httpServletResponse.setStatus(this.statusCode);
+            httpServletResponse.setStatus(this.statusCode);
         }
 
         ServletOutputStream stream = httpServletResponse.getOutputStream();

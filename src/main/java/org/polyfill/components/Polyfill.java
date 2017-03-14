@@ -142,7 +142,7 @@ public class Polyfill {
      * @return {String} - The type of license
      */
     public String getLicense() {
-        return (String) this.polyfillMap.get(LICENSE);
+        return getStringFromMap(this.polyfillMap, LICENSE);
     }
 
     /**
@@ -150,7 +150,7 @@ public class Polyfill {
      * @return {String} - The URl to the repository
      */
     public String getRepository() {
-        return (String) this.polyfillMap.get(REPO);
+        return getStringFromMap(this.polyfillMap, REPO);
     }
 
     public Map<String, Object> toMap() {
