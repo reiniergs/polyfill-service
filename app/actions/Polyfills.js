@@ -26,3 +26,31 @@ export const quickFilterChange = function (filterString) {
         filterString
     }
 };
+
+export const LOAD_POLYFILL_META = 'LOAD_POLYFILL_META';
+export const LOAD_POLYFILL_META_ERR = 'LOAD_POLYFILL_META_ERR';
+export const loadPolyfillMeta = function (name) {
+    return dispatch => {
+        const request = new XMLHttpRequest();
+
+        request.addEventListener('load', function () {
+            if (this.status === 200) {
+                dispatch({
+                    type: LOAD_POLYFILL_META,
+                    meta: JSON.parse(this.response)
+                })
+            } else if (this.status === 400) {
+                const { message, polyfill } = JSON.parse(this.response);
+
+                dispatch({
+                    type: LOAD_POLYFILL_META_ERR,
+                    message,
+                    polyfill
+                })
+            }
+        });
+
+        request.open('GET', `/api/web/polyfill/${name}`, true);
+        request.send();
+    }
+};

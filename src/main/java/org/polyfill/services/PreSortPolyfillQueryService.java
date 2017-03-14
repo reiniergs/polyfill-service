@@ -100,6 +100,15 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
                         this.polyfills.get(featureOptions.getName()).getSource(doMinify, featureOptions.isGated()))
                 .collect(Collectors.joining());
     }
+    @Override
+    public Map<String, Polyfill> getAllPolyfills() {
+        return polyfills;
+    }
+
+    @Override
+    public Polyfill getPolyfillByName(String name) {
+        return this.polyfills.get(name);
+    }
 
     /**
      * Sort feature options

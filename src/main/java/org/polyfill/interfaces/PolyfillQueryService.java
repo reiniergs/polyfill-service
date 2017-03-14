@@ -27,8 +27,15 @@ public interface PolyfillQueryService {
         List<FeatureOptions> featureOptionsList, List<String> excludeList, boolean doMinify, boolean loadOnUnknownUA);
 
     /**
-     * Return all polyfills
-     * @return map of all polyfills with key: polyfill name, value: polyfill
+     * Gets a Polyfill instance by the name of the polyfill.
+     * @param name - the name of the polyfill
+     * @return a Polyfill or null
      */
-    Map<String, Polyfill> getAllPolyfills();
+    public Polyfill getPolyfillByName(String name);
+
+    /**
+     * Gets all the polyfills
+     * @return - a Map with all the polyfill, keys are polyfill names values are instance of Polyfill
+     */
+    public Map<String, Polyfill> getAllPolyfills();
 }

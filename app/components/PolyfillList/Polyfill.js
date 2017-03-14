@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export default ({name, sizeMin, sizeRaw}) => {
     const useTag = '<use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#solution"></use>';
@@ -11,7 +12,9 @@ export default ({name, sizeMin, sizeRaw}) => {
                     </span>
                 </div>
                 <div className="slds-media__body">
-                    <h3 className="slds-truncate" title="SLDS_038.zip"><a href="javascript:void(0);">{ name }</a></h3>
+                    <h3 className="slds-truncate" title="SLDS_038.zip">
+                        <Link to={ `polyfill/${name}` }>{ name }</Link>
+                    </h3>
                     <div className="slds-tile__detail slds-text-body--small">
                         <ul className="slds-list--horizontal slds-has-dividers--right">
                             <li className="slds-item">Size Raw</li>
@@ -26,7 +29,6 @@ export default ({name, sizeMin, sizeRaw}) => {
             </div>
         </li>
     )
-
 }
 
 function getKbSize(bytes) {

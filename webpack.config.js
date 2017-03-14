@@ -27,7 +27,7 @@ var commonConfig = {
                 loader: "handlebars-loader"
             },
             {
-                test: /\.scss$/,
+                test: /\.(scss|css)$/,
                 loaders: ["style-loader", "css-loader", "sass-loader"]
             }
         ]
@@ -52,7 +52,7 @@ const entryVendors = {
     vendor: ['react', 'react-dom', 'immutable', 'react-router']
 };
 
-if (TARGET === 'dev-app') {
+if (TARGET === 'dev-web') {
     module.exports = merge(commonConfig, {
         entry: entryVendors,
         output: {
@@ -69,7 +69,7 @@ if (TARGET === 'dev-app') {
     })
 }
 
-if (TARGET === 'build-app') {
+if (TARGET === 'build-web') {
     module.exports = merge(commonConfig, {
         entry: entryVendors,
         output: {
