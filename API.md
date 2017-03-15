@@ -1,14 +1,6 @@
 # API reference
 
-## Migrating from v1
-
-> Here we're talking about the API version shown in the path (eg. `/v1/polyfill.min.js`), not the project version you find in the package.json file.
-
-* `libVersion` is no longer supported. We no longer support using an older version of the polyfill collection with the current version of the service. To use an older polyfill library, use the version of the project that contains the library in the state you want it (not possible if using cdn.polyfill.io)
-* `gated` is no longer supported. Use `flags` instead.
-* There are changes to the Node API. See the README for details.
-
-## GET /v2/polyfill<var>:minify</var>.<var>:type</var>
+## GET /api/polyfill<var>:minify</var>.<var>:type</var>
 
 Fetch a polyfill bundle.
 
