@@ -93,8 +93,9 @@ public class PolyfillController {
         UserAgent userAgent = userAgentParserService.parse(uaString);
         List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
         List<FeatureOptions> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
+        boolean loadOnUnknown = "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
 
-        return polyfillQueryService.getPolyfillsSource(userAgent, doMinify, featureList, excludeList);
+        return polyfillQueryService.getPolyfillsSource(userAgent, featureList, excludeList, doMinify, loadOnUnknown);
     }
 
     private List<String> buildExcludeList(String excludes) {

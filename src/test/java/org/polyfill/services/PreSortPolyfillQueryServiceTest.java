@@ -36,11 +36,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByUserAgentMeetVersionRequirements() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
@@ -48,35 +45,26 @@ public class PreSortPolyfillQueryServiceTest {
     public void testSearchByUserAgentSomeNotMeetVersionRequirement() {
         UserAgent userAgent = new UserAgentImpl("firefox", "5");
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(userAgent, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(userAgent, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "a"));
+        assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
-    public void testUserAgentNotMeetBaseline() {
+    public void testUnknownUserAgentShouldReturnEmpty() {
         UserAgent userAgent = new UserAgentImpl("firefox", "1");
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(userAgent, doMinify, features, excludes);
+        String actualPolyfillsString = getPolyfillsSource(userAgent, features);
         String expectedPolyfillsString = "";
-        assertEquals("Should return empty String when user agent doesn't meet minimum requirements",
-                expectedPolyfillsString, actualPolyfillsString);
+        assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testFeaturesAlwaysLoaded() {
         UserAgent userAgent = new UserAgentImpl("firefox", "5");
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default|always"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(userAgent, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(userAgent, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
@@ -84,76 +72,56 @@ public class PreSortPolyfillQueryServiceTest {
     public void testUserAgentNotMeetBaselineNullifyAlwaysFlag() {
         UserAgent userAgent = new UserAgentImpl("firefox", "1");
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default|always"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(userAgent, doMinify, features, excludes);
+        String actualPolyfillsString = getPolyfillsSource(userAgent, features);
         String expectedPolyfillsString = "";
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
-    public void testNoFeatures() {
-        List<FeatureOptions> noFeatures = new ArrayList<>();
-        List<String> noExcludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, noFeatures, noExcludes);
-        assertEquals("Should return empty String when requesting no features", "", actualPolyfillsString);
+    public void testNoFeaturesShouldReturnEmpty() {
+        List<FeatureOptions> features = new ArrayList<>();
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = "";
+        assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testSearchBySingleFeature() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("c"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testSearchByMultipleFeatures() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("c"), new FeatureOptions("e"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testSearchBySingleAlias() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("foo"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testSearchByMultipleAliases() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"), new FeatureOptions("foo"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e", "b", "d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testSearchByMixingAliasAndFeature() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"), new FeatureOptions("e"));
-        List<String> excludes = new ArrayList<>();
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "e", "b", "d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
@@ -161,10 +129,8 @@ public class PreSortPolyfillQueryServiceTest {
     public void testExcludesFeatures() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
         List<String> excludes = Arrays.asList("c", "b");
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features, excludes);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
@@ -172,10 +138,8 @@ public class PreSortPolyfillQueryServiceTest {
     public void testCannotExcludeAlias() {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
         List<String> excludes = Arrays.asList("es6");
-        boolean doMinify = false;
-
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features, excludes);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"));
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
@@ -184,15 +148,30 @@ public class PreSortPolyfillQueryServiceTest {
         List<FeatureOptions> features = Arrays.asList(new FeatureOptions("default"));
         List<String> excludes = new ArrayList<>();
         boolean doMinify = true;
+        boolean loadOnUnknownUA = false;
 
-        String actualPolyfillsString = polyfillQueryService.getPolyfillsSource(needAllUA, doMinify, features, excludes);
-        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"), doMinify);
+        String actualPolyfillsString = getPolyfillsSource(needAllUA, features, excludes, doMinify, loadOnUnknownUA);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c", "b", "d", "a"), true);
+        assertEquals(expectedPolyfillsString, actualPolyfillsString);
+    }
+
+    @Test
+    public void testloadOnUnknownUA() {
+        UserAgent unknownUA = new UserAgentImpl("unknown", "0.0.0");
+        List<FeatureOptions> features = Arrays.asList(new FeatureOptions("c"));
+        List<String> excludes = new ArrayList<>();
+        boolean doMinify = false;
+        boolean loadOnUnknownUA = true;
+
+        String actualPolyfillsString = getPolyfillsSource(unknownUA, features, excludes, doMinify, loadOnUnknownUA);
+        String expectedPolyfillsString = getMockSources(Arrays.asList("c"), doMinify);
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     /****************************************************************
      * Helper
      ****************************************************************/
+    // helpers to generate mock sources
     private String getMockSource(String featureName, boolean doMinify) {
         return featureName + (doMinify ? ".min" : ".raw_");
     }
@@ -201,5 +180,23 @@ public class PreSortPolyfillQueryServiceTest {
         return featureNameList.stream()
                 .map(featureName -> getMockSource(featureName, doMinify))
                 .collect(Collectors.joining());
+    }
+
+    private String getMockSources(List<String> featureNameList) {
+        return getMockSources(featureNameList, false);
+    }
+
+    // helper methods to wrap the function under the test
+    private String getPolyfillsSource(UserAgent userAgent, List<FeatureOptions> features) {
+        return getPolyfillsSource(userAgent, features, new ArrayList<>());
+    }
+
+    private String getPolyfillsSource(UserAgent userAgent, List<FeatureOptions> features, List<String> excludes) {
+        return getPolyfillsSource(userAgent, features, excludes, false, false);
+    }
+
+    private String getPolyfillsSource(UserAgent userAgent,
+            List<FeatureOptions> features, List<String> excludes, boolean doMinify, boolean loadOnUnknownUA) {
+        return polyfillQueryService.getPolyfillsSource(userAgent, features, excludes, doMinify, loadOnUnknownUA);
     }
 }

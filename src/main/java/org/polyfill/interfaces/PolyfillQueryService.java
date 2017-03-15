@@ -17,12 +17,14 @@ public interface PolyfillQueryService {
      * Alias feature in {@code featureOptionsList} will expand into specific features.
      * Dependencies will also be included in the resultant list.
      * @param userAgent user agent object
-     * @param doMinify whether to use minified source
      * @param featureOptionsList list of polyfill/alias names with options like always and/or gated
      * @param excludeList list of names of features to exclude
+     * @param doMinify whether to use minified source
+     * @param loadOnUnknownUA whether to load default features when user agent is unknown
      * @return a string of polyfills' sources
      */
-    String getPolyfillsSource(UserAgent userAgent, boolean doMinify, List<FeatureOptions> featureOptionsList, List<String> excludeList);
+    String getPolyfillsSource(UserAgent userAgent,
+        List<FeatureOptions> featureOptionsList, List<String> excludeList, boolean doMinify, boolean loadOnUnknownUA);
 
     /**
      * Gets a Polyfill instance by the name of the polyfill.

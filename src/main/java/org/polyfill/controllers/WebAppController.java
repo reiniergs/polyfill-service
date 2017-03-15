@@ -1,7 +1,7 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Polyfill;
-import org.polyfill.services.PreSortPolyfillQueryService;
+import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.views.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class WebAppController {
 
     @Autowired
-    PreSortPolyfillQueryService preSortPolyfillQueryService;
+    PolyfillQueryService preSortPolyfillQueryService;
 
     @RequestMapping(value = "/web/polyfills", method = RequestMethod.GET)
     public View polyfillApi(Model model) {
