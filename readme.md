@@ -44,6 +44,9 @@ Essentially, what we want from a polyfill delivery system is a way of sending on
 
 **Note:** Typically once a browser version is released, its feature set does not change until its next release.
 
+**[⬆ back to top](#top)**
+=======
+
 <a name="running locally"></a> 
 ### Running Locally
 
