@@ -1,6 +1,6 @@
 package org.polyfill.controllers;
 
-import org.polyfill.components.FeatureOptions;
+import org.polyfill.components.Feature;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
@@ -14,10 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -80,40 +77,40 @@ public class PolyfillController {
             String type, Model model, boolean doMinify) {
 
         if (type.equals("js")) {
-            String polyfillsSource = getPolyfillsSource(uaString, params, doMinify);
-            return new PolyfillsView(polyfillsSource, doMinify);
+            List<Feature> features = getFeatures(uaString, params);
+            return new PolyfillsView(features, doMinify);
         } else {
             model.addAttribute("message", "Sorry we just support javascript polyfills.");
             return new BadRequestView("badRequest", model);
         }
     }
 
-    private String getPolyfillsSource(String headerUA, Map<String, String> params, boolean doMinify) {
+    private List<Feature> getFeatures(String headerUA, Map<String, String> params) {
         String uaString = params.get(UA_OVERRIDE) != null ? params.get(UA_OVERRIDE) : headerUA;
         UserAgent userAgent = userAgentParserService.parse(uaString);
         List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
-        List<FeatureOptions> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
+        List<Feature> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
         boolean loadOnUnknown = "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
 
-        return polyfillQueryService.getPolyfillsSource(userAgent, featureList, excludeList, doMinify, loadOnUnknown);
+        return polyfillQueryService.getFeatures(userAgent, featureList, excludeList, loadOnUnknown);
     }
 
     private List<String> buildExcludeList(String excludes) {
         return splitToList(excludes, ",");
     }
 
-    private List<FeatureOptions> buildFeatureList(String features, String globalFlags) {
+    private List<Feature> buildFeatureList(String features, String globalFlags) {
         if (features == null) {
             features = "default";
         }
 
-        List<FeatureOptions> featureList = splitToList(features, ",").stream()
-                .map(FeatureOptions::new)
+        List<Feature> featureList = splitToList(features, ",").stream()
+                .map(Feature::new)
                 .collect(Collectors.toList());
 
         if (globalFlags != null) {
-            FeatureOptions globalOptions = new FeatureOptions("global", splitToList(globalFlags, ","));
-            featureList.forEach(featureOption -> featureOption.copyOptions(globalOptions));
+            Set<String> globalOptions = new HashSet<>(splitToList(globalFlags, ","));
+            featureList.forEach(featureOption -> featureOption.addFlags(globalOptions));
         }
 
         return featureList;
