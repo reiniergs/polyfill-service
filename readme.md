@@ -1,13 +1,15 @@
 #  Polyfill Service
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()  [![Coverage Status](https://coveralls.io/repos/github/reiniergs/polyfill-service/badge.svg?branch=codeCoverage)](https://coveralls.io/github/reiniergs/polyfill-service?branch=codeCoverage)
 
-## Table of content
 <a name="table-of-content"></a>
+## Table of content
+
 
  1. [Why? The problem](#why)
- 
-## Why? The problem
+
 <a name="why"></a>
+## Why? The problem
+
 
 New JavaScript features are being introduced all the time. In many cases, these new features are so helpful we choose to use 
 them on production before they’re fully implemented in all browsers. To not break the experience for users on older browsers, 
