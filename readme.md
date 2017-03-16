@@ -28,6 +28,7 @@ Is that the most efficient way? The problem is that we are forcing modern browse
 Note: One thing to be clear Polyfill Service does not provide support for syntactic sugar. For example, Classes, enhanced Object Literals, and things like Arrow Functions. You'd still need a compiler for those.
 
  **[⬆ back to top](#table-of-contents)**
+=======
  
 ## Running Locally
 Clone the project onto your local machine:
