@@ -1,7 +1,7 @@
 #  Polyfill Service
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()  [![Coverage Status](https://coveralls.io/repos/github/reiniergs/polyfill-service/badge.svg?branch=codeCoverage)](https://coveralls.io/github/reiniergs/polyfill-service?branch=codeCoverage)
 
-<a name="table-of-content"></a>
+<a name="table-of-contents"></a>
 ## Table of content
 
 
