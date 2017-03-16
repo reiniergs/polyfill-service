@@ -153,32 +153,7 @@ public class Polyfill {
         return getStringFromMap(this.polyfillMap, REPO);
     }
 
-    public Map<String, Object> toMap() {
-        Map<String, Object> polyfillMap = new HashMap<>();
-        polyfillMap.put("name", this.getName());
-        polyfillMap.put("sizeRaw", getSourceSize(this.getSource(false, false)));
-        polyfillMap.put("sizeMin", getSourceSize(this.getSource(true, false)));
-        polyfillMap.put("dependencies", this.getDependencies());
-        polyfillMap.put("browsers", this.getAllBrowserRequirements());
-        polyfillMap.put("sourceRaw", this.getSource(false, false));
-        polyfillMap.put("license", this.getLicense());
-        polyfillMap.put("repo", this.getRepository());
-        return polyfillMap;
-    }
-
-    public static Map<String, Object> toMap(Map.Entry<String, Polyfill> stringPolyfillEntry) {
-        Map<String, Object> polyfillMap = new HashMap<>();
-        polyfillMap.put("name", stringPolyfillEntry.getKey());
-        polyfillMap.put("sizeRaw", getSourceSize(stringPolyfillEntry.getValue().getSource(false, false)));
-        polyfillMap.put("sizeMin", getSourceSize(stringPolyfillEntry.getValue().getSource(true, false)));
-        return polyfillMap;
-    }
-
     /**************************** Helpers **************************/
-
-    private static Integer getSourceSize(String source) {
-        return source.getBytes().length;
-    }
 
     @Nullable
     private String getStringFromMap(Map<String, Object> map, String key) {
