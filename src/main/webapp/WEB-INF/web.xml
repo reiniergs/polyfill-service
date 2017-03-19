@@ -16,7 +16,7 @@
         <servlet-name>SpringApp</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>docs</servlet-name>
         <jsp-file>/index.html</jsp-file>
@@ -34,8 +34,4 @@
         <exception-type>404</exception-type>
         <location>/api/notfound</location>
     </error-page>
-
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 </web-app>
