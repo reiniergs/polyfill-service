@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgentParserService;
-import org.polyfill.views.PolyfillsView;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 

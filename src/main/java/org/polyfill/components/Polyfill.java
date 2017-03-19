@@ -1,6 +1,7 @@
 package org.polyfill.components;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ public class Polyfill {
         this.polyfillMap = polyfillMap;
     }
 
-
     /*********************** Public Interface ************************/
 
     /**
@@ -41,7 +41,6 @@ public class Polyfill {
     /**
      * @return feature group aliases that contain this feature
      */
-    @Nullable
     public List<String> getAliases() {
         return getListFromMap(this.polyfillMap, ALIASES_KEY);
     }
@@ -49,7 +48,6 @@ public class Polyfill {
     /**
      * @return browser requirements; e.g. {chrome: '*', ios_saf: '&lt;10'}
      */
-    @Nullable
     public Map<String, Object> getAllBrowserRequirements() {
         return getMapFromMap(this.polyfillMap, BROWSER_REQUIREMENTS_KEY);
     }
@@ -61,16 +59,12 @@ public class Polyfill {
     @Nullable
     public String getBrowserRequirement(String browserName) {
         Map<String, Object> allBrowserRequirements = getAllBrowserRequirements();
-        if (allBrowserRequirements != null) {
-            return getStringFromMap(allBrowserRequirements, browserName);
-        }
-        return null;
+        return getStringFromMap(allBrowserRequirements, browserName);
     }
 
     /**
      * @return a list of dependencies of this polyfill
      */
-    @Nullable
     public List<String> getDependencies() {
         return getListFromMap(this.polyfillMap, DEPENDENCIES_KEY);
     }
@@ -164,12 +158,12 @@ public class Polyfill {
     @Nullable
     private List<String> getListFromMap(Map<String, Object> map, String key) {
         Object value = map.get(key);
-        return (value instanceof List) ? (List<String>)value : null;
+        return (value instanceof List) ? (List<String>)value : new ArrayList<>();
     }
 
     @Nullable
     private Map<String, Object> getMapFromMap(Map<String, Object> map, String key) {
         Object value = map.get(key);
-        return (value instanceof Map) ? (Map<String, Object>)value : null;
+        return (value instanceof Map) ? (Map<String, Object>)value : new HashMap<>();
     }
 }

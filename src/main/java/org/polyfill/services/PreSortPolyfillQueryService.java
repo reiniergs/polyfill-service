@@ -63,7 +63,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             Feature feature = requestedFeatures.get(i);
 
             List<Feature> featureGroup = resolveAlias(feature);
-            if (featureGroup != null) {
+            if (!featureGroup.isEmpty()) {
                 // feature is an alias group, append to list to handle later
                 requestedFeatures.addAll(featureGroup);
 
@@ -71,17 +71,16 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
                 String featureName = feature.getName();
                 if (featureSet.containsKey(featureName)) {
                     // feature set already has this feature, just add new flags
-                    featureSet.get(featureName).copyFlags(feature);
+                    Feature existingFeature = featureSet.get(featureName);
+                    existingFeature.copyFlags(feature);
+                    existingFeature.copyRequiredBys(feature);
                 } else {
                     // add it to feature set
                     featureSet.put(featureName, feature);
                     feature.setPolyfill(this.polyfills.get(featureName));
 
-                    // if feature has dependencies, append to list to handle later
-                    List<Feature> dependencies = resolveDependencies(feature);
-                    if (dependencies != null) {
-                        requestedFeatures.addAll(dependencies);
-                    }
+                    // if feature has any dependencies, append to list to handle later
+                    requestedFeatures.addAll(resolveDependencies(feature));
                 }
             }
         }
@@ -126,12 +125,11 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             String polyfillName = polyfill.getName();
             dependencyGraph.addRelation(polyfillName, null);
 
-            List<String> dependencies = polyfill.getDependencies();
-            if (dependencies != null) {
-                dependencies.stream()
-                        .filter(polyfillMap::containsKey)
-                        .forEach(dependency -> dependencyGraph.addRelation(dependency, polyfillName));
-            }
+            polyfill.getDependencies().stream()
+                    .filter(polyfillMap::containsKey)
+                    .forEach(dependency -> {
+                        dependencyGraph.addRelation(dependency, polyfillName);
+                    });
         }
         return dependencyGraph;
     }
@@ -194,7 +192,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
                     .map(featureName -> new Feature(featureName, feature))
                     .collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -206,13 +204,10 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     private List<Feature> resolveDependencies(Feature feature) {
         Polyfill polyfill = this.polyfills.get(feature.getName());
         if (polyfill != null) {
-            List<String> featureGroup = polyfill.getDependencies();
-            if (featureGroup != null) {
-                return featureGroup.stream()
-                        .map(featureName -> new Feature(featureName, feature))
-                        .collect(Collectors.toList());
-            }
+            return polyfill.getDependencies().stream()
+                    .map(featureName -> new Feature(featureName, feature))
+                    .collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 }

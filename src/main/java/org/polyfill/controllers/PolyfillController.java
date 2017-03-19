@@ -9,6 +9,8 @@ import org.polyfill.views.HandlebarView;
 import org.polyfill.views.NotFoundView;
 import org.polyfill.views.PolyfillsView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
  * Created by reinier.guerra on 10/12/16.
  */
 @Controller
+@PropertySource("classpath:project.properties")
 public class PolyfillController {
 
     // supported query params
@@ -30,19 +33,32 @@ public class PolyfillController {
     private static final String UA_OVERRIDE = "ua";
     private static final String UNKNOWN_OVERRIDE = "unknown";
 
+    private static final String ONLY_SUPPORT_JS_MSG = "Sorry we just support javascript polyfills.";
+
     @Autowired
     UserAgentParserService userAgentParserService;
 
     @Autowired
     PolyfillQueryService polyfillQueryService;
 
+    @Value("${project.version}")
+    private String projectVersion;
+
+    @Value("${project.url}")
+    private String projectUrl;
+
     @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
-    public View polyfillApi(@RequestHeader("User-Agent") String uaString,
+    public View polyfillApi(@RequestHeader("User-Agent") String headerUA,
                             @RequestParam Map<String, String> params,
                             @PathVariable String type,
                             Model model) {
 
-        return handlePolyfillsRequest(uaString, params, type, model, false);
+        if (type.equals("js")) {
+            return getPolyfillsView(headerUA, params, false);
+        } else {
+            model.addAttribute("message", ONLY_SUPPORT_JS_MSG);
+            return new BadRequestView("badRequest", model);
+        }
     }
 
     @RequestMapping(value = "/polyfill.min.{type}", method = RequestMethod.GET)
@@ -51,7 +67,12 @@ public class PolyfillController {
                                @PathVariable String type,
                                Model model) {
 
-        return handlePolyfillsRequest(headerUA, params, type, model, true);
+        if (type.equals("js")) {
+            return getPolyfillsView(headerUA, params, true);
+        } else {
+            model.addAttribute("message", ONLY_SUPPORT_JS_MSG);
+            return new BadRequestView("badRequest", model);
+        }
     }
 
     @RequestMapping(value = "/user-agent", method = RequestMethod.GET)
@@ -73,26 +94,19 @@ public class PolyfillController {
      * Helpers
      ******************************************************/
 
-    private View handlePolyfillsRequest(String uaString, Map<String, String> params,
-            String type, Model model, boolean doMinify) {
+    private View getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
 
-        if (type.equals("js")) {
-            List<Feature> features = getFeatures(uaString, params);
-            return new PolyfillsView(features, doMinify);
-        } else {
-            model.addAttribute("message", "Sorry we just support javascript polyfills.");
-            return new BadRequestView("badRequest", model);
-        }
-    }
-
-    private List<Feature> getFeatures(String headerUA, Map<String, String> params) {
         String uaString = params.get(UA_OVERRIDE) != null ? params.get(UA_OVERRIDE) : headerUA;
         UserAgent userAgent = userAgentParserService.parse(uaString);
         List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
-        List<Feature> featureList = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
+        List<Feature> featuresRequested = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
         boolean loadOnUnknown = "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
 
-        return polyfillQueryService.getFeatures(userAgent, featureList, excludeList, loadOnUnknown);
+        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(userAgent,
+                featuresRequested, excludeList, loadOnUnknown);
+
+        return new PolyfillsView(projectVersion, projectUrl,
+                userAgent, featuresRequested, featuresLoaded, doMinify);
     }
 
     private List<String> buildExcludeList(String excludes) {
