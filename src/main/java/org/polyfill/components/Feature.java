@@ -16,7 +16,7 @@ public class Feature {
     private Polyfill polyfill;
 
     private Set<String> flags = new HashSet<>();
-    private List<String> requiredBys = new ArrayList<>();
+    private Set<String> requiredBys = new HashSet<>();
 
     public Feature(String queryParam) {
         // e.g. Array.of|always|gated -> ["Array.of", "always", "gated"]
@@ -58,7 +58,7 @@ public class Feature {
     }
 
     public List<String> getRequiredBys() {
-        return this.requiredBys;
+        return new ArrayList<>(this.requiredBys);
     }
 
     public void copyRequiredBys(Feature feature) {
