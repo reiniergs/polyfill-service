@@ -18,14 +18,15 @@ import java.util.stream.Collectors;
  */
 public class PolyfillsView implements View {
 
+    private static final String NO_POLYFILLS_MESSAGE = "/* No polyfills found for current settings */";
+    private static final String MIN_MESSAGE = "/* Disable minification (remove `.min` from URL path) for more info */";
+
     private String projectVersion;
     private String projectUrl;
     private UserAgent userAgent;
     private List<Feature> featuresRequested = new ArrayList<>();
     private List<Feature> featuresLoaded = new ArrayList<>();
     private boolean minify = false;
-
-    private static final String NO_POLYFILLS_MESSAGE = "/* No polyfills found for current settings */";
 
     public PolyfillsView(String projectVersion, String projectUrl, UserAgent userAgent,
             List<Feature> featuresRequested, List<Feature> featuresLoaded, boolean minify) {
@@ -63,10 +64,10 @@ public class PolyfillsView implements View {
      */
     private String getSources() {
         String sources = toPolyfillsSource(this.featuresLoaded);
-        if (!this.minify) {
-            sources = "".equals(sources) ? NO_POLYFILLS_MESSAGE : wrapInClosure(sources);
+        if (isEmpty(sources)) {
+            return this.minify ? "" : "\n\n" + NO_POLYFILLS_MESSAGE;
         }
-        return sources;
+        return "\n\n" + wrapInClosure(sources);
     }
 
     /**
@@ -86,15 +87,11 @@ public class PolyfillsView implements View {
      */
     private String wrapInClosure(String source) {
         String lf = minify ? "" : "\n";
-        return "(function(undefined) {" + lf
-                    + source
-                + "})" + lf
-                + ".call("
-                    + "'object' === typeof window && window" // bind `this` to window in a browser
-                    + "|| 'object' === typeof self && self" // bind `this` to self in a web worker
-                    + "|| 'object' === typeof global && global" // bind `this` to global in Node
-                    + "|| {}"
-                + ");" + lf;
+        return "(function(undefined) {" + lf + source + "})" + lf
+                + ".call('object' === typeof window && window" // bind `this` to window in a browser
+                + " || 'object' === typeof self && self"       // bind `this` to self in a web worker
+                + " || 'object' === typeof global && global"   // bind `this` to global in Node
+                + " || {});";
     }
 
     /**
@@ -103,7 +100,7 @@ public class PolyfillsView implements View {
      */
     private String getDebugInfo() {
         if (this.minify) {
-            return "";
+            return MIN_MESSAGE;
         }
 
         List<String> headers = new ArrayList<>();
@@ -139,7 +136,7 @@ public class PolyfillsView implements View {
      */
     private String buildCommentBlock(List<String> lines) {
         String comments = lines.stream().collect(Collectors.joining("\n * "));
-        return "/* " + comments + "\n */\n\n";
+        return "/* " + comments + " */";
     }
 
     /**
@@ -162,5 +159,9 @@ public class PolyfillsView implements View {
         }
 
         return "- " + feature.getName() + license + relatedFeatures;
+    }
+
+    private boolean isEmpty(String value) {
+        return value == null || "".equals(value);
     }
 }

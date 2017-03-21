@@ -37,6 +37,7 @@ public class Feature {
     public Feature(String name, Feature feature) {
         this.name = name;
         this.flags.addAll(feature.flags);
+        this.requiredBys.addAll(feature.requiredBys);
         this.requiredBys.add(feature.name);
     }
 

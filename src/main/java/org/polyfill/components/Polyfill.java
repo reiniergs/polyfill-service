@@ -17,7 +17,7 @@ public class Polyfill {
     public static final String DETECT_SOURCE_KEY = "detectSource";
     public static final String DEPENDENCIES_KEY = "dependencies";
     public static final String ALIASES_KEY = "aliases";
-    public static final String LICENSE = "license";
+    public static final String LICENSE_KEY = "license";
     public static final String REPO = "repo";
 
     private Map<String, Object> polyfillMap;
@@ -136,7 +136,7 @@ public class Polyfill {
      * @return {String} - The type of license
      */
     public String getLicense() {
-        return getStringFromMap(this.polyfillMap, LICENSE);
+        return getStringFromMap(this.polyfillMap, LICENSE_KEY);
     }
 
     /**
