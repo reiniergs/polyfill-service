@@ -1,6 +1,6 @@
 package org.polyfill.services;
 
-import org.polyfill.components.FeatureOptions;
+import org.polyfill.components.Feature;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.TSort;
 import org.polyfill.interfaces.PolyfillQueryService;
@@ -49,56 +49,43 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
-    public String getPolyfillsSource(UserAgent userAgent,
-        List<FeatureOptions> featureOptionsList, List<String> excludeList, boolean doMinify, boolean loadOnUnknownUA) {
+    public List<Feature> getFeatures(UserAgent userAgent,
+            List<Feature> featureList, List<String> excludeList, boolean loadOnUnknownUA) {
 
         if (!isUserAgentSupported(userAgent) && !loadOnUnknownUA) {
-            return "";
+            return new ArrayList<>();
         }
 
-        List<FeatureOptions> requestedFeatures = new ArrayList<>(featureOptionsList);
-        Map<String, FeatureOptions> featureSet = new HashMap<>();
+        List<Feature> requestedFeatures = new ArrayList<>(featureList);
+        Map<String, Feature> featureSet = new HashMap<>();
         Set<String> excludeSet = new HashSet<>(excludeList);
         for (int i = 0; i < requestedFeatures.size(); i++) {
-            FeatureOptions featureOptions = requestedFeatures.get(i);
+            Feature feature = requestedFeatures.get(i);
 
-            List<FeatureOptions> featureOptionsGroup = resolveAlias(featureOptions);
-            if (featureOptionsGroup != null) {
-                // featureOptions is an alias group, append to list to handle later
-                requestedFeatures.addAll(featureOptionsGroup);
+            List<Feature> featureGroup = resolveAlias(feature);
+            if (!featureGroup.isEmpty()) {
+                // feature is an alias group, append to list to handle later
+                requestedFeatures.addAll(featureGroup);
 
-            } else if(shouldIncludeFeature(featureOptions, userAgent, excludeSet, loadOnUnknownUA)) {
-                String featureName = featureOptions.getName();
+            } else if(shouldIncludeFeature(feature, userAgent, excludeSet, loadOnUnknownUA)) {
+                String featureName = feature.getName();
                 if (featureSet.containsKey(featureName)) {
-                    // feature set already has this featureOptions, just add new flags
-                    featureSet.get(featureName).copyOptions(featureOptions);
+                    // feature set already has this feature, just add new flags
+                    Feature existingFeature = featureSet.get(featureName);
+                    existingFeature.copyFlags(feature);
+                    existingFeature.copyRequiredBys(feature);
                 } else {
-                    // add it to featureOptions set
-                    featureSet.put(featureOptions.getName(), featureOptions);
+                    // add it to feature set
+                    featureSet.put(featureName, feature);
+                    feature.setPolyfill(this.polyfills.get(featureName));
 
-                    // if featureOptions has dependencies, append to list to handle later
-                    List<FeatureOptions> dependencies = resolveDependencies(featureOptions);
-                    if (dependencies != null) {
-                        requestedFeatures.addAll(dependencies);
-                    }
+                    // if feature has any dependencies, append to list to handle later
+                    requestedFeatures.addAll(resolveDependencies(feature));
                 }
             }
         }
 
-        return toPolyfillsSource(getSortedFeatureOptions(featureSet), doMinify);
-    }
-
-    /**
-     * Concatenate features to source
-     * @param featureOptionsList list of feature options
-     * @param doMinify whether to minify source
-     * @return source of features requested
-     */
-    private String toPolyfillsSource(List<FeatureOptions> featureOptionsList, boolean doMinify) {
-        return featureOptionsList.stream()
-                .map(featureOptions ->
-                        this.polyfills.get(featureOptions.getName()).getSource(doMinify, featureOptions.isGated()))
-                .collect(Collectors.joining());
+        return getSortedFeatureOptions(featureSet);
     }
 
     @Override
@@ -111,7 +98,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * @param featureSet set of features needed to sort
      * @return sorted list of feature options
      */
-    private List<FeatureOptions> getSortedFeatureOptions(Map<String, FeatureOptions> featureSet) {
+    private List<Feature> getSortedFeatureOptions(Map<String, Feature> featureSet) {
         return this.sortedPolyfills.stream()
                 .filter(featureSet::containsKey)
                 .map(featureSet::get)
@@ -138,12 +125,11 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             String polyfillName = polyfill.getName();
             dependencyGraph.addRelation(polyfillName, null);
 
-            List<String> dependencies = polyfill.getDependencies();
-            if (dependencies != null) {
-                dependencies.stream()
-                        .filter(polyfillMap::containsKey)
-                        .forEach(dependency -> dependencyGraph.addRelation(dependency, polyfillName));
-            }
+            polyfill.getDependencies().stream()
+                    .filter(polyfillMap::containsKey)
+                    .forEach(dependency -> {
+                        dependencyGraph.addRelation(dependency, polyfillName);
+                    });
         }
         return dependencyGraph;
     }
@@ -162,17 +148,17 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     /**
      * Check if a polyfill should be shown for {@code userAgent}
-     * @param featureOptions feature options for the polyfill
+     * @param feature feature options for the polyfill
      * @param userAgent user agent to check against
      * @param loadOnUnknownUA whether to load polyfill if user agent is unknown
      * @return true if we should load feature for the user agent
      */
-    private boolean isFeatureNeededForUA(FeatureOptions featureOptions, UserAgent userAgent, boolean loadOnUnknownUA) {
-        Polyfill polyfill = this.polyfills.get(featureOptions.getName());
+    private boolean isFeatureNeededForUA(Feature feature, UserAgent userAgent, boolean loadOnUnknownUA) {
+        Polyfill polyfill = this.polyfills.get(feature.getName());
         if (polyfill != null) {
             String requiredVersion = polyfill.getBrowserRequirement(userAgent.getFamily());
             String clientUAVersion = userAgent.getVersion();
-            return featureOptions.isAlways()
+            return feature.isAlways()
                     || (requiredVersion != null && versionChecker.isVersionInRange(clientUAVersion, requiredVersion))
                     || !isUserAgentSupported(userAgent) && loadOnUnknownUA;
         }
@@ -181,50 +167,47 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     /**
      * Determine whether we should include feature
-     * @param featureOptions featureOptions for the feature to test
+     * @param feature feature for the feature to test
      * @param userAgent user agent object
      * @param excludeSet features to exclude
      * @return true if should include feature, else false
      */
-    private boolean shouldIncludeFeature(FeatureOptions featureOptions,
+    private boolean shouldIncludeFeature(Feature feature,
             UserAgent userAgent, Set<String> excludeSet, boolean loadOnUnknownUA) {
-        return this.polyfills.containsKey(featureOptions.getName()) // if we have this polyfill
-                && !excludeSet.contains(featureOptions.getName())   // if should not exclude
-                && isFeatureNeededForUA(featureOptions, userAgent, loadOnUnknownUA); // if needed for user agent
+        return this.polyfills.containsKey(feature.getName()) // if we have this polyfill
+                && !excludeSet.contains(feature.getName())   // if should not exclude
+                && isFeatureNeededForUA(feature, userAgent, loadOnUnknownUA); // if needed for user agent
     }
 
     /**
-     * Expand the alias featureOptions
-     * @param featureOptions
-     * @return return a list of features represented by the alias featureOptions;
-     *         return null if alias featureOptions doesn't exist
+     * Expand the alias feature
+     * @param feature
+     * @return return a list of features represented by the alias feature;
+     *         return null if alias feature doesn't exist
      */
-    private List<FeatureOptions> resolveAlias(FeatureOptions featureOptions) {
-        Object featureGroup = this.aliases.get(featureOptions.getName());
+    private List<Feature> resolveAlias(Feature feature) {
+        Object featureGroup = this.aliases.get(feature.getName());
         if (featureGroup instanceof List) {
             return ((List<String>) featureGroup).stream()
-                    .map(featureName -> new FeatureOptions(featureName, featureOptions))
+                    .map(featureName -> new Feature(featureName, feature))
                     .collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
-     * Return a list of features depended by {@code featureOptions}
-     * @param featureOptions
-     * @return return a list of features depended by {@code featureOptions}
+     * Return a list of features depended by {@code feature}
+     * @param feature
+     * @return return a list of features depended by {@code feature}
      *         return null if there's no dependency
      */
-    private List<FeatureOptions> resolveDependencies(FeatureOptions featureOptions) {
-        Polyfill polyfill = this.polyfills.get(featureOptions.getName());
+    private List<Feature> resolveDependencies(Feature feature) {
+        Polyfill polyfill = this.polyfills.get(feature.getName());
         if (polyfill != null) {
-            List<String> featureGroup = polyfill.getDependencies();
-            if (featureGroup != null) {
-                return featureGroup.stream()
-                        .map(featureName -> new FeatureOptions(featureName, featureOptions))
-                        .collect(Collectors.toList());
-            }
+            return polyfill.getDependencies().stream()
+                    .map(featureName -> new Feature(featureName, feature))
+                    .collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 }

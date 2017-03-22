@@ -110,9 +110,9 @@ public class PolyfillTest {
         Polyfill polyfill = new Polyfill(null, new HashMap<>());
         assertEquals(null, polyfill.getName());
         assertEquals("", polyfill.getSource(true, true));
-        assertEquals(null, polyfill.getAliases());
-        assertEquals(null, polyfill.getDependencies());
-        assertEquals(null, polyfill.getAllBrowserRequirements());
+        assertTrue(polyfill.getAliases().isEmpty());
+        assertTrue(polyfill.getDependencies().isEmpty());
+        assertTrue(polyfill.getAllBrowserRequirements().isEmpty());
     }
 
     @Test
