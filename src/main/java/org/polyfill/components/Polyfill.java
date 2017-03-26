@@ -18,7 +18,7 @@ public class Polyfill {
     public static final String DEPENDENCIES_KEY = "dependencies";
     public static final String ALIASES_KEY = "aliases";
     public static final String LICENSE_KEY = "license";
-    public static final String REPO = "repo";
+    public static final String REPO_KEY = "repo";
 
     private Map<String, Object> polyfillMap;
     private String name;
@@ -144,7 +144,7 @@ public class Polyfill {
      * @return {String} - The URl to the repository
      */
     public String getRepository() {
-        return getStringFromMap(this.polyfillMap, REPO);
+        return getStringFromMap(this.polyfillMap, REPO_KEY);
     }
 
     /**************************** Helpers **************************/

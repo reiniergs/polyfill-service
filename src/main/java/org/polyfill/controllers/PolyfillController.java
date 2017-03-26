@@ -75,16 +75,6 @@ public class PolyfillController {
         }
     }
 
-    @RequestMapping(value = "/user-agent", method = RequestMethod.GET)
-    public View userAgentTest(@RequestHeader("User-Agent") String uaString, Model model) {
-        UserAgent userAgent = userAgentParserService.parse(uaString);
-
-        model.addAttribute("browserName", userAgent.getFamily());
-        model.addAttribute("browserVersion", userAgent.getVersion());
-
-        return new HandlebarView("userAgentDetector", model);
-    }
-
     @RequestMapping(value = "/notfound", method = RequestMethod.GET)
     public View polyfillNotFound(@RequestHeader("User-Agent") String uaString, Model model) {
         return new NotFoundView("notFound");
@@ -96,10 +86,10 @@ public class PolyfillController {
 
     private View getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
 
-        String uaString = params.get(UA_OVERRIDE) != null ? params.get(UA_OVERRIDE) : headerUA;
+        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
         UserAgent userAgent = userAgentParserService.parse(uaString);
         List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
-        List<Feature> featuresRequested = buildFeatureList(params.get(FEATURES), params.get(GLOBAL_FLAGS));
+        List<Feature> featuresRequested = buildFeatureList(params.getOrDefault(FEATURES, "default"), params.get(GLOBAL_FLAGS));
         boolean loadOnUnknown = "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
 
         List<Feature> featuresLoaded = polyfillQueryService.getFeatures(userAgent,
@@ -114,10 +104,6 @@ public class PolyfillController {
     }
 
     private List<Feature> buildFeatureList(String features, String globalFlags) {
-        if (features == null) {
-            features = "default";
-        }
-
         List<Feature> featureList = splitToList(features, ",").stream()
                 .map(Feature::new)
                 .collect(Collectors.toList());
