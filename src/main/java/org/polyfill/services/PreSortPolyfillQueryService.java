@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -56,36 +57,22 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
             return new ArrayList<>();
         }
 
-        List<Feature> requestedFeatures = new ArrayList<>(featureList);
         Map<String, Feature> featureSet = new HashMap<>();
-        Set<String> excludeSet = new HashSet<>(excludeList);
-        for (int i = 0; i < requestedFeatures.size(); i++) {
-            Feature feature = requestedFeatures.get(i);
-
-            List<Feature> featureGroup = resolveAlias(feature);
-            if (!featureGroup.isEmpty()) {
-                // feature is an alias group, append to list to handle later
-                requestedFeatures.addAll(featureGroup);
-
-            } else if(shouldIncludeFeature(feature, userAgent, excludeSet, loadOnUnknownUA)) {
-                String featureName = feature.getName();
-                if (featureSet.containsKey(featureName)) {
-                    // feature set already has this feature, just add new flags
-                    Feature existingFeature = featureSet.get(featureName);
-                    existingFeature.copyFlags(feature);
-                    existingFeature.copyRequiredBys(feature);
-                } else {
-                    // add it to feature set
-                    featureSet.put(featureName, feature);
-                    feature.setPolyfill(this.polyfills.get(featureName));
-
-                    // if feature has any dependencies, append to list to handle later
-                    requestedFeatures.addAll(resolveDependencies(feature));
-                }
-            }
+        for (Feature feature : featureList) {
+            featureSet.put(feature.getName(), feature);
         }
 
-        return getSortedFeatureOptions(featureSet);
+        resolveFeatures(featureSet, this::resolveAlias, true);
+        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+
+        resolveFeatures(featureSet, this::resolveDependencies, false);
+        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+
+        filterExcludes(featureSet, new HashSet<>(excludeList));
+
+        attachPolyfills(featureSet);
+
+        return sort(featureSet);
     }
 
     @Override
@@ -94,11 +81,21 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
-     * Sort feature options
+     * Attach polyfill source to each feature
+     * @param featureSet set of features
+     */
+    private void attachPolyfills(Map<String, Feature> featureSet) {
+        for (Feature feature : featureSet.values()) {
+            feature.setPolyfill(this.polyfills.get(feature.getName()));
+        }
+    }
+
+    /**
+     * Sort features by dependencies
      * @param featureSet set of features needed to sort
      * @return sorted list of feature options
      */
-    private List<Feature> getSortedFeatureOptions(Map<String, Feature> featureSet) {
+    private List<Feature> sort(Map<String, Feature> featureSet) {
         return this.sortedPolyfills.stream()
                 .filter(featureSet::containsKey)
                 .map(featureSet::get)
@@ -147,36 +144,35 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
-     * Check if a polyfill should be shown for {@code userAgent}
-     * @param feature feature options for the polyfill
+     * Check if features should be shown for {@code userAgent}
+     * @param featureSet feature options for the polyfill
      * @param userAgent user agent to check against
      * @param loadOnUnknownUA whether to load polyfill if user agent is unknown
-     * @return true if we should load feature for the user agent
      */
-    private boolean isFeatureNeededForUA(Feature feature, UserAgent userAgent, boolean loadOnUnknownUA) {
-        Polyfill polyfill = this.polyfills.get(feature.getName());
-        if (polyfill != null) {
-            String requiredVersion = polyfill.getBrowserRequirement(userAgent.getFamily());
-            String clientUAVersion = userAgent.getVersion();
-            return feature.isAlways()
-                    || (requiredVersion != null && versionChecker.isVersionInRange(clientUAVersion, requiredVersion))
-                    || !isUserAgentSupported(userAgent) && loadOnUnknownUA;
-        }
-        return false;
+    private void filterForTargetingUA(Map<String, Feature> featureSet,
+                UserAgent userAgent, boolean loadOnUnknownUA) {
+        featureSet.values().removeIf(feature -> {
+            boolean isFeatureNeededForUA = false;
+            Polyfill polyfill = this.polyfills.get(feature.getName());
+            if (polyfill != null) {
+                String requiredVersion = polyfill.getBrowserRequirement(userAgent.getFamily());
+                String clientUAVersion = userAgent.getVersion();
+                isFeatureNeededForUA = feature.isAlways()
+                        || (requiredVersion != null
+                            && versionChecker.isVersionInRange(clientUAVersion, requiredVersion))
+                        || !isUserAgentSupported(userAgent) && loadOnUnknownUA;
+            }
+            return !isFeatureNeededForUA;
+        });
     }
 
     /**
-     * Determine whether we should include feature
-     * @param feature feature for the feature to test
-     * @param userAgent user agent object
-     * @param excludeSet features to exclude
-     * @return true if should include feature, else false
+     * Remove feature from features based on feature names in excludes
+     * @param featureSet map of features to go through excludes
+     * @param excludes features to excludes
      */
-    private boolean shouldIncludeFeature(Feature feature,
-            UserAgent userAgent, Set<String> excludeSet, boolean loadOnUnknownUA) {
-        return this.polyfills.containsKey(feature.getName()) // if we have this polyfill
-                && !excludeSet.contains(feature.getName())   // if should not exclude
-                && isFeatureNeededForUA(feature, userAgent, loadOnUnknownUA); // if needed for user agent
+    private void filterExcludes(Map<String, Feature> featureSet, Set<String> excludes) {
+        featureSet.keySet().removeIf(name -> excludes.contains(name));
     }
 
     /**
@@ -209,5 +205,41 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Expand/Resolve features through a resolve function
+     * @param featureSet feature set to process with resolve function
+     * @param resolveFn resolve function (e.g. expand alias, get dependencies)
+     */
+    private void resolveFeatures(Map<String, Feature> featureSet,
+                Function<Feature, List<Feature>> resolveFn, boolean removeResolvedFeature) {
+
+        Queue<String> featuresQueue = new LinkedList<>(featureSet.keySet());
+        while (!featuresQueue.isEmpty()) {
+            String name = featuresQueue.remove();
+
+            List<Feature> resolvedFeatures = resolveFn.apply(featureSet.get(name));
+            for (Feature newFeature : resolvedFeatures) {
+                String newName = newFeature.getName();
+
+                if (featureSet.containsKey(newName)) {
+                    // if exists, copy new properties
+                    Feature existingFeature = featureSet.get(newName);
+                    existingFeature.copyFlags(newFeature);
+                    existingFeature.copyRequiredBys(newFeature);
+
+                } else {
+                    // new feature, add it and queue it up to process later
+                    featureSet.put(newName, newFeature);
+                    featuresQueue.add(newName);
+                }
+            }
+
+            // feature is resolved
+            if (!resolvedFeatures.isEmpty() && removeResolvedFeature) {
+                featureSet.remove(name);
+            }
+        }
     }
 }
