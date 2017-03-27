@@ -50,6 +50,37 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
+    public Polyfill getPolyfill(String name) {
+        return this.polyfills.get(name);
+    }
+
+    @Override
+    public List<Polyfill> getPolyfills(List<String> polyfillNames, UserAgent userAgent) {
+        boolean doFilterUA = userAgent != null;
+
+        if (doFilterUA && !isUserAgentSupported(userAgent)) {
+            return new ArrayList<>();
+        }
+
+        Map<String, Feature> featureSet = new HashMap<>();
+        for (String polyfillName : polyfillNames) {
+            featureSet.put(polyfillName, new Feature(polyfillName));
+        }
+
+        if (polyfillNames.contains("all")) {
+            resolveFeatures(featureSet, this::resolveAlias, true);
+        }
+
+        if (doFilterUA) {
+            filterForTargetingUA(featureSet, userAgent, false);
+        }
+
+        return featureSet.keySet().stream()
+                .map(name -> this.polyfills.get(name))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Feature> getFeatures(UserAgent userAgent,
             List<Feature> featureList, List<String> excludeList, boolean loadOnUnknownUA) {
 
@@ -73,11 +104,6 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         attachPolyfills(featureSet);
 
         return sort(featureSet);
-    }
-
-    @Override
-    public Polyfill getPolyfillByName(String name) {
-        return this.polyfills.get(name);
     }
 
     /**
@@ -132,6 +158,20 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
+     * Go through feature list and see if we should load all features
+     * @param featureList list containing requested features
+     * @return whether to load all features
+     */
+    private boolean shouldLoadAllFeatures(List<Feature> featureList) {
+        for (Feature feature : featureList) {
+            if ("all".equals(feature.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if {@code userAgent} meets the minimum browser versions we support
      * @param userAgent user agent to check
      * @return true if {@code userAgent} is supported
@@ -176,17 +216,32 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
+     * Expand features=all to all features
+     * @param featureAll feature all to inherit the flags
+     * @return list of all features
+     */
+    private List<Feature> getAllFeatures(Feature featureAll) {
+        return this.polyfills.keySet().stream()
+                .map(featureName -> new Feature(featureName, featureAll))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Expand the alias feature
      * @param feature
      * @return return a list of features represented by the alias feature;
      *         return null if alias feature doesn't exist
      */
     private List<Feature> resolveAlias(Feature feature) {
-        Object featureGroup = this.aliases.get(feature.getName());
-        if (featureGroup instanceof List) {
-            return ((List<String>) featureGroup).stream()
-                    .map(featureName -> new Feature(featureName, feature))
-                    .collect(Collectors.toList());
+        if ("all".equals(feature.getName())) {
+            return getAllFeatures(feature);
+        } else {
+            Object featureGroup = this.aliases.get(feature.getName());
+            if (featureGroup instanceof List) {
+                return ((List<String>) featureGroup).stream()
+                        .map(featureName -> new Feature(featureName, feature))
+                        .collect(Collectors.toList());
+            }
         }
         return new ArrayList<>();
     }

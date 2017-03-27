@@ -5,7 +5,6 @@ import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.views.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by reinier.guerra on 2/22/17.
@@ -36,7 +34,7 @@ public class WebAppController {
 
     @RequestMapping(value = "/web/polyfill/{name:.+}", method = RequestMethod.GET)
     public View polyfillApi(@PathVariable String name) {
-        Polyfill polyfill = preSortPolyfillQueryService.getPolyfillByName(name);
+        Polyfill polyfill = preSortPolyfillQueryService.getPolyfill(name);
 
         if (polyfill != null) {
             return new JsonView(this.getPolyfillMetaData(polyfill));

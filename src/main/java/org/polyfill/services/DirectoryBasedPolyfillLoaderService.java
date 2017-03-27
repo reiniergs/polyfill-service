@@ -62,8 +62,8 @@ public class DirectoryBasedPolyfillLoaderService implements PolyfillLoaderServic
                     System.err.println("Error loading polyfill from directory: " + dir);
                 }
             });
+        return Collections.unmodifiableMap(polyfills);
 
-        return polyfills;
     }
 
     /**
