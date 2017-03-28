@@ -158,20 +158,6 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
-     * Go through feature list and see if we should load all features
-     * @param featureList list containing requested features
-     * @return whether to load all features
-     */
-    private boolean shouldLoadAllFeatures(List<Feature> featureList) {
-        for (Feature feature : featureList) {
-            if ("all".equals(feature.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Check if {@code userAgent} meets the minimum browser versions we support
      * @param userAgent user agent to check
      * @return true if {@code userAgent} is supported
