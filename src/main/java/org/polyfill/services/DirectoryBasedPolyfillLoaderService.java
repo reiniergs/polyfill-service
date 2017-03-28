@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +63,8 @@ public class DirectoryBasedPolyfillLoaderService implements PolyfillLoaderServic
                     System.err.println("Error loading polyfill from directory: " + dir);
                 }
             });
+        return Collections.unmodifiableMap(polyfills);
 
-        return polyfills;
     }
 
     /**
