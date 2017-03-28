@@ -50,20 +50,21 @@ public class TestController {
                             Model model) {
 
         String mode = params.getOrDefault(MODE, "all");
-        String featureName = params.getOrDefault(FEATURE, "all");
-        List<String> requestedFeatureList = Collections.singletonList(featureName);
+        String featureReq = params.getOrDefault(FEATURE, "all");
+        List<String> reqFeatureList = Collections.singletonList(featureReq);
 
         List<Polyfill> polyfillList;
         if ("targeted".equals(MODE)) {
             String uaString = params.get(UA_OVERRIDE) != null ? params.get(UA_OVERRIDE) : headerUA;
             UserAgent userAgent = userAgentParserService.parse(uaString);
-            polyfillList = polyfillQueryService.getPolyfills(requestedFeatureList, userAgent);
+            polyfillList = polyfillQueryService.getPolyfills(reqFeatureList, userAgent);
         } else {
-            polyfillList = polyfillQueryService.getPolyfills(requestedFeatureList, null);
+            polyfillList = polyfillQueryService.getPolyfills(reqFeatureList, null);
         }
 
         List<Map<String, Object>> testFeatures = getTestFeatures(polyfillList);
 
+        model.addAttribute("featureRequested", featureReq);
         model.addAttribute("loadPolyfill", !"control".equals(mode));
         model.addAttribute("forceAlways", !"targeted".equals(mode));
         model.addAttribute("features", testFeatures);
