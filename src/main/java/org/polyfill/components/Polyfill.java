@@ -19,6 +19,8 @@ public class Polyfill {
     public static final String ALIASES_KEY = "aliases";
     public static final String LICENSE_KEY = "license";
     public static final String REPO_KEY = "repo";
+    public static final String TEST_KEY = "test";
+    public static final String TESTS_SOURCE_KEY = "testsSource";
 
     private Map<String, Object> polyfillMap;
     private String name;
@@ -77,7 +79,7 @@ public class Polyfill {
         String detectSource = getStringFromMap(this.polyfillMap, DETECT_SOURCE_KEY);
         boolean wrapInDetect = gated && detectSource != null;
 
-        if (wrapInDetect) {
+        if (wrapInDetect && !"".equals(detectSource)) {
             String lf = minify ? "" : "\n";
             return "if(!(" + detectSource + ")){" + lf + source + lf + "}" + lf + lf;
         }
@@ -145,6 +147,19 @@ public class Polyfill {
      */
     public String getRepository() {
         return getStringFromMap(this.polyfillMap, REPO_KEY);
+    }
+
+    public boolean isTestable() {
+        Map<String, Object> testMap = getMapFromMap(this.polyfillMap, TEST_KEY);
+        return !(testMap.containsKey("ci") && (Boolean)testMap.get("ci") == false);
+    }
+
+    public String getTestsSource() {
+        return getStringFromMap(this.polyfillMap, TESTS_SOURCE_KEY);
+    }
+
+    public String getDetectSource() {
+        return getStringFromMap(this.polyfillMap, DETECT_SOURCE_KEY);
     }
 
     /**************************** Helpers **************************/
