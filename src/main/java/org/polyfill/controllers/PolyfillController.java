@@ -5,7 +5,6 @@ import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
 import org.polyfill.views.BadRequestView;
-import org.polyfill.views.HandlebarView;
 import org.polyfill.views.NotFoundView;
 import org.polyfill.views.PolyfillsView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,28 +46,14 @@ public class PolyfillController {
     @Value("${project.url}")
     private String projectUrl;
 
-    @RequestMapping(value = "/polyfill.{type}", method = RequestMethod.GET)
-    public View polyfillApi(@RequestHeader("User-Agent") String headerUA,
-                            @RequestParam Map<String, String> params,
-                            @PathVariable String type,
-                            Model model) {
-
-        if (type.equals("js")) {
-            return getPolyfillsView(headerUA, params, false);
-        } else {
-            model.addAttribute("message", ONLY_SUPPORT_JS_MSG);
-            return new BadRequestView("badRequest", model);
-        }
-    }
-
-    @RequestMapping(value = "/polyfill.min.{type}", method = RequestMethod.GET)
+    @RequestMapping(value={"polyfill.{doMinify:min}.{type:[^.]+}", "/polyfill.{type:[^.]+}" }, method = RequestMethod.GET)
     public View polyfillMinApi(@RequestHeader("User-Agent") String headerUA,
                                @RequestParam Map<String, String> params,
+                               @PathVariable Optional<String> doMinify,
                                @PathVariable String type,
                                Model model) {
-
         if (type.equals("js")) {
-            return getPolyfillsView(headerUA, params, true);
+            return getPolyfillsView(headerUA, params, doMinify.isPresent());
         } else {
             model.addAttribute("message", ONLY_SUPPORT_JS_MSG);
             return new BadRequestView("badRequest", model);
