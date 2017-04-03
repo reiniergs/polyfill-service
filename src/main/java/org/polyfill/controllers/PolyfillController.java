@@ -79,11 +79,10 @@ public class PolyfillController {
         UserAgent userAgent = getUserAgent(headerUA, params);
         boolean loadOnUnknown = getLoadOnUnknown(params);
 
-        Filters filters = new Filters.Builder()
-                .userAgent(userAgent)
-                .excludeFeatures(featuresToExclude)
-                .doLoadOnUnknownUA(loadOnUnknown)
-                .build();
+        Filters filters = new Filters()
+                .setUserAgent(userAgent)
+                .setLoadOnUnknownUA(loadOnUnknown)
+                .excludeFeatures(featuresToExclude);
 
         List<Feature> featuresLoaded = polyfillQueryService.getFeatures(featuresRequested, filters);
 

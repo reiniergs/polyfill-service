@@ -40,11 +40,20 @@ public class TestController {
     PolyfillQueryService polyfillQueryService;
 
     /**
-     * Modes:
-     *   control:  All features are allowed, tests served, no polyfills
-     *   all:      All features are allowed, tests and polyfills both served
-     *   targeted: Only targeted features are allowed, tests and polyfills both served
+     * Params
+     * - feature
+     *   - feature to run mocha tests
+     * - mode
+     *   - control: all features are allowed, tests served, no polyfills
+     *   - all: all features are allowed, tests and polyfills both served
+     *   - targeted: only targeted features are allowed, tests and polyfills both served
+     * - ua
+     *   - user agent
      *
+     * @param headerUA user agent from request header
+     * @param params optional query params: mode, ua, and feature
+     * @param model data model for runner page
+     * @return mocha test runner page
      */
     @RequestMapping(value = "/test/tests", method = RequestMethod.GET)
     public View polyfillsMochaTests(@RequestHeader("User-Agent") String headerUA,
@@ -53,26 +62,10 @@ public class TestController {
 
         String mode = params.getOrDefault(MODE, "all");
         String featureReq = params.getOrDefault(FEATURE, "all");
+        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
 
-        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
-        Filters filters;
-        if ("targeted".equals(MODE)) {
-            String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
-            filters = new Filters.Builder()
-                    .userAgent(userAgentParserService.parse(uaString))
-                    .doIncludeDependencies(false)
-                    .build();
-        } else {
-            filters = new Filters.Builder()
-                    .doIncludeDependencies(false)
-                    .build();
-        }
-
-        Map<String, Polyfill> allPolyfills = polyfillQueryService.getAllPolyfills();
-        List<Polyfill> polyfills = polyfillQueryService.getFeatures(reqFeatureList, filters).stream()
-                .map(feature -> allPolyfills.get(feature.getName()))
-                .collect(Collectors.toList());
-
+        Filters filters = createFilters(mode, uaString);
+        List<Polyfill> polyfills = getTestPolyfills(featureReq, filters);
         List<Map<String, Object>> testFeatures = getTestFeatures(polyfills);
 
         model.addAttribute("featureRequested", featureReq);
@@ -82,6 +75,24 @@ public class TestController {
         model.addAttribute("mode", mode);
 
         return new HandlebarView("tests/browsers/runner", model);
+    }
+
+    private Filters createFilters(String mode, String uaString) {
+        Filters filters = new Filters()
+                .setIncludeDependencies(false)
+                .setLoadOnUnknownUA(false);
+        if ("targeted".equals(mode)) {
+            filters.setUserAgent(userAgentParserService.parse(uaString));
+        }
+        return filters;
+    }
+
+    private List<Polyfill> getTestPolyfills(String featureReq, Filters filters) {
+        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
+        Map<String, Polyfill> allPolyfills = polyfillQueryService.getAllPolyfills();
+        return polyfillQueryService.getFeatures(reqFeatureList, filters).stream()
+                .map(feature -> allPolyfills.get(feature.getName()))
+                .collect(Collectors.toList());
     }
 
     private List<Map<String, Object>> getTestFeatures(List<Polyfill> polyfillList) {

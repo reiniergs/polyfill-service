@@ -21,9 +21,10 @@ public interface PolyfillQueryService {
      * - user agent
      * - exclude list
      * - whether to load features when user agent is unknown
+     * - whether to resolve dependencies
      * @param featureList list of polyfill/alias names with options like always and/or gated
      * @param filters filters to remove features
-     * @return
+     * @return list of features
      */
     List<Feature> getFeatures(List<Feature> featureList, Filters filters);
 
