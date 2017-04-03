@@ -1,6 +1,7 @@
 package org.polyfill.interfaces;
 
 import org.polyfill.components.Feature;
+import org.polyfill.components.Filters;
 import org.polyfill.components.Polyfill;
 
 import java.util.List;
@@ -13,17 +14,18 @@ import java.util.Map;
 public interface PolyfillQueryService {
 
     /**
-     * Return a list of features containing all sources of polyfills filtered by user agent and exclude list
+     * Return a list of features containing all sources of polyfills.
      * Alias feature in {@code featureList} will expand into specific features.
      * Dependencies will also be included in the resultant list.
-     * @param userAgent user agent object
+     * Filters can be applied to the list to remove unwanted features:
+     * - user agent
+     * - exclude list
+     * - whether to load features when user agent is unknown
      * @param featureList list of polyfill/alias names with options like always and/or gated
-     * @param excludeList list of names of features to exclude
-     * @param loadOnUnknownUA whether to load default features when user agent is unknown
-     * @return a list of features
+     * @param filters filters to remove features
+     * @return
      */
-    List<Feature> getFeatures(UserAgent userAgent,
-            List<Feature> featureList, List<String> excludeList, boolean loadOnUnknownUA);
+    List<Feature> getFeatures(List<Feature> featureList, Filters filters);
 
 
     /**

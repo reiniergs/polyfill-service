@@ -1,6 +1,7 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Feature;
+import org.polyfill.components.Filters;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
@@ -71,37 +72,52 @@ public class PolyfillController {
 
     private View getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
 
-        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
-        UserAgent userAgent = userAgentParserService.parse(uaString);
-        List<String> excludeList = buildExcludeList(params.get(EXCLUDES));
-        List<Feature> featuresRequested = buildFeatureList(params.getOrDefault(FEATURES, "default"), params.get(GLOBAL_FLAGS));
-        boolean loadOnUnknown = "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
+        List<Feature> featuresRequested = getFeatures(params);
+        List<String> featuresToExclude = getFeaturesToExclude(params);
+        UserAgent userAgent = getUserAgent(headerUA, params);
+        boolean loadOnUnknown = getLoadOnUnknown(params);
 
-        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(userAgent,
-                featuresRequested, excludeList, loadOnUnknown);
+        Filters filters = new Filters.Builder()
+                .userAgent(userAgent)
+                .excludeFeatures(featuresToExclude)
+                .loadOnUnknown(loadOnUnknown)
+                .build();
+
+        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(featuresRequested, filters);
 
         return new PolyfillsView(projectVersion, projectUrl,
                 userAgent, featuresRequested, featuresLoaded, doMinify);
     }
 
-    private List<String> buildExcludeList(String excludes) {
-        return splitToList(excludes, ",");
-    }
-
-    private List<Feature> buildFeatureList(String features, String globalFlags) {
-        List<Feature> featureList = splitToList(features, ",").stream()
+    private List<Feature> getFeatures(Map<String, String> params) {
+        List<Feature> featureList = getList(params, FEATURES, ",").stream()
                 .map(Feature::new)
                 .collect(Collectors.toList());
 
-        if (globalFlags != null) {
-            Set<String> globalOptions = new HashSet<>(splitToList(globalFlags, ","));
+        if (params.containsKey(GLOBAL_FLAGS)) {
+            Set<String> globalOptions = new HashSet<>(getList(params, GLOBAL_FLAGS, ","));
             featureList.forEach(featureOption -> featureOption.addFlags(globalOptions));
         }
 
         return featureList;
     }
 
-    private List<String> splitToList(String string, String delimiter) {
-        return string == null ? new ArrayList<>() : Arrays.asList(string.split(delimiter));
+    private UserAgent getUserAgent(String headerUA, Map<String, String> params) {
+        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
+        return userAgentParserService.parse(uaString);
+    }
+
+    private boolean getLoadOnUnknown(Map<String, String> params) {
+        return "polyfill".equals(params.get(UNKNOWN_OVERRIDE));
+    }
+
+    private List<String> getFeaturesToExclude(Map<String, String> params) {
+        return getList(params, EXCLUDES, ",");
+    }
+
+    private List<String> getList(Map<String, String> params, String field, String delimiter) {
+        return params.containsKey(field)
+                ? Arrays.asList(params.get(field).split(delimiter))
+                : Collections.emptyList();
     }
 }
