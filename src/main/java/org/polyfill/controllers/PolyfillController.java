@@ -47,12 +47,14 @@ public class PolyfillController {
     @Value("${project.url}")
     private String projectUrl;
 
-    @RequestMapping(value={"polyfill.{doMinify:min}.{type:[^.]+}", "/polyfill.{type:[^.]+}" }, method = RequestMethod.GET)
-    public View polyfillMinApi(@RequestHeader("User-Agent") String headerUA,
-                               @RequestParam Map<String, String> params,
-                               @PathVariable Optional<String> doMinify,
-                               @PathVariable String type,
-                               Model model) {
+    @RequestMapping(
+            value={"polyfill.{doMinify:min}.{type:[^.]+}", "/polyfill.{type:[^.]+}" },
+            method = RequestMethod.GET)
+    public View polyfillApi(@RequestHeader("User-Agent") String headerUA,
+                            @RequestParam Map<String, String> params,
+                            @PathVariable Optional<String> doMinify,
+                            @PathVariable String type,
+                            Model model) {
         if (type.equals("js")) {
             return getPolyfillsView(headerUA, params, doMinify.isPresent());
         } else {
@@ -80,7 +82,7 @@ public class PolyfillController {
         Filters filters = new Filters.Builder()
                 .userAgent(userAgent)
                 .excludeFeatures(featuresToExclude)
-                .loadOnUnknown(loadOnUnknown)
+                .doLoadOnUnknownUA(loadOnUnknown)
                 .build();
 
         List<Feature> featuresLoaded = polyfillQueryService.getFeatures(featuresRequested, filters);

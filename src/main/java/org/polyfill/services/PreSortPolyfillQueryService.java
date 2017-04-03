@@ -56,34 +56,13 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
-    public List<Polyfill> getPolyfills(List<String> polyfillNames, UserAgent userAgent) {
-        if (userAgent != null && !isUserAgentSupported(userAgent)) {
-            return Collections.emptyList();
-        }
-
-        Map<String, Feature> featureSet = new HashMap<>();
-        for (String polyfillName : polyfillNames) {
-            featureSet.put(polyfillName, new Feature(polyfillName));
-        }
-
-        if (polyfillNames.contains("all")) {
-            resolveFeatures(featureSet, this::resolveAlias, true);
-        }
-
-        filterForTargetingUA(featureSet, userAgent, false);
-
-        return featureSet.keySet().stream()
-                .map(name -> this.polyfills.get(name))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<Feature> getFeatures(List<Feature> featureList, Filters filters) {
         UserAgent userAgent = filters.getUserAgent();
-        boolean loadOnUnknownUA = filters.getLoadOnUnknownUA();
+        boolean doLoadOnUnknownUA = filters.doLoadOnUnknownUA();
+        boolean doIncludeDependencies = filters.doIncludeDependencies();
         Set<String> excludes = filters.getExcludes();
 
-        if (userAgent != null && !isUserAgentSupported(userAgent) && !loadOnUnknownUA) {
+        if (userAgent != null && !isUserAgentSupported(userAgent) && !doLoadOnUnknownUA) {
             return Collections.emptyList();
         }
 
@@ -93,10 +72,12 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         }
 
         resolveFeatures(featureSet, this::resolveAlias, true);
-        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+        filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
 
-        resolveFeatures(featureSet, this::resolveDependencies, false);
-        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+        if (doIncludeDependencies) {
+            resolveFeatures(featureSet, this::resolveDependencies, false);
+            filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
+        }
 
         filterExcludes(featureSet, excludes);
 
@@ -177,16 +158,16 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      *
      * @param featureSet feature options for the polyfill
      * @param userAgent user agent to check against
-     * @param loadOnUnknownUA whether to load polyfill if user agent is unknown
+     * @param doLoadOnUnknownUA whether to load polyfill if user agent is unknown
      */
     private void filterForTargetingUA(Map<String, Feature> featureSet,
-                UserAgent userAgent, boolean loadOnUnknownUA) {
+                UserAgent userAgent, boolean doLoadOnUnknownUA) {
 
         if (userAgent == null) return;
 
         String clientBrowser = userAgent.getFamily();
         String clientUAVersion = userAgent.getVersion();
-        boolean unknownUALoadPolyfill = !isUserAgentSupported(userAgent) && loadOnUnknownUA;
+        boolean unknownUALoadPolyfill = !isUserAgentSupported(userAgent) && doLoadOnUnknownUA;
 
         featureSet.values().removeIf(feature -> {
             boolean isFeatureNeededForUA = false;

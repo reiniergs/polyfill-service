@@ -27,25 +27,16 @@ public interface PolyfillQueryService {
      */
     List<Feature> getFeatures(List<Feature> featureList, Filters filters);
 
-
-    /**
-     * Return a list of polyfills
-     * @param polyfillNames names of requested polyfills
-     * @param userAgent user agent for filtering
-     * @return a list of polyfills
-     */
-    List<Polyfill> getPolyfills(List<String> polyfillNames, UserAgent userAgent);
-
     /**
      * Gets a Polyfill instance by the name of the polyfill.
      * @param name - the name of the polyfill
      * @return a Polyfill or null
      */
-    public Polyfill getPolyfill(String name);
+    Polyfill getPolyfill(String name);
 
     /**
      * Gets all the polyfills
      * @return - a Map with all the polyfill, keys are polyfill names values are instance of Polyfill
      */
-    public Map<String, Polyfill> getAllPolyfills();
+    Map<String, Polyfill> getAllPolyfills();
 }

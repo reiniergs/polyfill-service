@@ -12,13 +12,15 @@ import java.util.Set;
 public class Filters {
 
     private UserAgent userAgent;
-    private Set<String> excludes = new HashSet<>();
-    private boolean loadOnUnknownUA = false;
+    private Set<String> excludes;
+    private boolean doLoadOnUnknownUA;
+    private boolean doIncludeDependencies;
 
     private Filters(Builder builder) {
         this.userAgent = builder.userAgent;
         this.excludes = builder.excludes;
-        this.loadOnUnknownUA = builder.loadOnUnknown;
+        this.doLoadOnUnknownUA = builder.doLoadOnUnknownUA;
+        this.doIncludeDependencies = builder.doIncludeDependencies;
     }
 
     public UserAgent getUserAgent() {
@@ -29,14 +31,28 @@ public class Filters {
         return this.excludes;
     }
 
-    public boolean getLoadOnUnknownUA() {
-        return this.loadOnUnknownUA;
+    public boolean doLoadOnUnknownUA() {
+        return this.doLoadOnUnknownUA;
+    }
+
+    public boolean doIncludeDependencies() {
+        return this.doIncludeDependencies;
     }
 
     public static class Builder {
-        private UserAgent userAgent;
+        private UserAgent userAgent = null;
         private Set<String> excludes = new HashSet<>();
-        private boolean loadOnUnknown = false;
+        private boolean doLoadOnUnknownUA = false;
+        private boolean doIncludeDependencies = true;
+
+        public Builder userAgent(UserAgent userAgent) {
+            this.userAgent = userAgent;
+            return this;
+        }
+
+        public Filters build() {
+            return new Filters(this);
+        }
 
         public Builder excludeFeatures(String ... features) {
             for (String feature : features) {
@@ -50,18 +66,14 @@ public class Filters {
             return this;
         }
 
-        public Builder loadOnUnknown(boolean loadOnUnknown) {
-            this.loadOnUnknown = loadOnUnknown;
+        public Builder doLoadOnUnknownUA(boolean doLoadOnUnknownUA) {
+            this.doLoadOnUnknownUA = doLoadOnUnknownUA;
             return this;
         }
 
-        public Builder userAgent(UserAgent userAgent) {
-            this.userAgent = userAgent;
+        public Builder doIncludeDependencies(boolean doIncludeDependencies) {
+            this.doIncludeDependencies = doIncludeDependencies;
             return this;
-        }
-
-        public Filters build() {
-            return new Filters(this);
         }
     }
 }

@@ -176,7 +176,7 @@ public class PreSortPolyfillQueryServiceTest {
         List<Feature> features = Arrays.asList(new Feature("c"));
         Filters filters = new Filters.Builder()
                 .userAgent(new UserAgentImpl("unknown", "0.0.0"))
-                .loadOnUnknown(true)
+                .doLoadOnUnknownUA(true)
                 .build();
 
         String actualPolyfillsString = getPolyfillsRawSources(features, filters);
