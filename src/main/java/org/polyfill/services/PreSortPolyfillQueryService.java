@@ -1,6 +1,7 @@
 package org.polyfill.services;
 
 import org.polyfill.components.Feature;
+import org.polyfill.components.Filters;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.TSort;
 import org.polyfill.interfaces.PolyfillQueryService;
@@ -55,37 +56,14 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
-    public List<Polyfill> getPolyfills(List<String> polyfillNames, UserAgent userAgent) {
-        boolean doFilterUA = userAgent != null;
+    public List<Feature> getFeatures(List<Feature> featureList, Filters filters) {
+        UserAgent userAgent = filters.getUserAgent();
+        boolean doLoadOnUnknownUA = filters.doLoadOnUnknownUA();
+        boolean doIncludeDependencies = filters.doIncludeDependencies();
+        Set<String> excludes = filters.getExcludes();
 
-        if (doFilterUA && !isUserAgentSupported(userAgent)) {
-            return new ArrayList<>();
-        }
-
-        Map<String, Feature> featureSet = new HashMap<>();
-        for (String polyfillName : polyfillNames) {
-            featureSet.put(polyfillName, new Feature(polyfillName));
-        }
-
-        if (polyfillNames.contains("all")) {
-            resolveFeatures(featureSet, this::resolveAlias, true);
-        }
-
-        if (doFilterUA) {
-            filterForTargetingUA(featureSet, userAgent, false);
-        }
-
-        return featureSet.keySet().stream()
-                .map(name -> this.polyfills.get(name))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Feature> getFeatures(UserAgent userAgent,
-            List<Feature> featureList, List<String> excludeList, boolean loadOnUnknownUA) {
-
-        if (!isUserAgentSupported(userAgent) && !loadOnUnknownUA) {
-            return new ArrayList<>();
+        if (userAgent != null && !isUserAgentSupported(userAgent) && !doLoadOnUnknownUA) {
+            return Collections.emptyList();
         }
 
         Map<String, Feature> featureSet = new HashMap<>();
@@ -94,12 +72,14 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
         }
 
         resolveFeatures(featureSet, this::resolveAlias, true);
-        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+        filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
 
-        resolveFeatures(featureSet, this::resolveDependencies, false);
-        filterForTargetingUA(featureSet, userAgent, loadOnUnknownUA);
+        if (doIncludeDependencies) {
+            resolveFeatures(featureSet, this::resolveDependencies, false);
+            filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
+        }
 
-        filterExcludes(featureSet, new HashSet<>(excludeList));
+        filterExcludes(featureSet, excludes);
 
         attachPolyfills(featureSet);
 
@@ -163,6 +143,8 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * @return true if {@code userAgent} is supported
      */
     private boolean isUserAgentSupported(UserAgent userAgent) {
+        if (userAgent == null) return false;
+
         Object baselineVersion = browserBaselines.get(userAgent.getFamily());
         String clientUAVersion = userAgent.getVersion();
         return baselineVersion instanceof String
@@ -170,23 +152,31 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     /**
-     * Check if features should be shown for {@code userAgent}
+     * Filter out all features that do not support given user agent unless
+     * loadOnUnknownUA is true
+     * NOP if user agent is null
+     *
      * @param featureSet feature options for the polyfill
      * @param userAgent user agent to check against
-     * @param loadOnUnknownUA whether to load polyfill if user agent is unknown
+     * @param doLoadOnUnknownUA whether to load polyfill if user agent is unknown
      */
     private void filterForTargetingUA(Map<String, Feature> featureSet,
-                UserAgent userAgent, boolean loadOnUnknownUA) {
+                UserAgent userAgent, boolean doLoadOnUnknownUA) {
+
+        if (userAgent == null) return;
+
+        String clientBrowser = userAgent.getFamily();
+        String clientUAVersion = userAgent.getVersion();
+        boolean unknownUALoadPolyfill = !isUserAgentSupported(userAgent) && doLoadOnUnknownUA;
+
         featureSet.values().removeIf(feature -> {
             boolean isFeatureNeededForUA = false;
             Polyfill polyfill = this.polyfills.get(feature.getName());
             if (polyfill != null) {
-                String requiredVersion = polyfill.getBrowserRequirement(userAgent.getFamily());
-                String clientUAVersion = userAgent.getVersion();
-                isFeatureNeededForUA = feature.isAlways()
-                        || (requiredVersion != null
-                            && versionChecker.isVersionInRange(clientUAVersion, requiredVersion))
-                        || !isUserAgentSupported(userAgent) && loadOnUnknownUA;
+                String requiredVersion = polyfill.getBrowserRequirement(clientBrowser);
+                boolean versionIsInRange = requiredVersion != null
+                        && versionChecker.isVersionInRange(clientUAVersion, requiredVersion);
+                isFeatureNeededForUA = feature.isAlways() || versionIsInRange || unknownUALoadPolyfill;
             }
             return !isFeatureNeededForUA;
         });
@@ -198,7 +188,7 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
      * @param excludes features to excludes
      */
     private void filterExcludes(Map<String, Feature> featureSet, Set<String> excludes) {
-        featureSet.keySet().removeIf(name -> excludes.contains(name));
+        featureSet.keySet().removeIf(excludes::contains);
     }
 
     /**

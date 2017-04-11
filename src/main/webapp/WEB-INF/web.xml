@@ -27,11 +27,11 @@
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>landing.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <error-page>
-        <exception-type>404</exception-type>
-        <location>/api/notfound</location>
-    </error-page>
+    <!--<error-page>-->
+        <!--<exception-type>404</exception-type>-->
+        <!--<location>/api/notfound</location>-->
+    <!--</error-page>-->
 </web-app>
