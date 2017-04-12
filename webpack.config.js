@@ -39,7 +39,7 @@ var commonConfig = {
             dry: false
         }),
         new HtmlWebpackPlugin({
-            filename: path.resolve(__dirname, 'src/main/webapp/landing.html'),
+            filename: path.resolve(__dirname, 'src/main/webapp/index.html'),
             template: 'app/templates/webpack-app-template.hbs',
             title: 'Polyfill as a service',
             appMountId: 'app',
