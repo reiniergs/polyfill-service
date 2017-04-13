@@ -5,7 +5,7 @@
     "browsers": {
         "android": "<=4.4.4",
         "ie": "*",
-        "edge": "12 - 13",
+        "edge": "<14",
         "chrome": "<=48",
         "firefox": "6 - 50",
         "safari": "<=9",
