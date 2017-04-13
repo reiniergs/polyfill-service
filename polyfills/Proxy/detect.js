@@ -1,0 +1,1 @@
+'Proxy' in window
