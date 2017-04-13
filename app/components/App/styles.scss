@@ -10,6 +10,15 @@
         .app-content {
             max-width: 1024px;
             margin: auto;
+
+            .app-content-layout {
+                display: flex;
+                flex-direction: row;
+
+                .content {
+                    flex: 1;
+                }
+            }
         }
     }
 }
