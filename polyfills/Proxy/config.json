@@ -3,16 +3,16 @@
         "es6"
     ],
     "browsers": {
-        "android": "* - 4.4.4",
+        "android": "<=4.4.4",
         "ie": "*",
         "edge": "12 - 13",
-        "chrome": "* - 48",
+        "chrome": "<=48",
         "firefox": "6 - 50",
-        "safari": "* - 9",
+        "safari": "<=9",
         "ie_mob": "*",
-        "ios_saf": "* - 9.3",
+        "ios_saf": "<=9.3",
         "op_mini": "*",
-        "opera": "* - 42"
+        "opera": "<=42"
     },
     "dependencies": [
         "Object.defineProperty",
