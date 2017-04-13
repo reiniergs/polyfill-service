@@ -1,14 +1,20 @@
 import React from 'react';
 import GlobalHeader from './../GlobalHeader';
+import AppMenu from './../AppMenu';
 import './styles.scss';
 
 export default ({children}) => {
     return (
         <div className="app-container">
-            <GlobalHeader />
+            <GlobalHeader/>
             <div className="app-content-container">
                 <div className="app-content">
-                    { children }
+                    <div className="app-content-layout">
+                        <AppMenu/>
+                        <div className="content">
+                            { children }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

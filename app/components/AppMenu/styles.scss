@@ -1,0 +1,18 @@
+.app-menu-container {
+    padding: 15px;
+    width: 200px;
+
+    li.menu-option {
+        padding-left: 10px;
+        margin-bottom: 5px;
+
+        //&.is-selected {
+        //  border-left: 4px solid #0070D2;
+        //}
+
+        a {
+            font-size: 1.2em;
+        }
+    }
+
+}
