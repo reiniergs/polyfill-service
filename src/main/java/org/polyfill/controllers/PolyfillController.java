@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created by reinier.guerra on 10/12/16.
  */
 @Controller
-@PropertySource("classpath:project.properties")
+@PropertySource("classpath:config.properties")
 public class PolyfillController {
 
     // supported query params
