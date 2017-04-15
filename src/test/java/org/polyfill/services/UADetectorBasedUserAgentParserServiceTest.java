@@ -1,7 +1,5 @@
 package org.polyfill.services;
 
-import net.sf.uadetector.UserAgentStringParser;
-import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.configurations.MockBrowserAliasesConfig;
@@ -11,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 

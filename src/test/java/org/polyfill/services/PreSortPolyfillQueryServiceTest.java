@@ -165,7 +165,7 @@ public class PreSortPolyfillQueryServiceTest {
     }
 
     @Test
-    public void testloadOnUnknownUA() {
+    public void testLoadOnUnknownUA() {
         List<Feature> features = Arrays.asList(new Feature("c"));
         Filters filters = new Filters()
                 .setUserAgent(new UserAgentImpl("unknown", "0.0.0"))
