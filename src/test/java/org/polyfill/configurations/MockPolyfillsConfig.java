@@ -34,71 +34,71 @@ public class MockPolyfillsConfig {
 
     @Bean
     public Map<String, Polyfill> polyfills() {
-        Map<String, Object> polyfillA = new HashMap<String, Object>(){{
-            put(Polyfill.ALIASES_KEY, Arrays.asList("default", "foo"));
-            put(Polyfill.BROWSER_REQUIREMENTS_KEY, new HashMap<String, Object>(){{
+        Polyfill polyfillA = new Polyfill.Builder("a")
+            .aliases(Arrays.asList("default", "foo"))
+            .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
                 put("firefox", "4 - 31");
-            }});
-            put(Polyfill.DEPENDENCIES_KEY, Arrays.asList("b", "d"));
-            put(Polyfill.DETECT_SOURCE_KEY, "a.detectSource");
-            put(Polyfill.MIN_SOURCE_KEY, "a.min");
-            put(Polyfill.RAW_SOURCE_KEY, "a.raw_");
-        }};
+            }})
+            .dependencies(Arrays.asList("b", "d"))
+            .detectSource("a.detectSource")
+            .minSource("a.min")
+            .rawSource("a.raw_")
+            .build();
 
-        Map<String, Object> polyfillB = new HashMap<String, Object>(){{
-            put(Polyfill.ALIASES_KEY, Arrays.asList("default", "es6"));
-            put(Polyfill.BROWSER_REQUIREMENTS_KEY, new HashMap<String, Object>(){{
+        Polyfill polyfillB = new Polyfill.Builder("b")
+            .aliases(Arrays.asList("default", "es6"))
+            .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
                 put("firefox", "31");
-            }});
-            put(Polyfill.DEPENDENCIES_KEY, Arrays.asList("c"));
-            put(Polyfill.DETECT_SOURCE_KEY, "b.detectSource");
-            put(Polyfill.MIN_SOURCE_KEY, "b.min");
-            put(Polyfill.RAW_SOURCE_KEY, "b.raw_");
-        }};
+            }})
+            .dependencies(Arrays.asList("c"))
+            .detectSource("b.detectSource")
+            .minSource("b.min")
+            .rawSource("b.raw_")
+            .build();
 
-        Map<String, Object> polyfillC = new HashMap<String, Object>(){{
-            put(Polyfill.ALIASES_KEY, Arrays.asList("default", "es6", "foo"));
-            put(Polyfill.BROWSER_REQUIREMENTS_KEY, new HashMap<String, Object>(){{
+        Polyfill polyfillC = new Polyfill.Builder("c")
+            .aliases(Arrays.asList("default", "es6", "foo"))
+            .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
                 put("firefox", "4 - 31");
-            }});
-            put(Polyfill.DEPENDENCIES_KEY, new ArrayList<String>());
-            put(Polyfill.DETECT_SOURCE_KEY, "c.detectSource");
-            put(Polyfill.MIN_SOURCE_KEY, "c.min");
-            put(Polyfill.RAW_SOURCE_KEY, "c.raw_");
-        }};
+            }})
+            .dependencies(new ArrayList<String>())
+            .detectSource("c.detectSource")
+            .minSource("c.min")
+            .rawSource("c.raw_")
+            .build();
 
-        Map<String, Object> polyfillD = new HashMap<String, Object>(){{
-            put(Polyfill.ALIASES_KEY, Arrays.asList("es6"));
-            put(Polyfill.BROWSER_REQUIREMENTS_KEY, new HashMap<String, Object>(){{
+        Polyfill polyfillD = new Polyfill.Builder("d")
+            .aliases(Arrays.asList("es6"))
+            .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "<50");
                 put("firefox", "31");
-            }});
-            put(Polyfill.DEPENDENCIES_KEY, Arrays.asList("b", "c"));
-            put(Polyfill.DETECT_SOURCE_KEY, "d.detectSource");
-            put(Polyfill.MIN_SOURCE_KEY, "d.min");
-            put(Polyfill.RAW_SOURCE_KEY, "d.raw_");
-        }};
+            }})
+            .dependencies(Arrays.asList("b", "c"))
+            .detectSource("d.detectSource")
+            .minSource("d.min")
+            .rawSource("d.raw_")
+            .build();
 
-        Map<String, Object> polyfillE = new HashMap<String, Object>(){{
-            put(Polyfill.ALIASES_KEY, Arrays.asList("foo"));
-            put(Polyfill.BROWSER_REQUIREMENTS_KEY, new HashMap<String, Object>(){{
+        Polyfill polyfillE = new Polyfill.Builder("e")
+            .aliases(Arrays.asList("foo"))
+            .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
-            }});
-            put(Polyfill.DEPENDENCIES_KEY, new ArrayList<>());
-            put(Polyfill.DETECT_SOURCE_KEY, "e.detectSource");
-            put(Polyfill.MIN_SOURCE_KEY, "e.min");
-            put(Polyfill.RAW_SOURCE_KEY, "e.raw_");
-        }};
+            }})
+            .dependencies(new ArrayList<>())
+            .detectSource("e.detectSource")
+            .minSource("e.min")
+            .rawSource("e.raw_")
+            .build();
 
         return new HashMap<String, Polyfill>(){{
-            put("a", new Polyfill("a", polyfillA));
-            put("b", new Polyfill("b", polyfillB));
-            put("c", new Polyfill("c", polyfillC));
-            put("d", new Polyfill("d", polyfillD));
-            put("e", new Polyfill("e", polyfillE));
+            put(polyfillA.getName(), polyfillA);
+            put(polyfillB.getName(), polyfillB);
+            put(polyfillC.getName(), polyfillC);
+            put(polyfillD.getName(), polyfillD);
+            put(polyfillE.getName(), polyfillE);
         }};
     }
 }

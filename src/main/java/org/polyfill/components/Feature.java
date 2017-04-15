@@ -70,7 +70,18 @@ public class Feature {
     }
 
     public String getSource(boolean minify) {
-        return this.polyfill.getSource(minify, this.flags.contains(GATED));
+        String detectSource = this.polyfill.getDetectSource();
+        String source = minify ? this.polyfill.getMinSource() : this.polyfill.getRawSource();
+        source = (source == null) ? "" : source;
+
+        boolean wrapInDetect = this.flags.contains(GATED) && detectSource != null;
+
+        if (wrapInDetect && !"".equals(detectSource)) {
+            String lf = minify ? "" : "\n";
+            return "if(!(" + detectSource + ")){" + lf + source + lf + "}" + lf + lf;
+        }
+
+        return source;
     }
 
     public void copyFlags(Feature feature) {
