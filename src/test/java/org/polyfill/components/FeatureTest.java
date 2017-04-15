@@ -1,5 +1,6 @@
 package org.polyfill.components;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.*;
@@ -8,6 +9,10 @@ import static junit.framework.TestCase.*;
  * Created by smo on 3/5/17.
  */
 public class FeatureTest {
+
+    private final String minSource = "min";
+    private final String rawSource = "raw";
+    private final String detectSource = "detect";
 
     @Test
     public void testFeatureNameWithNoFlags() {
@@ -38,5 +43,55 @@ public class FeatureTest {
         Feature feature = new Feature("featureName|always|gated");
         assertTrue("Expected feature to be gated", feature.isGated());
         assertTrue("Expected feature to be always shown", feature.isAlways());
+    }
+
+    @Test
+    public void testGetMinSource() {
+        Feature feature = getFeatureWithSources(false);
+        assertEquals(minSource, feature.getSource(true));
+    }
+
+    @Test
+    public void testGetMinSourceGated() {
+        Feature feature = getFeatureWithSources(true);
+        String detectMinSource = "if(!(" + detectSource + ")){" + minSource + "}";
+        assertEquals(detectMinSource, feature.getSource(true));
+    }
+
+    @Test
+    public void testGetRawSource() {
+        Feature feature = getFeatureWithSources(false);
+        assertEquals(rawSource, feature.getSource(false));
+    }
+
+    @Test
+    public void testGetRawSourceGated() {
+        Feature feature = getFeatureWithSources(true);
+        String detectRawSource = "if(!(" + detectSource + ")){\n" + rawSource + "\n}\n\n";
+        assertEquals(detectRawSource, feature.getSource(false));
+    }
+
+    @Test
+    public void testNoDetectSource() {
+        Feature feature = getFeatureWithSources(false);
+        assertEquals(minSource, feature.getSource(true));
+        assertEquals(rawSource, feature.getSource(false));
+    }
+
+    private Feature getFeatureWithSources(boolean hasDetectSource) {
+        String name = "feature";
+        if (hasDetectSource) {
+            name += "|gated";
+        }
+
+        Polyfill polyfill = new Polyfill.Builder(name)
+                .minSource(this.minSource)
+                .rawSource(this.rawSource)
+                .detectSource(hasDetectSource ? this.detectSource : null)
+                .build();
+
+        Feature feature = new Feature(name);
+        feature.setPolyfill(polyfill);
+        return feature;
     }
 }

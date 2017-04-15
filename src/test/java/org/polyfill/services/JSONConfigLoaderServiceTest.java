@@ -1,73 +1,57 @@
 package org.polyfill.services;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.polyfill.configurations.TestConfigs;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.polyfill.utils.UnitTestingUtil;
 
-import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 /**
  * Created by bvenkataraman on 10/13/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        loader=AnnotationConfigContextLoader.class,
-        classes={TestConfigs.class})
 public class JSONConfigLoaderServiceTest {
 
-    @Resource(name = "testRootPath")
-    private String testRootPath;
-
-    JSONConfigLoaderService jsonConfigLoaderService;
-
-    @Before
-    public void setup() {
-        jsonConfigLoaderService = new JSONConfigLoaderService();
-    }
+    JSONConfigLoaderService jsonConfigLoaderService = new JSONConfigLoaderService();
 
     @Test
-    public void testInvalidFilePath() {
+    public void testInvalidFilePath() throws Exception {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = testRootPath + "config.jsosn";
+        String filePath = UnitTestingUtil.getResourcesPath().resolve("config.jsosn").toString();
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-            fail("JSONConfigLoaderService::getConfig should throw IOException when file path is incorrect");
+            fail("Should throw IOException when file path is incorrect");
         } catch (IOException e) {
-            assertNull("JSONConfigLoaderService::getConfig should not return anything when there's IOException",
-                    resultantConfigMap);
+            assertNull("Should not return anything when there's IOException", resultantConfigMap);
         }
     }
 
     @Test
-    public void testInvalidFileFormat() {
+    public void testInvalidFileFormat() throws Exception {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = testRootPath + "polyfills/a/min.js";
+        String filePath = UnitTestingUtil.getPolyfillsPath().resolve(Paths.get("a", "min.js")).toString();
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
-            fail("JSONConfigLoaderService::getConfig should throw IOException when file type is incorrect");
+            fail("Should throw IOException when file type is incorrect");
         } catch (IOException e) {
-            assertNull("JSONConfigLoaderService::getConfig should not return anything when there's IOException",
-                    resultantConfigMap);
+            assertNull("Should not return anything when there's IOException", resultantConfigMap);
         }
     }
 
     @Test
-    public void testGetConfigWithStringPath() {
-        String filePath = testRootPath + "simpleConfig.json";
+    public void testGetConfigWithStringPath() throws Exception {
+        String filePath = UnitTestingUtil.getResourcesPath().resolve("simpleConfig.json").toString();
         Map<String, Object> expectedConfigMap = getSimpleConfig();
         try {
             Map<String, Object> actualConfigMap = jsonConfigLoaderService.getConfig(filePath);
             assertTrue("The two config maps do not match", expectedConfigMap.equals(actualConfigMap));
         } catch (IOException e) {
-            fail("JSONConfigLoaderService::getConfig should not throw IOException when file exists");
+            fail("Should not throw IOException when file exists");
         }
     }
 

@@ -61,8 +61,8 @@ public class WebAppController {
         Map<String, Object> polyfillMap = new HashMap<>();
 
         polyfillMap.put("name", polyfill.getName());
-        polyfillMap.put("sizeRaw", polyfill.getSource(false, false).getBytes().length);
-        polyfillMap.put("sizeMin", polyfill.getSource(true, false).getBytes().length);
+        polyfillMap.put("sizeRaw", polyfill.getRawSource().getBytes().length);
+        polyfillMap.put("sizeMin", polyfill.getMinSource().getBytes().length);
 
         return polyfillMap;
     }
@@ -72,7 +72,7 @@ public class WebAppController {
 
         polyfillMap.put("dependencies", polyfill.getDependencies());
         polyfillMap.put("browsers", polyfill.getAllBrowserRequirements());
-        polyfillMap.put("sourceRaw", polyfill.getSource(false, false));
+        polyfillMap.put("sourceRaw", polyfill.getRawSource());
         polyfillMap.put("license", polyfill.getLicense());
         polyfillMap.put("repo", polyfill.getRepository());
 
