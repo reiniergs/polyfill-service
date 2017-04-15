@@ -95,6 +95,10 @@ public class PolyfillController {
                 .map(Feature::new)
                 .collect(Collectors.toList());
 
+        if (featureList.isEmpty()) {
+            featureList.add(new Feature("default"));
+        }
+
         if (params.containsKey(GLOBAL_FLAGS)) {
             Set<String> globalOptions = new HashSet<>(getList(params, GLOBAL_FLAGS, ","));
             featureList.forEach(featureOption -> featureOption.addFlags(globalOptions));
