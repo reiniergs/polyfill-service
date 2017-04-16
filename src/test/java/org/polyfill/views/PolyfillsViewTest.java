@@ -89,19 +89,21 @@ public class PolyfillsViewTest {
         String featureLoadedName1 = "123";
         Feature featureRequested = new Feature("default");
         Feature featureLoaded1 = new Feature(featureLoadedName1, featureRequested);
-        featureLoaded1.setPolyfill(new Polyfill(featureLoaded1.getName(), new HashMap<String, Object>(){{
-            put(Polyfill.RAW_SOURCE_KEY, "abc");
-            put(Polyfill.MIN_SOURCE_KEY, "abc");
-            put(Polyfill.LICENSE_KEY, "MIT");
-        }}));
+        Polyfill polyfill1 = new Polyfill.Builder(featureLoaded1.getName())
+                .rawSource("abc")
+                .minSource("abc")
+                .license("MIT")
+                .build();
+        featureLoaded1.setPolyfill(polyfill1);
 
         String featureLoadedName2 = "456";
         Feature featureLoaded2 = new Feature(featureLoadedName2, featureLoaded1);
-        featureLoaded2.setPolyfill(new Polyfill(featureLoaded2.getName(), new HashMap<String, Object>(){{
-            put(Polyfill.RAW_SOURCE_KEY, "def");
-            put(Polyfill.MIN_SOURCE_KEY, "def");
-            put(Polyfill.LICENSE_KEY, "LALALA");
-        }}));
+        Polyfill polyfill2 = new Polyfill.Builder(featureLoaded1.getName())
+                .rawSource("def")
+                .minSource("def")
+                .license("LALALA")
+                .build();
+        featureLoaded2.setPolyfill(polyfill2);
 
         List<Feature> requestedList = Collections.singletonList(featureRequested);
         List<Feature> loadedList = Arrays.asList(featureLoaded1, featureLoaded2);

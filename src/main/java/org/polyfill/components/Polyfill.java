@@ -1,41 +1,63 @@
 package org.polyfill.components;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * Wrapper for polyfill metadata
+ * Author: smo
+ * Immutable polyfill wrapper of all the metadata
  */
 public class Polyfill {
 
-    public static final String BROWSER_REQUIREMENTS_KEY = "browsers";
-    public static final String RAW_SOURCE_KEY = "rawSource";
-    public static final String MIN_SOURCE_KEY = "minSource";
-    public static final String DETECT_SOURCE_KEY = "detectSource";
-    public static final String DEPENDENCIES_KEY = "dependencies";
-    public static final String ALIASES_KEY = "aliases";
-    public static final String LICENSE_KEY = "license";
-    public static final String REPO_KEY = "repo";
-    public static final String TEST_KEY = "test";
-    public static final String TESTS_SOURCE_KEY = "testsSource";
-
-    private Map<String, Object> polyfillMap;
     private String name;
+    private String rawSource;
+    private String minSource;
+    private String detectSource;
+    private String testsSource;
+    private String license;
+    private String repository;
+    private boolean isTestable;
+    private List<String> aliases;
+    private List<String> dependencies;
+    private Map<String, String> browserRequirements;
 
-    public Polyfill(String name, Map<String, Object> polyfillMap) {
-        this.name = name;
-        this.polyfillMap = polyfillMap;
+    private Polyfill(Builder builder) {
+        this.name = builder.name;
+        this.rawSource = builder.rawSource;
+        this.minSource = builder.minSource;
+        this.detectSource = builder.detectSource;
+        this.testsSource = builder.testsSource;
+        this.license = builder.license;
+        this.repository = builder.repository;
+        this.isTestable = builder.isTestable;
+        this.aliases = builder.aliases;
+        this.dependencies = builder.dependencies;
+        this.browserRequirements = builder.browserRequirements;
     }
 
-    /*********************** Public Interface ************************/
+    /**
+     * Gets the string representation of the polyfill
+     * @return String representation of this polyfill
+     */
+    public String toString() {
+        return "{ name:" + this.name
+                + ", aliases: " + this.aliases.toString()
+                + ", browsers: " + this.browserRequirements.toString()
+                + ", dependencies: " + this.dependencies.toString()
+                + ", license: " + this.license
+                + ", repository: " + this.repository
+                + ", rawSource: " + this.rawSource
+                + ", minSource: " + this.minSource
+                + ", detectSource: " + this.detectSource
+                + ", testsSource: " + this.testsSource
+                + ", isTestable: " + this.isTestable
+                + "}";
+    }
 
     /**
-     * @return name of polyfill; e.g. Array.of
+     * Gets the name of the polyfill: e.g. Array.of
+     * @return the name of polyfill
      */
-    @Nullable
     public String getName() {
         return this.name;
     }
@@ -44,141 +66,180 @@ public class Polyfill {
      * @return feature group aliases that contain this feature
      */
     public List<String> getAliases() {
-        return getListFromMap(this.polyfillMap, ALIASES_KEY);
+        return this.aliases;
     }
 
     /**
      * @return browser requirements; e.g. {chrome: '*', ios_saf: '&lt;10'}
      */
-    public Map<String, Object> getAllBrowserRequirements() {
-        return getMapFromMap(this.polyfillMap, BROWSER_REQUIREMENTS_KEY);
+    public Map<String, String> getAllBrowserRequirements() {
+        return this.browserRequirements;
     }
 
     /**
+     * Gets the browser requirement based on browser name: e.g. '*' for browserName = "chrome"
      * @param browserName browser name
-     * @return get browser requirement based on browser name: e.g. '*' for browserName = "chrome"
+     * @return {String} - the specific browser requirement
      */
     @Nullable
     public String getBrowserRequirement(String browserName) {
-        Map<String, Object> allBrowserRequirements = getAllBrowserRequirements();
-        return getStringFromMap(allBrowserRequirements, browserName);
+        Map<String, String> allBrowserRequirements = getAllBrowserRequirements();
+        return allBrowserRequirements.get(browserName);
     }
 
     /**
-     * @return a list of dependencies of this polyfill
+     * Gets a list of dependencies
+     * @return {List} - The dependencies of this polyfill
      */
     public List<String> getDependencies() {
-        return getListFromMap(this.polyfillMap, DEPENDENCIES_KEY);
-    }
-
-    public String getSource(boolean minify, boolean gated) {
-        String sourceKey = minify ? MIN_SOURCE_KEY : RAW_SOURCE_KEY;
-        String source = getStringFromMap(this.polyfillMap, sourceKey);
-        source = (source == null) ? "" : source;
-
-        String detectSource = getStringFromMap(this.polyfillMap, DETECT_SOURCE_KEY);
-        boolean wrapInDetect = gated && detectSource != null;
-
-        if (wrapInDetect && !"".equals(detectSource)) {
-            String lf = minify ? "" : "\n";
-            return "if(!(" + detectSource + ")){" + lf + source + lf + "}" + lf + lf;
-        }
-
-        return source;
+        return this.dependencies;
     }
 
     /**
-     * @return String representation of this polyfill
+     * Gets the source for detecting whether the polyfill is needed
+     * @return {String} - The detect source of the polyfill
      */
-    public String toString() {
-        return this.polyfillMap.toString();
+    @Nullable
+    public String getDetectSource() {
+        return this.detectSource;
     }
 
     /**
-     * Overriding equals to define that when all fields of both polyfills
-     * are equal, then they are equal
-     * @param obj the other polyfill object
-     * @return true if all fields of both polyfills are equal
+     * Gets the minified source of the polyfill
+     * @return {String} - The minified source of the polyfill
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(Polyfill.class.isAssignableFrom(obj.getClass()))) {
-            return false;
-        }
-        final Polyfill other = (Polyfill)obj;
-        if ((this.name == null && other.name != null)
-                || (!this.name.equals(other.name))) {
-            return false;
-        }
-        if ((this.polyfillMap == null && other.polyfillMap != null)
-                || (!this.polyfillMap.equals(other.polyfillMap))) {
-            return false;
-        }
-        return true;
+    @Nullable
+    public String getMinSource() {
+        return this.minSource;
     }
 
     /**
-     * Compute hashCode using the hashCodes of polyfill's fields to
-     * make sure they are valid for the equals method
-     * @return hashCode of the polyfill
+     * Gets the raw source of the polyfill
+     * @return {String} - The raw source of the polyfill
      */
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 53 * hash + (this.polyfillMap != null ? this.polyfillMap.hashCode() : 0);
-        return hash;
+    @Nullable
+    public String getRawSource() {
+        return this.rawSource;
     }
 
     /**
      * Gets the type of license of the polyfill implementation e.g. MIT | Apache
      * @return {String} - The type of license
      */
+    @Nullable
     public String getLicense() {
-        return getStringFromMap(this.polyfillMap, LICENSE_KEY);
+        return this.license;
     }
 
     /**
      * Gets the URL to the polyfill repository
      * @return {String} - The URl to the repository
      */
+    @Nullable
     public String getRepository() {
-        return getStringFromMap(this.polyfillMap, REPO_KEY);
+        return this.repository;
     }
 
-    public boolean isTestable() {
-        Map<String, Object> testMap = getMapFromMap(this.polyfillMap, TEST_KEY);
-        return !(testMap.containsKey("ci") && (Boolean)testMap.get("ci") == false);
-    }
-
+    /**
+     * Gets the source of mocha tests
+     * @return {String} - The source of mocha tests
+     */
+    @Nullable
     public String getTestsSource() {
-        return getStringFromMap(this.polyfillMap, TESTS_SOURCE_KEY);
+        return this.testsSource;
     }
 
-    public String getDetectSource() {
-        return getStringFromMap(this.polyfillMap, DETECT_SOURCE_KEY);
+    /**
+     * Checks whether this polyfill has tests and is testable
+     * @return {boolean} - whether polyfill is testable
+     */
+    public boolean isTestable() {
+        return this.isTestable;
     }
 
-    /**************************** Helpers **************************/
+    /**
+     * Using builder pattern to make sure Polyfill is immutable once constructed
+     */
+    public static class Builder {
 
-    @Nullable
-    private String getStringFromMap(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return (value instanceof String) ? (String)value : null;
-    }
+        private String name;
+        private String rawSource;
+        private String minSource;
+        private String detectSource;
+        private String testsSource;
+        private String license;
+        private String repository;
+        private boolean isTestable;
+        private List<String> aliases;
+        private List<String> dependencies;
+        private Map<String, String> browserRequirements;
 
-    @Nullable
-    private List<String> getListFromMap(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return (value instanceof List) ? (List<String>)value : new ArrayList<>();
-    }
+        public Builder(String name) {
+            this.name = name;
+            this.isTestable = false;
+            this.aliases = Collections.emptyList();
+            this.dependencies = Collections.emptyList();
+            this.browserRequirements = Collections.emptyMap();
+        }
 
-    @Nullable
-    private Map<String, Object> getMapFromMap(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return (value instanceof Map) ? (Map<String, Object>)value : new HashMap<>();
+        public Polyfill build() {
+            return new Polyfill(this);
+        }
+
+        public Builder rawSource(String rawSource) {
+            this.rawSource = rawSource;
+            return this;
+        }
+
+        public Builder minSource(String minSource) {
+            this.minSource = minSource;
+            return this;
+        }
+
+        public Builder detectSource(String detectSource) {
+            this.detectSource = detectSource;
+            return this;
+        }
+
+        public Builder testsSource(String testsSource) {
+            this.testsSource = testsSource;
+            return this;
+        }
+
+        public Builder license(String license) {
+            this.license = license;
+            return this;
+        }
+
+        public Builder repository(String repository) {
+            this.repository = repository;
+            return this;
+        }
+
+        public Builder isTestable(boolean testable) {
+            isTestable = testable;
+            return this;
+        }
+
+        public Builder aliases(List<String> aliases) {
+            if (aliases != null && !aliases.isEmpty()) {
+                this.aliases = Collections.unmodifiableList(aliases);
+            }
+            return this;
+        }
+
+        public Builder dependencies(List<String> dependencies) {
+            if (dependencies != null && !dependencies.isEmpty()) {
+                this.dependencies = Collections.unmodifiableList(dependencies);
+            }
+            return this;
+        }
+
+        public Builder browserRequirements(Map<String, String> browserRequirements) {
+            if (browserRequirements != null && !browserRequirements.isEmpty()) {
+                this.browserRequirements = Collections.unmodifiableMap(browserRequirements);
+            }
+            return this;
+        }
     }
 }
