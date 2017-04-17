@@ -7,7 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.ConfigLoaderService;
-import org.polyfill.utils.UnitTestingUtil;
+import org.polyfill.utils.TestingUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,7 +34,7 @@ public class FinancialTimesPolyfillLoaderServiceTest {
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
 
-        testPolyfillsPath = UnitTestingUtil.getResourcesPath().resolve("loadPolyfillsTest");
+        testPolyfillsPath = TestingUtil.getResourcesPath().resolve("loadPolyfillsTest");
 
         Polyfill polyfillA = new Polyfill.Builder("a")
                 .aliases(Arrays.asList("default", "foo"))

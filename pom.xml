@@ -150,7 +150,7 @@
                 <configuration>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <excludes>
-                        <exclude>**/*IT.java</exclude>
+                        <exclude>src/integration-test/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
