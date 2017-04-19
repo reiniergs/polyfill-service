@@ -1,7 +1,7 @@
 package org.polyfill.services;
 
 import org.junit.Test;
-import org.polyfill.utils.UnitTestingUtil;
+import org.polyfill.utils.TestingUtil;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -22,7 +22,7 @@ public class JSONConfigLoaderServiceTest {
     @Test
     public void testInvalidFilePath() throws Exception {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = UnitTestingUtil.getResourcesPath().resolve("config.jsosn").toString();
+        String filePath = TestingUtil.getResourcesPath().resolve("config.jsosn").toString();
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
             fail("Should throw IOException when file path is incorrect");
@@ -34,7 +34,7 @@ public class JSONConfigLoaderServiceTest {
     @Test
     public void testInvalidFileFormat() throws Exception {
         Map<String, Object> resultantConfigMap = null;
-        String filePath = UnitTestingUtil.getPolyfillsPath().resolve(Paths.get("a", "min.js")).toString();
+        String filePath = TestingUtil.getPolyfillsPath().resolve(Paths.get("a", "min.js")).toString();
         try {
             resultantConfigMap = jsonConfigLoaderService.getConfig(filePath);
             fail("Should throw IOException when file type is incorrect");
@@ -45,7 +45,7 @@ public class JSONConfigLoaderServiceTest {
 
     @Test
     public void testGetConfigWithStringPath() throws Exception {
-        String filePath = UnitTestingUtil.getResourcesPath().resolve("simpleConfig.json").toString();
+        String filePath = TestingUtil.getResourcesPath().resolve("simpleConfig.json").toString();
         Map<String, Object> expectedConfigMap = getSimpleConfig();
         try {
             Map<String, Object> actualConfigMap = jsonConfigLoaderService.getConfig(filePath);

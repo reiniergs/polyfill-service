@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created by reinier.guerra on 10/12/16.
  */
 @Controller
-@PropertySource("classpath:project.properties")
+@PropertySource("classpath:config.properties")
 public class PolyfillController {
 
     // supported query params
@@ -94,6 +94,10 @@ public class PolyfillController {
         List<Feature> featureList = getList(params, FEATURES, ",").stream()
                 .map(Feature::new)
                 .collect(Collectors.toList());
+
+        if (featureList.isEmpty()) {
+            featureList.add(new Feature("default"));
+        }
 
         if (params.containsKey(GLOBAL_FLAGS)) {
             Set<String> globalOptions = new HashSet<>(getList(params, GLOBAL_FLAGS, ","));

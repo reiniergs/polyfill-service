@@ -6,8 +6,10 @@ import org.polyfill.interfaces.PolyfillLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -17,7 +19,9 @@ import java.util.Map;
  * Created by reinier.guerra on 1/24/17.
  */
 @Configuration
-@PropertySource("classpath:project.properties")
+@EnableWebMvc
+@PropertySource("classpath:config.properties")
+@ComponentScan(basePackages = {"org.polyfill"})
 public class AppConfig {
 
     @Value("${path.polyfillsDist}")
