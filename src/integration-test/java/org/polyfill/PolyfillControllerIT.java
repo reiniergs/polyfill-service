@@ -47,17 +47,6 @@ public class PolyfillControllerIT {
     }
 
     @Test
-    public void getDefaultMinPolyfills() throws Exception {
-        String expectedContent = loadExpectedOutput("defaultMin.js");
-        this.mockMvc.perform(get("/polyfill.min.js")
-                    .header("User-Agent", UA.CHROME_59)
-                    .param("flags", "always"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(expectedContent))
-                .andReturn();
-    }
-
-    @Test
     public void getRawPolyfillsUsingAllFilters() throws Exception {
         String expectedContent = loadExpectedOutput("manyFiltersRaw.js");
         this.mockMvc.perform(get("/polyfill.js")
