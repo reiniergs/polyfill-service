@@ -327,6 +327,7 @@
                 </property>
             </activation>
             <properties>
+                <build.profile.id>heroku</build.profile.id>
                 <packaging.type>war</packaging.type>
             </properties>
             <build>
