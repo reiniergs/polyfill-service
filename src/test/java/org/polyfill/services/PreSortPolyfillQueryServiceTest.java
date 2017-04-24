@@ -3,7 +3,7 @@ package org.polyfill.services;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.components.Feature;
-import org.polyfill.components.Filters;
+import org.polyfill.components.Query;
 import org.polyfill.components.UserAgentImpl;
 import org.polyfill.configurations.MockPolyfillsConfig;
 import org.polyfill.interfaces.PolyfillQueryService;
@@ -34,9 +34,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByUserAgentMeetVersionRequirements() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("chrome", "30"));
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -44,9 +44,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByUserAgentSomeNotMeetVersionRequirement() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("firefox", "5"));
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -54,29 +54,29 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testUnknownUserAgentShouldReturnEmpty() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("firefox", "1"));
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = "";
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testFeaturesAlwaysLoaded() {
-        List<Feature> features = Arrays.asList(new Feature("default|always"));
-        Filters filters = new Filters()
+        List<Feature> features = Arrays.asList(new Feature("default", false, true));
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("firefox", "5"));
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
 
     @Test
     public void testUserAgentNotMeetBaselineNullifyAlwaysFlag() {
-        List<Feature> features = Arrays.asList(new Feature("default|always"));
-        Filters filters = new Filters()
+        List<Feature> features = Arrays.asList(new Feature("default", false, true));
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("firefox", "1"));
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = "";
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -84,8 +84,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testNoFeaturesShouldReturnEmpty() {
         List<Feature> features = Collections.emptyList();
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = "";
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -93,8 +93,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchBySingleFeature() {
         List<Feature> features = Arrays.asList(new Feature("c"));
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -102,8 +102,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMultipleFeatures() {
         List<Feature> features = Arrays.asList(new Feature("c"), new Feature("e"));
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "e");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -111,8 +111,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchBySingleAlias() {
         List<Feature> features = Arrays.asList(new Feature("foo"));
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "e");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -120,8 +120,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMultipleAliases() {
         List<Feature> features = Arrays.asList(new Feature("default"), new Feature("foo"));
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "e", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -129,8 +129,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testSearchByMixingAliasAndFeature() {
         List<Feature> features = Arrays.asList(new Feature("default"), new Feature("e"));
-        Filters emptyFilters = new Filters();
-        String actualPolyfillsString = getPolyfillsRawSources(features, emptyFilters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "e", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -138,9 +138,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testExcludesFeatures() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .excludeFeatures("c", "b");
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -148,9 +148,9 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testCannotExcludeAlias() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .excludeFeatures("es6");
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -158,8 +158,8 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testDoMinify() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Filters filters = new Filters();
-        String actualPolyfillsString = getPolyfillsMinSources(features, filters);
+        Query query = new Query(features);
+        String actualPolyfillsString = getPolyfillsMinSources(query);
         String expectedPolyfillsString = getMockMinSources("c", "b", "d", "a");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -167,11 +167,11 @@ public class PreSortPolyfillQueryServiceTest {
     @Test
     public void testLoadOnUnknownUA() {
         List<Feature> features = Arrays.asList(new Feature("c"));
-        Filters filters = new Filters()
+        Query query = new Query(features)
                 .setUserAgent(new UserAgentImpl("unknown", "0.0.0"))
                 .setLoadOnUnknownUA(true);
 
-        String actualPolyfillsString = getPolyfillsRawSources(features, filters);
+        String actualPolyfillsString = getPolyfillsRawSources(query);
         String expectedPolyfillsString = getMockRawSources("c");
         assertEquals(expectedPolyfillsString, actualPolyfillsString);
     }
@@ -193,16 +193,16 @@ public class PreSortPolyfillQueryServiceTest {
                 .collect(Collectors.joining());
     }
 
-    private String getPolyfillsRawSources(List<Feature> features, Filters filters) {
-        return getPolyfillsSources(features, filters, false);
+    private String getPolyfillsRawSources(Query query) {
+        return getPolyfillsSources(query, false);
     }
 
-    private String getPolyfillsMinSources(List<Feature> features, Filters filters) {
-        return getPolyfillsSources(features, filters, true);
+    private String getPolyfillsMinSources(Query query) {
+        return getPolyfillsSources(query, true);
     }
 
-    private String getPolyfillsSources(List<Feature> features, Filters filters, boolean minify) {
-        return polyfillQueryService.getFeatures(features, filters).stream()
+    private String getPolyfillsSources(Query query, boolean minify) {
+        return polyfillQueryService.getFeatures(query).stream()
                 .map(feature -> feature.getSource(minify))
                 .collect(Collectors.joining());
     }

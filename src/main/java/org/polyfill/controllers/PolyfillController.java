@@ -1,7 +1,7 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Feature;
-import org.polyfill.components.Filters;
+import org.polyfill.components.Query;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
@@ -79,12 +79,12 @@ public class PolyfillController {
         UserAgent userAgent = getUserAgent(headerUA, params);
         boolean loadOnUnknown = getLoadOnUnknown(params);
 
-        Filters filters = new Filters()
+        Query query = new Query(featuresRequested)
                 .setUserAgent(userAgent)
                 .setLoadOnUnknownUA(loadOnUnknown)
                 .excludeFeatures(featuresToExclude);
 
-        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(featuresRequested, filters);
+        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(query);
 
         return new PolyfillsView(projectVersion, projectUrl,
                 userAgent, featuresRequested, featuresLoaded, doMinify);
