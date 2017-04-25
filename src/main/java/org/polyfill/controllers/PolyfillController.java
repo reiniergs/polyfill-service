@@ -1,7 +1,7 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Feature;
-import org.polyfill.components.Filters;
+import org.polyfill.components.Query;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
@@ -79,12 +79,12 @@ public class PolyfillController {
         UserAgent userAgent = getUserAgent(headerUA, params);
         boolean loadOnUnknown = getLoadOnUnknown(params);
 
-        Filters filters = new Filters()
+        Query query = new Query(featuresRequested)
                 .setUserAgent(userAgent)
                 .setLoadOnUnknownUA(loadOnUnknown)
                 .excludeFeatures(featuresToExclude);
 
-        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(featuresRequested, filters);
+        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(query);
 
         return new PolyfillsView(projectVersion, projectUrl,
                 userAgent, featuresRequested, featuresLoaded, doMinify);
@@ -92,7 +92,7 @@ public class PolyfillController {
 
     private List<Feature> getFeatures(Map<String, String> params) {
         List<Feature> featureList = getList(params, FEATURES, ",").stream()
-                .map(Feature::new)
+                .map(this::parseFeature)
                 .collect(Collectors.toList());
 
         if (featureList.isEmpty()) {
@@ -100,8 +100,10 @@ public class PolyfillController {
         }
 
         if (params.containsKey(GLOBAL_FLAGS)) {
-            Set<String> globalOptions = new HashSet<>(getList(params, GLOBAL_FLAGS, ","));
-            featureList.forEach(featureOption -> featureOption.addFlags(globalOptions));
+            // use Feature as a utility to set global flags on other features
+            List<String> flags = getList(params, GLOBAL_FLAGS, ",");
+            Feature global = new Feature("flags", flags.contains(Feature.GATED), flags.contains(Feature.ALWAYS));
+            featureList.forEach(featureOption -> featureOption.copyFlags(global));
         }
 
         return featureList;
@@ -124,5 +126,23 @@ public class PolyfillController {
         return params.containsKey(field)
                 ? Arrays.asList(params.get(field).split(delimiter))
                 : Collections.emptyList();
+    }
+
+    // e.g. Array.of|always|gated -> ["Array.of", "always", "gated"]
+    // index 0 is name, index > 0 is flag
+    private Feature parseFeature(String featureQuery) {
+        String[] nameAndFlags = featureQuery.split("\\|");
+        String name = nameAndFlags[0];
+        boolean isGated = false;
+        boolean isAlways = false;
+        for (int i = 1; i < nameAndFlags.length; i++) {
+            switch (nameAndFlags[i]) {
+                case Feature.GATED:
+                    isGated = true; break;
+                case Feature.ALWAYS:
+                    isAlways = true; break;
+            }
+        }
+        return new Feature(name, isGated, isAlways);
     }
 }

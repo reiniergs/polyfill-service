@@ -1,19 +1,15 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Feature;
-import org.polyfill.components.Filters;
+import org.polyfill.components.Query;
 import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.PolyfillQueryService;
-import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
-import org.polyfill.views.BadRequestView;
 import org.polyfill.views.HandlebarView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 import java.util.Collections;
@@ -64,8 +60,8 @@ public class TestController {
         String featureReq = params.getOrDefault(FEATURE, "all");
         String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
 
-        Filters filters = createFilters(mode, uaString);
-        List<Polyfill> polyfills = getTestPolyfills(featureReq, filters);
+        Query query = buildQuery(featureReq, mode, uaString);
+        List<Polyfill> polyfills = getTestPolyfills(query);
         List<Map<String, Object>> testFeatures = getTestFeatures(polyfills);
 
         model.addAttribute("featureRequested", featureReq);
@@ -77,20 +73,20 @@ public class TestController {
         return new HandlebarView("tests/browsers/runner", model);
     }
 
-    private Filters createFilters(String mode, String uaString) {
-        Filters filters = new Filters()
+    private Query buildQuery(String featureReq, String mode, String uaString) {
+        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
+        Query query = new Query(reqFeatureList)
                 .setIncludeDependencies(false)
                 .setLoadOnUnknownUA(false);
         if ("targeted".equals(mode)) {
-            filters.setUserAgent(userAgentParserService.parse(uaString));
+            query.setUserAgent(userAgentParserService.parse(uaString));
         }
-        return filters;
+        return query;
     }
 
-    private List<Polyfill> getTestPolyfills(String featureReq, Filters filters) {
-        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
+    private List<Polyfill> getTestPolyfills(Query query) {
         Map<String, Polyfill> allPolyfills = polyfillQueryService.getAllPolyfills();
-        return polyfillQueryService.getFeatures(reqFeatureList, filters).stream()
+        return polyfillQueryService.getFeatures(query).stream()
                 .map(feature -> allPolyfills.get(feature.getName()))
                 .collect(Collectors.toList());
     }

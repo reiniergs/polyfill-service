@@ -1,7 +1,7 @@
 package org.polyfill.services;
 
 import org.polyfill.components.Feature;
-import org.polyfill.components.Filters;
+import org.polyfill.components.Query;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.TSort;
 import org.polyfill.interfaces.PolyfillQueryService;
@@ -56,11 +56,12 @@ public class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
-    public List<Feature> getFeatures(List<Feature> featureList, Filters filters) {
-        UserAgent userAgent = filters.getUserAgent();
-        boolean doLoadOnUnknownUA = filters.doLoadOnUnknownUA();
-        boolean doIncludeDependencies = filters.doIncludeDependencies();
-        Set<String> excludes = filters.getExcludes();
+    public List<Feature> getFeatures(Query query) {
+        List<Feature> featureList = query.getFeatures();
+        UserAgent userAgent = query.getUserAgent();
+        boolean doLoadOnUnknownUA = query.doLoadOnUnknownUA();
+        boolean doIncludeDependencies = query.doIncludeDependencies();
+        Set<String> excludes = query.getExcludes();
 
         if (userAgent != null && !isUserAgentSupported(userAgent) && !doLoadOnUnknownUA) {
             return Collections.emptyList();

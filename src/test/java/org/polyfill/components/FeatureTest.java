@@ -21,26 +21,20 @@ public class FeatureTest {
     }
 
     @Test
-    public void testFeatureNameWithFlags() {
-        Feature feature = new Feature("featureName|always|gated");
-        assertEquals("featureName", feature.getName());
-    }
-
-    @Test
     public void testFeatureWithGated() {
-        Feature feature = new Feature("featureName|gated");
+        Feature feature = new Feature("featureName", true, false);
         assertTrue("Expected feature to be gated", feature.isGated());
     }
 
     @Test
     public void testFeatureWithAlways() {
-        Feature feature = new Feature("featureName|always");
+        Feature feature = new Feature("featureName", false, true);
         assertTrue("Expected feature to be always shown", feature.isAlways());
     }
 
     @Test
     public void testFeatureWithGatedAlways() {
-        Feature feature = new Feature("featureName|always|gated");
+        Feature feature = new Feature("featureName", true, true);
         assertTrue("Expected feature to be gated", feature.isGated());
         assertTrue("Expected feature to be always shown", feature.isAlways());
     }
@@ -80,9 +74,6 @@ public class FeatureTest {
 
     private Feature getFeatureWithSources(boolean hasDetectSource) {
         String name = "feature";
-        if (hasDetectSource) {
-            name += "|gated";
-        }
 
         Polyfill polyfill = new Polyfill.Builder(name)
                 .minSource(this.minSource)
@@ -90,7 +81,7 @@ public class FeatureTest {
                 .detectSource(hasDetectSource ? this.detectSource : null)
                 .build();
 
-        Feature feature = new Feature(name);
+        Feature feature = new Feature(name, hasDetectSource, false);
         feature.setPolyfill(polyfill);
         return feature;
     }

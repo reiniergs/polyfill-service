@@ -14,29 +14,25 @@ public class Feature {
 
     private String name;
     private Polyfill polyfill;
+    private boolean isAlways;
+    private boolean isGated;
 
-    private Set<String> flags = new HashSet<>();
     private Set<String> requiredBys = new HashSet<>();
 
-    public Feature(String queryParam) {
-        // e.g. Array.of|always|gated -> ["Array.of", "always", "gated"]
-        // index 0 is name, index > 0 is flag
-        String[] nameAndFlags = queryParam.split("\\|");
-        this.name = nameAndFlags[0];
-        for (int i = 1; i < nameAndFlags.length; i++) {
-            String flag = nameAndFlags[i];
-            this.flags.add(flag);
-        }
+    public Feature(String name) {
+        this(name, false, false);
     }
 
-    public Feature(String name, Set<String> flags) {
+    public Feature(String name, boolean isGated, boolean isAlways) {
         this.name = name;
-        this.flags.addAll(flags);
+        this.isGated = isGated;
+        this.isAlways = isAlways;
     }
 
     public Feature(String name, Feature feature) {
         this.name = name;
-        this.flags.addAll(feature.flags);
+        this.isGated = feature.isGated;
+        this.isAlways = feature.isAlways;
         this.requiredBys.addAll(feature.requiredBys);
         this.requiredBys.add(feature.name);
     }
@@ -45,16 +41,20 @@ public class Feature {
         return this.name;
     }
 
-    public boolean isGated() {
-        return this.flags.contains(GATED);
-    }
-
     public boolean isAlways() {
-        return this.flags.contains(ALWAYS);
+        return this.isAlways;
     }
 
-    public void addFlags(Set<String> flags) {
-        this.flags.addAll(flags);
+    public void setAlways(boolean isAlways) {
+        this.isAlways = isAlways;
+    }
+
+    public boolean isGated() {
+        return this.isGated;
+    }
+
+    public void setGated(boolean isGated) {
+        this.isGated = isGated;
     }
 
     public List<String> getRequiredBys() {
@@ -74,7 +74,7 @@ public class Feature {
         String source = minify ? this.polyfill.getMinSource() : this.polyfill.getRawSource();
         source = (source == null) ? "" : source;
 
-        boolean wrapInDetect = this.flags.contains(GATED) && detectSource != null;
+        boolean wrapInDetect = this.isGated && detectSource != null;
 
         if (wrapInDetect && !"".equals(detectSource)) {
             String lf = minify ? "" : "\n";
@@ -85,7 +85,8 @@ public class Feature {
     }
 
     public void copyFlags(Feature feature) {
-        this.flags.addAll(feature.flags);
+        this.isGated = feature.isGated;
+        this.isAlways = feature.isAlways;
     }
 
     public String getLicense() {
