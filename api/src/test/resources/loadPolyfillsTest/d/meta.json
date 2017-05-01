@@ -1,0 +1,15 @@
+{
+    "aliases": [
+        "es6"
+    ],
+    "browsers": {
+        "chrome": "*",
+        "firefox": "31"
+    },
+    "dependencies": [
+        "b",
+        "c"
+    ],
+    "detectSource": "d.detectSource",
+    "baseDir": "d"
+}

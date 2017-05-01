@@ -1,0 +1,16 @@
+{
+    "aliases": [
+        "default",
+        "foo"
+    ],
+    "browsers": {
+        "chrome": "*",
+        "firefox": "4 - 31"
+    },
+    "dependencies": [
+        "b",
+        "d"
+    ],
+    "detectSource": "a.detectSource",
+    "baseDir": "a"
+}
