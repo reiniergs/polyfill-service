@@ -1,15 +1,16 @@
 package org.polyfill.services;
 
+import org.apache.commons.io.FilenameUtils;
 import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.PolyfillLoaderService;
 import org.polyfill.interfaces.ResourceLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -69,23 +70,16 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     @Override
     public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
         Map<String, Polyfill> polyfills = new HashMap<>();
-        getResources("*").stream().forEach(resource -> {
-            try {
-                System.out.println(resource.getFilename() + " " + resource.getURI().toString());
-            } catch (IOException e) {
-                System.err.println("IOException from resource");
-            }
-        });
 
-        getResources(polyfillsPath, "*").stream()
-            .filter(polyfillResource -> !polyfillResource.isReadable()) // filter out files
+        getResources(polyfillsPath, "*", "meta.json")
             .forEach(polyfillResource -> {
-                Path polyfillDir = Paths.get(polyfillsPath, polyfillResource.getFilename());
                 try {
+                    String polyfillDirName = getBaseDirectoryName(polyfillResource);
+                    Path polyfillDir = Paths.get(polyfillsPath, polyfillDirName);
                     Polyfill polyfill = loadPolyfill(polyfillDir);
                     polyfills.put(polyfill.getName(), polyfill);
                 } catch (IOException e) {
-                    System.err.println("Error loading polyfill from directory: " + polyfillDir);
+                    System.err.println("Error loading polyfill from directory: " + polyfillResource.toString());
                 }
             });
 
@@ -117,5 +111,12 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
 
     private Map getMap(Map<String, Object> map, String key) {
         return (Map)map.getOrDefault(key, Collections.emptyMap());
+    }
+
+    private String getBaseDirectoryName(Resource resource) throws IOException {
+        // using string manipulation to handle path here because if resource is from jar,
+        // we cannot create a file/path instance from it
+        String dirPathString = FilenameUtils.getFullPathNoEndSeparator(resource.getURI().toString());
+        return FilenameUtils.getName(dirPathString);
     }
 }

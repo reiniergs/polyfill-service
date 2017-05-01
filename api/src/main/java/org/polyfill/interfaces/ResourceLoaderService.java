@@ -24,15 +24,18 @@ public interface ResourceLoaderService {
     }
 
     default Resource getResource(String first, String ... more) throws IOException {
-        String filePath = Paths.get(first, more).toString();
+        String filePattern = Paths.get(first, more).toString();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        return resolver.getResource(ResourceUtils.CLASSPATH_URL_PREFIX + filePath);
+        return resolver.getResource(ResourceUtils.CLASSPATH_URL_PREFIX + filePattern);
     }
 
     default List<Resource> getResources(String first, String ... more) throws IOException {
         String filePattern = Paths.get(first, more).toString();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources(ResourceUtils.CLASSPATH_URL_PREFIX + filePattern);
+        if (resources.length == 0) {
+            throw new IOException("No matching resources are found in:" + filePattern);
+        }
         return Arrays.asList(resources);
     }
 }

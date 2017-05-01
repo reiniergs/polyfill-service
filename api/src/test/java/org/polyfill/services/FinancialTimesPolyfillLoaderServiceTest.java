@@ -49,11 +49,6 @@ public class FinancialTimesPolyfillLoaderServiceTest {
         }};
     }
 
-    @Test
-    public void testtest() {
-
-    }
-
     /*
     @Test
     public void testLoadSinglePolyfill() {
