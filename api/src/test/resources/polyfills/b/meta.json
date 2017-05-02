@@ -1,7 +1,7 @@
 {
     "aliases": [
-        "es6",
-        "default"
+        "default",
+        "es6"
     ],
     "browsers": {
         "chrome": "*",
@@ -10,6 +10,5 @@
     "dependencies": [
         "c"
     ],
-    "detectSource": "b.detectSource",
-    "baseDir": "b"
+    "detectSource": "b.detectSource"
 }

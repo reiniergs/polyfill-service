@@ -43,7 +43,7 @@ public class MockPolyfillsConfig {
             .dependencies(Arrays.asList("b", "d"))
             .detectSource("a.detectSource")
             .minSource("a.min")
-            .rawSource("a.raw_")
+            .rawSource("a.raw")
             .build();
 
         Polyfill polyfillB = new Polyfill.Builder("b")
@@ -55,7 +55,7 @@ public class MockPolyfillsConfig {
             .dependencies(Arrays.asList("c"))
             .detectSource("b.detectSource")
             .minSource("b.min")
-            .rawSource("b.raw_")
+            .rawSource("b.raw")
             .build();
 
         Polyfill polyfillC = new Polyfill.Builder("c")
@@ -67,7 +67,7 @@ public class MockPolyfillsConfig {
             .dependencies(new ArrayList<String>())
             .detectSource("c.detectSource")
             .minSource("c.min")
-            .rawSource("c.raw_")
+            .rawSource("c.raw")
             .build();
 
         Polyfill polyfillD = new Polyfill.Builder("d")
@@ -79,7 +79,7 @@ public class MockPolyfillsConfig {
             .dependencies(Arrays.asList("b", "c"))
             .detectSource("d.detectSource")
             .minSource("d.min")
-            .rawSource("d.raw_")
+            .rawSource("d.raw")
             .build();
 
         Polyfill polyfillE = new Polyfill.Builder("e")
@@ -90,7 +90,7 @@ public class MockPolyfillsConfig {
             .dependencies(new ArrayList<>())
             .detectSource("e.detectSource")
             .minSource("e.min")
-            .rawSource("e.raw_")
+            .rawSource("e.raw")
             .build();
 
         return new HashMap<String, Polyfill>(){{

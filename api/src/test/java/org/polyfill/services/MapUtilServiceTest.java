@@ -14,7 +14,7 @@ public class MapUtilServiceTest {
 
     private ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
     private MapUtilService mapUtilService = new MapUtilService();
-    private String testConfigFilePath = "config.json";
+    private String testConfigFilePath = "map_util_test.json";
 
     @Test
     public void testGetInSingleValue() throws Exception {

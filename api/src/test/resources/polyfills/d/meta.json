@@ -3,13 +3,12 @@
         "es6"
     ],
     "browsers": {
-        "chrome": "*",
+        "chrome": "<50",
         "firefox": "31"
     },
     "dependencies": [
         "b",
         "c"
     ],
-    "detectSource": "d.detectSource",
-    "baseDir": "d"
+    "detectSource": "d.detectSource"
 }

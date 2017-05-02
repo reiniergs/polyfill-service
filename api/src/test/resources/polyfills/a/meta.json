@@ -11,6 +11,5 @@
         "b",
         "d"
     ],
-    "detectSource": "a.detectSource",
-    "baseDir": "a"
+    "detectSource": "a.detectSource"
 }

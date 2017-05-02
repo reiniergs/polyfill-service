@@ -189,7 +189,7 @@ public class PreSortPolyfillQueryServiceTest {
 
     private String getMockSources(List<String> featureNameList, boolean doMinify) {
         return featureNameList.stream()
-                .map(featureName -> featureName + (doMinify ? ".min" : ".raw_"))
+                .map(featureName -> featureName + (doMinify ? ".min" : ".raw"))
                 .collect(Collectors.joining());
     }
 

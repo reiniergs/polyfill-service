@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.polyfill.components.Feature;
 import org.polyfill.components.Query;
 import org.polyfill.interfaces.QueryLoaderService;
-import org.polyfill.utils.TestingUtil;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -71,7 +71,8 @@ public class XMLQueryLoaderServiceTest {
     }
 
     private Query loadTestQuery(String fileName) throws IOException {
-        Path filePath = TestingUtil.getResourcesPath().resolve("query-loader-test").resolve(fileName);
+        Path resourcePath = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + ".").toPath();
+        Path filePath = resourcePath.resolve("queries").resolve(fileName);
         return queryLoaderService.loadQuery(filePath.toString());
     }
 

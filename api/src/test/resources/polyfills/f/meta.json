@@ -1,0 +1,14 @@
+/**
+ * This polyfill should not be loaded since it doesn't have
+ * min and raw sources.
+ */
+{
+    "aliases": [
+        "foo"
+    ],
+    "browsers": {
+        "chrome": "*"
+    },
+    "dependencies": [],
+    "detectSource": "f.detectSource"
+}
