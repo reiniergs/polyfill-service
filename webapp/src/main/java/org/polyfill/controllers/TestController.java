@@ -5,7 +5,6 @@ import org.polyfill.components.Polyfill;
 import org.polyfill.components.Query;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgentParserService;
-import org.polyfill.views.HandlebarView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.View;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +53,7 @@ public class TestController {
      * @return mocha test runner page
      */
     @RequestMapping(value = "/test/tests", method = RequestMethod.GET)
-    public View polyfillsMochaTests(@RequestHeader("User-Agent") String headerUA,
+    public String polyfillsMochaTests(@RequestHeader("User-Agent") String headerUA,
                             @RequestParam Map<String, String> params,
                             Model model) {
 
@@ -73,7 +71,7 @@ public class TestController {
         model.addAttribute("features", testFeatures);
         model.addAttribute("mode", mode);
 
-        return new HandlebarView("tests/browsers/runner", model);
+        return "tests/browsers/runner";
     }
 
     private Query buildQuery(String featureReq, String mode, String uaString) {

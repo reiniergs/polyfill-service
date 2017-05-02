@@ -5,16 +5,17 @@ import org.polyfill.components.Query;
 import org.polyfill.interfaces.PolyfillQueryService;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
-import org.polyfill.views.BadRequestView;
-import org.polyfill.views.NotFoundView;
 import org.polyfill.views.PolyfillsView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.View;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class PolyfillController {
     private static final String UA_OVERRIDE = "ua";
     private static final String UNKNOWN_OVERRIDE = "unknown";
 
-    private static final String ONLY_SUPPORT_JS_MSG = "Sorry we just support javascript polyfills.";
+    private static final String ONLY_SUPPORT_JS_MSG = "Sorry, we only support javascript polyfills :(";
 
     @Autowired
     UserAgentParserService userAgentParserService;
@@ -50,29 +51,29 @@ public class PolyfillController {
     @RequestMapping(
             value={"polyfill.{doMinify:min}.{type:[^.]+}", "/polyfill.{type:[^.]+}" },
             method = RequestMethod.GET)
-    public View polyfillApi(@RequestHeader("User-Agent") String headerUA,
-                            @RequestParam Map<String, String> params,
-                            @PathVariable Optional<String> doMinify,
-                            @PathVariable String type,
-                            Model model) {
-        if (type.equals("js")) {
-            return getPolyfillsView(headerUA, params, doMinify.isPresent());
-        } else {
-            model.addAttribute("message", ONLY_SUPPORT_JS_MSG);
-            return new BadRequestView("badRequest", model);
-        }
-    }
+    public ResponseEntity polyfillApi(@RequestHeader("User-Agent") String headerUA,
+                                      @RequestParam Map<String, String> params,
+                                      @PathVariable Optional<String> doMinify,
+                                      @PathVariable String type,
+                                      Model model) {
+        final HttpHeaders httpHeaders= new HttpHeaders();
 
-    @RequestMapping(value = "/notfound", method = RequestMethod.GET)
-    public View polyfillNotFound(@RequestHeader("User-Agent") String uaString, Model model) {
-        return new NotFoundView("notFound");
+        if (type.equals("js")) {
+            httpHeaders.add("Content-Type", "text/javascript; charset=utf-8");
+            PolyfillsView view = getPolyfillsView(headerUA, params, doMinify.isPresent());
+            String output = view.getDebugInfo() + view.getSources();
+            return new ResponseEntity<>(output, httpHeaders, HttpStatus.OK);
+        } else {
+            httpHeaders.add("Content-Type", "text/html; charset=utf-8");
+            return new ResponseEntity<>(ONLY_SUPPORT_JS_MSG, httpHeaders, HttpStatus.BAD_REQUEST);
+        }
     }
 
     /******************************************************
      * Helpers
      ******************************************************/
 
-    private View getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
+    private PolyfillsView getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
 
         List<Feature> featuresRequested = getFeatures(params);
         List<String> featuresToExclude = getFeaturesToExclude(params);

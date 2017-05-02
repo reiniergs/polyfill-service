@@ -29,8 +29,8 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!--<error-page>-->
-        <!--<exception-type>404</exception-type>-->
-        <!--<location>/api/notfound</location>-->
-    <!--</error-page>-->
+    <error-page>
+        <exception-type>404</exception-type>
+        <location>/404.html</location>
+    </error-page>
 </web-app>

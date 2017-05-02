@@ -63,7 +63,7 @@ public class PolyfillsView implements View {
      * Build sources of polyfills
      * @return sources of polyfills
      */
-    private String getSources() {
+    public String getSources() {
         String sources = toPolyfillsSource(this.featuresLoaded);
         if (isEmpty(sources)) {
             return this.minify ? "" : "\n\n" + NO_POLYFILLS_MESSAGE;
@@ -99,7 +99,7 @@ public class PolyfillsView implements View {
      * Build header comments for debugging
      * @return header comments containing debug info
      */
-    private String getDebugInfo() {
+    public String getDebugInfo() {
         if (this.minify) {
             return MIN_MESSAGE;
         }
