@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +48,7 @@ public class PolyfillController {
     private String projectUrl;
 
     @RequestMapping(
-            value={"polyfill.{doMinify:min}.{type:[^.]+}", "/polyfill.{type:[^.]+}" },
+            value={"polyfill.{doMinify:min}.{type:[^.]+}", "polyfill.{type:[^.]+}" },
             method = RequestMethod.GET)
     public ResponseEntity polyfillApi(@RequestHeader("User-Agent") String headerUA,
                                       @RequestParam Map<String, String> params,

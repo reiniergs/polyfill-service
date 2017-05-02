@@ -9,8 +9,10 @@ import java.util.Map;
 public interface ConfigLoaderService {
 
     /**
-     * Retrieve JSON config file from specified path and convert it into a Map
+     * Retrieve a JSON config file from specified path and convert it into a Map
      *
+     * @param first first segment of the config file path
+     * @param more rest of the segments of the config file path
      * @return configMap - Returns the JSON config in a HashMap format
      * @throws IOException throws exception if file is not found at the specified path
      */

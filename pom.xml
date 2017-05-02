@@ -85,105 +85,207 @@
             <version>2.8.0</version>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>polyfills</groupId>
+                <artifactId>polyfill-service-api</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-                </plugin>
-                <!-- test runner for unit tests -->
-                <!-- see test reports in ${basedir}/target/surefire-reports -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
-                    <configuration>
-                        <skipTests>${skip.unit.tests}</skipTests>
-                        <excludes>
-                            <exclude>src/integration-test/*.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <!-- test runner for integration tests, part of surefire -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.19.1</version>
-                    <executions>
-                        <execution>
-                            <id>integration-tests</id>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                            <configuration>
-                                <skipTests>${skip.integration.tests}</skipTests>
-                                <runOrder>random</runOrder>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- java docs to html -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
-                    <configuration>
-                        <destDir>src/main/webapp/docs</destDir>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.7</version>
-                    <configuration>
-                        <format>xml</format>
-                        <maxmem>256m</maxmem>
-                        <!-- aggregated reports for multi-module projects -->
-                        <aggregate>true</aggregate>
-                        <check/>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>4.2.0</version>
-                    <configuration>
-                        <repoToken>0FfYZ0xtNhoImyWCny4eQ9CLcEgAejhZ8</repoToken>
-                        <sourceEncoding>UTF-8</sourceEncoding>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
+            <!-- java compiler version -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!-- jetty -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jettyVersion}</version>
             </plugin>
+            <!-- java docs to html -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
+                <configuration>
+                    <destDir>src/main/webapp/docs</destDir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- build helper plugin to add test sources and resources for integration tests -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/integration-test/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-integration-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>src/integration-test/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- test runner for unit tests -->
+            <!-- see test reports in ${basedir}/target/surefire-reports -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>${skip.unit.tests}</skipTests>
+                    <excludes>
+                        <exclude>src/integration-test/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!-- test runner for integration tests, part of surefire -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.19.1</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <skipTests>${skip.integration.tests}</skipTests>
+                            <runOrder>random</runOrder>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- test reports generation -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <format>xml</format>
+                    <maxmem>256m</maxmem>
+                    <!-- aggregated reports for multi-module projects -->
+                    <aggregate>true</aggregate>
+                    <check/>
+                </configuration>
+            </plugin>
+            <!-- coverage report with coveralls -->
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <configuration>
+                    <repoToken>0FfYZ0xtNhoImyWCny4eQ9CLcEgAejhZ8</repoToken>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <!-- Profiles -->
+    <profiles>
+
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.profile.id>dev</build.profile.id>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>false</skip.unit.tests>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <build.profile.id>integration-test</build.profile.id>
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>heroku</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env.HOME</name>
+                    <value>/app</value>
+                </property>
+            </activation>
+            <properties>
+                <build.profile.id>heroku</build.profile.id>
+                <packaging.type>war</packaging.type>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.3</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals><goal>copy</goal></goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.eclipse.jetty</groupId>
+                                            <artifactId>jetty-runner</artifactId>
+                                            <version>9.3.3.v20150827</version>
+                                            <destFileName>jetty-runner.jar</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>

@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.configurations.WebAppConfig;
 import org.polyfill.utils.TestingUtil;
-import org.polyfill.utils.UA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class PolyfillControllerIT {
 
+    private static final String CHROME_59 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3070.0 Safari/537.36";
+
     @Autowired
     private WebApplicationContext wac;
 
@@ -40,7 +41,7 @@ public class PolyfillControllerIT {
     public void getDefaultRawPolyfillsWithNoneLoaded() throws Exception {
         String expectedContent = loadExpectedOutput("defaultRawNoneLoaded.js");
         this.mockMvc.perform(get("/polyfill.js")
-                .header("User-Agent", UA.CHROME_59))
+                .header("User-Agent", CHROME_59))
                 .andExpect(status().isOk())
                 .andExpect(content().string(expectedContent))
                 .andReturn();
@@ -50,7 +51,7 @@ public class PolyfillControllerIT {
     public void getRawPolyfillsUsingAllFilters() throws Exception {
         String expectedContent = loadExpectedOutput("manyFiltersRaw.js");
         this.mockMvc.perform(get("/polyfill.js")
-                    .header("User-Agent", UA.CHROME_59)
+                    .header("User-Agent", CHROME_59)
                     .param("ua", "firefox/23")
                     .param("features", "modernizr:es6string|gated,Array.isArray|always")
                     .param("excludes", "String.prototype.repeat"))
