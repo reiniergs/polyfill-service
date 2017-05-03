@@ -5,7 +5,8 @@ let path = require('path');
 let CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const TARGET = process.env.npm_lifecycle_event;
-const BUILD_DIR = path.resolve(__dirname, 'src/main/webapp/assets/js');
+const WEB_DIR = 'webapp/src/main/webapp/';
+const BUILD_DIR = path.resolve(__dirname, WEB_DIR + 'assets/js');
 const APP_DIR = path.resolve(__dirname, 'app/');
 
 var commonConfig = {
@@ -33,13 +34,13 @@ var commonConfig = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(['src/main/webapp/assets/js', 'src/main/webapp/landing.html'], {
+        new CleanWebpackPlugin([WEB_DIR + 'assets/js', WEB_DIR + 'landing.html'], {
             root: path.resolve(__dirname),
             verbose: true,
             dry: false
         }),
         new HtmlWebpackPlugin({
-            filename: path.resolve(__dirname, 'src/main/webapp/index.html'),
+            filename: path.resolve(__dirname, WEB_DIR + 'index.html'),
             template: 'app/templates/webpack-app-template.hbs',
             title: 'Polyfill as a service',
             appMountId: 'app',
