@@ -3,7 +3,6 @@ package org.polyfill;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.polyfill.configurations.WebAppConfig;
 import org.polyfill.utils.TestingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by smo on 4/11/17.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WebAppConfig.class})
+@ContextConfiguration({ "file:src/main/webapp/WEB-INF/dispatcher-servlet.xml" })
 @WebAppConfiguration
 public class PolyfillControllerIT {
 
