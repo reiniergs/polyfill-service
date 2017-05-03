@@ -54,8 +54,8 @@ public class TestController {
      */
     @RequestMapping(value = "/test/tests", method = RequestMethod.GET)
     public String polyfillsMochaTests(@RequestHeader("User-Agent") String headerUA,
-                            @RequestParam Map<String, String> params,
-                            Model model) {
+                                      @RequestParam Map<String, String> params,
+                                      Model model) {
 
         String mode = params.getOrDefault(MODE, "all");
         String featureReq = params.getOrDefault(FEATURE, "all");
