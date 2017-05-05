@@ -34,7 +34,7 @@ var commonConfig = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin([WEB_DIR + 'assets/js', WEB_DIR + 'landing.html'], {
+        new CleanWebpackPlugin([WEB_DIR + 'assets/js', WEB_DIR + 'index.html'], {
             root: path.resolve(__dirname),
             verbose: true,
             dry: false
