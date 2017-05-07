@@ -19,16 +19,32 @@ public class Feature {
 
     private Set<String> requiredBys = new HashSet<>();
 
+    /** 
+     * Construct a feature that is not gated nor always loaded 
+     * @param name name of the feature 
+     */
     public Feature(String name) {
         this(name, false, false);
     }
 
+    /** 
+     * Construct a feature 
+     * @param name name of the feature 
+     * @param isGated whether getSource() should wrap source code with detection code 
+     * @param isAlways whether to tell service to always load this feature 
+     */
     public Feature(String name, boolean isGated, boolean isAlways) {
         this.name = name;
         this.isGated = isGated;
         this.isAlways = isAlways;
     }
 
+    /** 
+     * Construct a feature and inherit another feature's attributes 
+     * Used when the other feature requires this feature 
+     * @param name name of the feature 
+     * @param feature feature that requires this feature 
+     */
     public Feature(String name, Feature feature) {
         this.name = name;
         this.isGated = feature.isGated;
