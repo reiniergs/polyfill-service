@@ -4,9 +4,7 @@ import org.polyfill.components.Feature;
 import org.polyfill.components.Query;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.TSort;
-import org.polyfill.interfaces.PolyfillQueryService;
-import org.polyfill.interfaces.UserAgent;
-import org.polyfill.interfaces.VersionUtilService;
+import org.polyfill.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @Service("presort")
 @Primary
-class PreSortPolyfillQueryService implements PolyfillQueryService {
+class PreSortPolyfillService implements org.polyfill.interfaces.PolyfillService {
 
     @Resource(name = "polyfills")
     private Map<String, Polyfill> polyfills;
@@ -37,6 +35,12 @@ class PreSortPolyfillQueryService implements PolyfillQueryService {
 
     @Autowired
     private VersionUtilService versionChecker;
+
+    @Autowired
+    private UserAgentParserService userAgentParserService;
+
+    @Autowired
+    private PolyfillsOutputService polyfillsOutputService;
 
     private List<String> sortedPolyfills;
 
@@ -56,31 +60,43 @@ class PreSortPolyfillQueryService implements PolyfillQueryService {
     }
 
     @Override
-    public List<Feature> getFeatures(Query query) {
-        List<Feature> featureList = query.getFeatures();
-        UserAgent userAgent = query.getUserAgent();
-        boolean doLoadOnUnknownUA = query.doLoadOnUnknownUA();
-        boolean doIncludeDependencies = query.doIncludeDependencies();
-        Set<String> excludes = query.getExcludes();
+    public List<Feature> getFeatures(Query query, String uaString) {
+        UserAgent userAgent = uaString == null ? null : userAgentParserService.parse(uaString);
+        return getFeatures(userAgent, query);
+    }
 
-        if (userAgent != null && !isUserAgentSupported(userAgent) && !doLoadOnUnknownUA) {
+    @Override
+    public String getPolyfillsSource(Query query, String userAgentString) {
+        return getPolyfillsSource(query, userAgentString, false);
+    }
+
+    @Override
+    public String getPolyfillsSource(Query query, String uaString, boolean isDebugMode) {
+        UserAgent userAgent = uaString == null ? null : userAgentParserService.parse(uaString);
+        List<Feature> featuresLoaded = getFeatures(userAgent, query);
+        return polyfillsOutputService.getPolyfillsSource(userAgent.toString(), query, featuresLoaded, isDebugMode);
+    }
+
+    private List<Feature> getFeatures(UserAgent userAgent, Query query) {
+        if ((userAgent != null && !isUserAgentSupported(userAgent) && !query.doLoadOnUnknownUA())
+                || query.getFeatures().isEmpty()) {
             return Collections.emptyList();
         }
 
         Map<String, Feature> featureSet = new HashMap<>();
-        for (Feature feature : featureList) {
+        for (Feature feature : query.getFeatures()) {
             featureSet.put(feature.getName(), feature);
         }
 
         resolveFeatures(featureSet, this::resolveAlias, true);
-        filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
+        filterForTargetingUA(featureSet, userAgent, query.doLoadOnUnknownUA());
 
-        if (doIncludeDependencies) {
+        if (query.doIncludeDependencies()) {
             resolveFeatures(featureSet, this::resolveDependencies, false);
-            filterForTargetingUA(featureSet, userAgent, doLoadOnUnknownUA);
+            filterForTargetingUA(featureSet, userAgent, query.doLoadOnUnknownUA());
         }
 
-        filterExcludes(featureSet, excludes);
+        filterExcludes(featureSet, query.getExcludes());
 
         attachPolyfills(featureSet);
 

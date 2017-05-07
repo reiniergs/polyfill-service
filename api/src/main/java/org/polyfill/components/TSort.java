@@ -6,16 +6,6 @@ import java.util.List;
 
 public class TSort {
 
-     private class Relation {
-        final String from;
-        final String to;
-
-        Relation(String from, String to) {
-            this.from = from;
-            this.to = to;
-        }
-    }
-
     private List<Relation> T;
 
     public TSort() {
@@ -30,7 +20,7 @@ public class TSort {
         List<String> sortedList = new ArrayList<>();
 
         // find nodes with no incoming edges
-        List<String> S = new ArrayList<String>();
+        List<String> S = new ArrayList<>();
         for (Relation rel: T) {
             if (!S.contains(rel.from)) S.add(rel.from);
         }
@@ -76,7 +66,7 @@ public class TSort {
 
         // if graph has edges
         if (T.size() > 0) {
-            System.out.println("This graph has cycle. Aborted.");
+            System.err.println("This graph has cycle. Aborted.");
         }
 
         return sortedList;
@@ -86,21 +76,13 @@ public class TSort {
         T = new ArrayList<>();
     }
 
-    public static void main(String[] args) {
-        TSort tsort = new TSort();
-        tsort.addRelation("20", null);
-        tsort.addRelation("3", "20");
-        tsort.addRelation("3","8");
-        tsort.addRelation("3","10");
-        tsort.addRelation("5","11");
-        tsort.addRelation("7","8");
-        tsort.addRelation("7","11");
-        tsort.addRelation("8","9");
-        tsort.addRelation("11","2");
-        tsort.addRelation("11","9");
-        tsort.addRelation("11","10");
-        tsort.sort().forEach(item -> {
-            System.out.println(item);
-        });
+    private class Relation {
+        final String from;
+        final String to;
+
+        Relation(String from, String to) {
+            this.from = from;
+            this.to = to;
+        }
     }
 }

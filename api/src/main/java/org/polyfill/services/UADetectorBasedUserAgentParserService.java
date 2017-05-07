@@ -4,7 +4,6 @@ import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.polyfill.components.UserAgentImpl;
 import org.polyfill.interfaces.UserAgent;
 import org.polyfill.interfaces.UserAgentParserService;
 import org.springframework.context.annotation.Primary;
@@ -20,8 +19,8 @@ import java.util.regex.Pattern;
  * Created by smo
  * Service to parse user agent string.
  */
-@Service("uadetector")
 @Primary
+@Service("uadetector")
 class UADetectorBasedUserAgentParserService implements UserAgentParserService {
 
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
@@ -31,20 +30,20 @@ class UADetectorBasedUserAgentParserService implements UserAgentParserService {
     private Map<String, Object> browserAliases;
 
     @Override
-    public UserAgent parse(String userAgentString) {
-        userAgentString = userAgentString.trim();
+    public UserAgent parse(String uaString) {
+        uaString = (uaString == null) ? "unknown/0.0.0" : uaString.trim();
 
         String family, versionString;
 
         // normalized user agent e.g. firefox/1.2.3
-        Matcher uaMatcher = normalizePattern.matcher(userAgentString);
+        Matcher uaMatcher = normalizePattern.matcher(uaString);
         if (uaMatcher.find()) {
             family = uaMatcher.group(1);
             versionString = uaMatcher.group(2);
 
         // normal user agent, need to parse
         } else {
-            ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(userAgentString));
+            ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(uaString));
             VersionNumber version = readableUA.getVersionNumber();
             family = readableUA.getName().toLowerCase();
             versionString = version.toVersionString();
@@ -82,5 +81,44 @@ class UADetectorBasedUserAgentParserService implements UserAgentParserService {
      */
     private String stripIOSWebViewBrowsers(String uaString) {
         return uaString.replaceAll("((CriOS|OPiOS)\\/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)|(FxiOS\\/(\\d+)\\.(\\d+)))", "");
+    }
+
+    /**
+     * Implementation of UserAgent interface to store user agent info
+     */
+    private class UserAgentImpl implements UserAgent {
+
+        private String family;
+        private VersionNumber version;
+
+        public UserAgentImpl(String family, String versionString) {
+            this.family = family;
+            this.version = VersionNumber.parseVersion(versionString);
+        }
+
+        @Override
+        public String getFamily() {
+            return this.family;
+        }
+
+        @Override
+        public String getVersion() {
+            return version.toVersionString();
+        }
+
+        @Override
+        public String getMajorVersion() {
+            return version.getMajor();
+        }
+
+        @Override
+        public String getMinorVersion() {
+            return version.getMinor();
+        }
+
+        @Override
+        public String toString() {
+            return getFamily() + "/" + getVersion();
+        }
     }
 }

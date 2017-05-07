@@ -3,8 +3,7 @@ package org.polyfill.controllers;
 import org.polyfill.components.Feature;
 import org.polyfill.components.Polyfill;
 import org.polyfill.components.Query;
-import org.polyfill.interfaces.PolyfillQueryService;
-import org.polyfill.interfaces.UserAgentParserService;
+import org.polyfill.interfaces.PolyfillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,10 +30,7 @@ public class TestController {
     private static final String MODE = "mode";
 
     @Autowired
-    UserAgentParserService userAgentParserService;
-
-    @Autowired
-    PolyfillQueryService polyfillQueryService;
+    PolyfillService polyfillService;
 
     /**
      * Params
@@ -59,10 +55,14 @@ public class TestController {
 
         String mode = params.getOrDefault(MODE, "all");
         String featureReq = params.getOrDefault(FEATURE, "all");
-        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
+        String uaString = "targeted".equals(mode) ? params.getOrDefault(UA_OVERRIDE, headerUA) : null;
 
-        Query query = buildQuery(featureReq, mode, uaString);
-        List<Polyfill> polyfills = getTestPolyfills(query);
+        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
+        Query query = new Query(reqFeatureList)
+                .setIncludeDependencies(false)
+                .setLoadOnUnknownUA(false);
+
+        List<Polyfill> polyfills = getTestPolyfills(uaString, query);
         List<Map<String, Object>> testFeatures = getTestFeatures(polyfills);
 
         model.addAttribute("featureRequested", featureReq);
@@ -74,20 +74,9 @@ public class TestController {
         return "tests/browsers/runner";
     }
 
-    private Query buildQuery(String featureReq, String mode, String uaString) {
-        List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
-        Query query = new Query(reqFeatureList)
-                .setIncludeDependencies(false)
-                .setLoadOnUnknownUA(false);
-        if ("targeted".equals(mode)) {
-            query.setUserAgent(userAgentParserService.parse(uaString));
-        }
-        return query;
-    }
-
-    private List<Polyfill> getTestPolyfills(Query query) {
-        Map<String, Polyfill> allPolyfills = polyfillQueryService.getAllPolyfills();
-        return polyfillQueryService.getFeatures(query).stream()
+    private List<Polyfill> getTestPolyfills(String uaString, Query query) {
+        Map<String, Polyfill> allPolyfills = polyfillService.getAllPolyfills();
+        return polyfillService.getFeatures(query, uaString).stream()
                 .map(feature -> allPolyfills.get(feature.getName()))
                 .collect(Collectors.toList());
     }

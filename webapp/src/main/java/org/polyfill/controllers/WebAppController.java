@@ -1,7 +1,7 @@
 package org.polyfill.controllers;
 
 import org.polyfill.components.Polyfill;
-import org.polyfill.interfaces.PolyfillQueryService;
+import org.polyfill.interfaces.PolyfillService;
 import org.polyfill.views.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,11 +22,11 @@ import java.util.Map;
 public class WebAppController {
 
     @Autowired
-    PolyfillQueryService preSortPolyfillQueryService;
+    PolyfillService polyfillService;
 
     @RequestMapping(value = "/web/polyfills", method = RequestMethod.GET)
     public View polyfillApi() {
-        Map<String, Polyfill> polyfills = preSortPolyfillQueryService.getAllPolyfills();
+        Map<String, Polyfill> polyfills = polyfillService.getAllPolyfills();
         List<Map<String, Object>> polyfillsMainMetaData = getPolyfillsMainMetaData(polyfills);
 
         return new JsonView(polyfillsMainMetaData);
@@ -34,7 +34,7 @@ public class WebAppController {
 
     @RequestMapping(value = "/web/polyfill/{name:.+}", method = RequestMethod.GET)
     public View polyfillApi(@PathVariable String name) {
-        Polyfill polyfill = preSortPolyfillQueryService.getPolyfill(name);
+        Polyfill polyfill = polyfillService.getPolyfill(name);
 
         if (polyfill != null) {
             return new JsonView(this.getPolyfillMetaData(polyfill));
