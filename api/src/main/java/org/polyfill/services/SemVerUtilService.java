@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
  * Created by scottmo on 10/20/16
  * Service to check version number
  */
-@Service("semver")
 @Primary
+@Service("semver")
 class SemVerUtilService implements VersionUtilService {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)((\\.\\d+)+)?");

@@ -1,20 +1,18 @@
 package org.polyfill.components;
 
-import org.polyfill.interfaces.UserAgent;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Created by smo on 3/28/17.
+ * Config object used to retrieve polyfills
  */
 public class Query {
     // features to request
     private List<Feature> features;
 
     // filters
-    private UserAgent userAgent = null;
     private Set<String> excludes = new HashSet<>();
     private boolean doLoadOnUnknownUA = false;
     private boolean doMinify = false;
@@ -28,15 +26,6 @@ public class Query {
 
     public List<Feature> getFeatures() {
         return this.features;
-    }
-
-    public UserAgent getUserAgent() {
-        return this.userAgent;
-    }
-
-    public Query setUserAgent(UserAgent userAgent) {
-        this.userAgent = userAgent;
-        return this;
     }
 
     public Set<String> getExcludes() {

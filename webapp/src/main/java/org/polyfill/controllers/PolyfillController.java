@@ -2,13 +2,8 @@ package org.polyfill.controllers;
 
 import org.polyfill.components.Feature;
 import org.polyfill.components.Query;
-import org.polyfill.interfaces.PolyfillQueryService;
-import org.polyfill.interfaces.UserAgent;
-import org.polyfill.interfaces.UserAgentParserService;
-import org.polyfill.views.PolyfillsView;
+import org.polyfill.interfaces.PolyfillService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +18,6 @@ import java.util.stream.Collectors;
  * Created by reinier.guerra on 10/12/16.
  */
 @Controller
-@PropertySource("classpath:config.properties")
 public class PolyfillController {
 
     // supported query params
@@ -36,16 +30,7 @@ public class PolyfillController {
     private static final String ONLY_SUPPORT_JS_MSG = "Sorry, we only support javascript polyfills :(";
 
     @Autowired
-    UserAgentParserService userAgentParserService;
-
-    @Autowired
-    PolyfillQueryService polyfillQueryService;
-
-    @Value("${project.version}")
-    private String projectVersion;
-
-    @Value("${project.url}")
-    private String projectUrl;
+    PolyfillService polyfillService;
 
     @RequestMapping(
             value={"polyfill.{doMinify:min}.{type:[^.]+}", "polyfill.{type:[^.]+}" },
@@ -59,8 +44,8 @@ public class PolyfillController {
 
         if (type.equals("js")) {
             httpHeaders.add("Content-Type", "text/javascript; charset=utf-8");
-            PolyfillsView view = getPolyfillsView(headerUA, params, doMinify.isPresent());
-            String output = view.getDebugInfo() + view.getSources();
+            httpHeaders.add("Access-Control-Allow-Origin", "*");
+            String output = getPolyfillsSource(headerUA, params, doMinify.isPresent());
             return new ResponseEntity<>(output, httpHeaders, HttpStatus.OK);
         } else {
             httpHeaders.add("Content-Type", "text/html; charset=utf-8");
@@ -72,22 +57,18 @@ public class PolyfillController {
      * Helpers
      ******************************************************/
 
-    private PolyfillsView getPolyfillsView(String headerUA, Map<String, String> params, boolean doMinify) {
-
+    private String getPolyfillsSource(String headerUA, Map<String, String> params, boolean doMinify) {
         List<Feature> featuresRequested = getFeatures(params);
         List<String> featuresToExclude = getFeaturesToExclude(params);
-        UserAgent userAgent = getUserAgent(headerUA, params);
+        String uaString = getUserAgent(headerUA, params);
         boolean loadOnUnknown = getLoadOnUnknown(params);
 
         Query query = new Query(featuresRequested)
-                .setUserAgent(userAgent)
                 .setLoadOnUnknownUA(loadOnUnknown)
                 .excludeFeatures(featuresToExclude)
                 .setMinify(doMinify);
 
-        List<Feature> featuresLoaded = polyfillQueryService.getFeatures(query);
-
-        return new PolyfillsView(projectVersion, projectUrl, query, featuresLoaded);
+        return polyfillService.getPolyfillsSource(query, uaString, true);
     }
 
     private List<Feature> getFeatures(Map<String, String> params) {
@@ -109,9 +90,8 @@ public class PolyfillController {
         return featureList;
     }
 
-    private UserAgent getUserAgent(String headerUA, Map<String, String> params) {
-        String uaString = params.getOrDefault(UA_OVERRIDE, headerUA);
-        return userAgentParserService.parse(uaString);
+    private String getUserAgent(String headerUA, Map<String, String> params) {
+        return params.getOrDefault(UA_OVERRIDE, headerUA);
     }
 
     private boolean getLoadOnUnknown(Map<String, String> params) {

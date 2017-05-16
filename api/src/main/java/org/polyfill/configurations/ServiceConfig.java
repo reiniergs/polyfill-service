@@ -4,6 +4,7 @@ import org.polyfill.components.Polyfill;
 import org.polyfill.interfaces.ConfigLoaderService;
 import org.polyfill.interfaces.PolyfillLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +26,27 @@ public class ServiceConfig {
     public static final String BROWSER_ALIASES_CONFIG = "browserAliases.json";
     public static final String BROWSER_BASELINES_CONFIG = "browserBaselines.json";
 
+    @Value("${project.version}")
+    private String projectVersion;
+
+    @Value("${project.url}")
+    private String projectUrl;
+
     @Autowired
     private ConfigLoaderService configLoaderService;
 
     @Autowired
     private PolyfillLoaderService polyfillLoaderService;
+
+    @Bean
+    public String projectVersion() {
+        return projectVersion;
+    }
+
+    @Bean
+    public String projectUrl() {
+        return projectUrl;
+    }
 
     @Bean
     public Map<String, Object> aliases() throws IOException {

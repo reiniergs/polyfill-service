@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.polyfill.interfaces.PolyfillQueryService;
+import org.polyfill.interfaces.PolyfillService;
 import org.polyfill.interfaces.UserAgentParserService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,7 +23,7 @@ public class PolyfillControllerTest {
     PolyfillController polyfillController;
 
     @Mock
-    PolyfillQueryService polyfillQueryService;
+    PolyfillService polyfillService;
 
     @Mock
     UserAgentParserService userAgentParserService;

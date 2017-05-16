@@ -1,93 +1,58 @@
-package org.polyfill.views;
+package org.polyfill.services;
 
 import org.polyfill.components.Feature;
 import org.polyfill.components.Query;
-import org.polyfill.interfaces.UserAgent;
-import org.springframework.web.servlet.View;
+import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by reinier.guerra on 10/12/16.
+ * Created by smo on 4/27/17.
  */
-public class PolyfillsView implements View {
+@Service
+class PolyfillsOutputService {
 
     private static final String NO_POLYFILLS_MESSAGE = "/* No polyfills found for current settings */";
     private static final String MIN_MESSAGE = "/* Disable minification (remove `.min` from URL path) for more info */";
 
+    @Resource(name = "projectVersion")
     private String projectVersion;
+
+    @Resource(name = "projectUrl")
     private String projectUrl;
-    private UserAgent userAgent;
-    private List<Feature> featuresRequested = new ArrayList<>();
-    private List<Feature> featuresLoaded = new ArrayList<>();
-    private boolean minify = false;
 
-    public PolyfillsView(String projectVersion, String projectUrl,
-            Query query, List<Feature> featuresLoaded) {
-        this.projectVersion = projectVersion;
-        this.projectUrl = projectUrl;
-        this.featuresLoaded = featuresLoaded;
-        this.userAgent = query.getUserAgent();
-        this.featuresRequested = query.getFeatures();
-        this.minify = query.doMinify();
-    }
-
-    @Override
-    public String getContentType() {
-        return "text/javascript;charset=UTF-8";
-    }
-
-    @Override
-    public void render(Map<String, ?> map, HttpServletRequest request, HttpServletResponse response) {
-
-        String output = getDebugInfo() + getSources();
-
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setContentType(getContentType());
-
-        try (ServletOutputStream stream = response.getOutputStream()) {
-            stream.print(output);
-        } catch (IOException e) {
-            System.err.println("Failed to send response!");
-        }
+    public String getPolyfillsSource(String uaString, Query query,
+                                     List<Feature> featuresLoaded, boolean isDebugMode) {
+        String debugInfo = isDebugMode ? getDebugInfo(uaString, query, featuresLoaded) : "";
+        String sources = getSources(featuresLoaded, query.doMinify());
+        return !debugInfo.isEmpty() && !sources.isEmpty()
+                ? debugInfo + "\n\n" + sources
+                : debugInfo + sources;
     }
 
     /**
      * Build sources of polyfills
      * @return sources of polyfills
      */
-    public String getSources() {
-        String sources = toPolyfillsSource(this.featuresLoaded);
-        if (isEmpty(sources)) {
-            return this.minify ? "" : "\n\n" + NO_POLYFILLS_MESSAGE;
-        }
-        return "\n\n" + wrapInClosure(sources);
-    }
-
-    /**
-     * Concatenate featuresLoaded to source
-     * @param features list of feature options
-     * @return source of featuresLoaded requested
-     */
-    private String toPolyfillsSource(List<Feature> features) {
-        return features.stream()
-                .map(feature -> feature.getSource(this.minify))
+    private String getSources(List<Feature> features, boolean minify) {
+        String sources = features.stream()
+                .map(feature -> feature.getSource(minify))
                 .collect(Collectors.joining());
+        if (sources.isEmpty()) {
+            return minify ? "" : NO_POLYFILLS_MESSAGE;
+        }
+        return wrapInClosure(sources, minify);
     }
 
     /**
      * Wrap source in closure to hide private functions
      * @return wrapped source
      */
-    private String wrapInClosure(String source) {
-        String lf = this.minify ? "" : "\n";
+    private String wrapInClosure(String source, boolean minify) {
+        String lf = minify ? "" : "\n";
         return "(function(undefined) {" + lf + source + "})" + lf
                 + ".call('object' === typeof window && window" // bind `this` to window in a browser
                 + " || 'object' === typeof self && self"       // bind `this` to self in a web worker
@@ -99,8 +64,8 @@ public class PolyfillsView implements View {
      * Build header comments for debugging
      * @return header comments containing debug info
      */
-    public String getDebugInfo() {
-        if (this.minify) {
+    private String getDebugInfo(String uaString, Query query, List<Feature> featuresLoaded) {
+        if (query.doMinify()) {
             return MIN_MESSAGE;
         }
 
@@ -108,21 +73,21 @@ public class PolyfillsView implements View {
         headers.add("Polyfill service v" + this.projectVersion);
         headers.add("For detailed credits and licence information see " + this.projectUrl);
 
-        if (this.userAgent != null) {
+        if (uaString != null) {
             headers.add(""); // new line
-            headers.add("UA detected: " + this.userAgent.toString());
+            headers.add("UA detected: " + uaString);
         }
 
-        if (!this.featuresRequested.isEmpty()) {
-            String featuresRequestedLine = this.featuresRequested.stream()
+        if (!query.getFeatures().isEmpty()) {
+            String featuresRequestedLine = query.getFeatures().stream()
                     .map(Feature::getName)
                     .collect(Collectors.joining(","));
             headers.add("Features requested: " + featuresRequestedLine);
         }
 
-        if (!this.featuresLoaded.isEmpty()) {
+        if (!featuresLoaded.isEmpty()) {
             headers.add(""); // new line
-            List<String> featuresLoadedLines = this.featuresLoaded.stream()
+            List<String> featuresLoadedLines = featuresLoaded.stream()
                     .map(this::formatFeatureLoaded)
                     .collect(Collectors.toList());
             headers.addAll(featuresLoadedLines);
@@ -160,9 +125,5 @@ public class PolyfillsView implements View {
         }
 
         return "- " + feature.getName() + license + relatedFeatures;
-    }
-
-    private boolean isEmpty(String value) {
-        return value == null || "".equals(value);
     }
 }
