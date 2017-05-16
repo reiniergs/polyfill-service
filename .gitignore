@@ -12,6 +12,8 @@ target/
 
 out/
 lib/
-polyfills/__dist
 node_modules
-src/main/webapp/docs
+
+# Generated
+*/src/main/webapp/docs/
+api/src/main/resources/polyfills/

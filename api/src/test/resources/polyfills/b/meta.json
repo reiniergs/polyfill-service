@@ -1,0 +1,14 @@
+{
+    "aliases": [
+        "default",
+        "es6"
+    ],
+    "browsers": {
+        "chrome": "*",
+        "firefox": "31"
+    },
+    "dependencies": [
+        "c"
+    ],
+    "detectSource": "b.detectSource"
+}

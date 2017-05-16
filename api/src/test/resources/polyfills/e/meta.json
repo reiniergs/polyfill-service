@@ -1,0 +1,10 @@
+{
+    "aliases": [
+        "foo"
+    ],
+    "browsers": {
+        "chrome": "*"
+    },
+    "dependencies": [],
+    "detectSource": "e.detectSource"
+}
