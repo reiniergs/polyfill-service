@@ -31,13 +31,13 @@
             <artifactId>handlebars-springmvc</artifactId>
             <version>4.0.3</version>
         </dependency>
-        <!-- api library -->
+        <!-- polyfills api library -->
         <dependency>
             <groupId>polyfills</groupId>
             <artifactId>polyfill-service-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- rest controllers -->
+        <!-- polyfills api controllers -->
         <dependency>
             <groupId>polyfills</groupId>
             <artifactId>polyfill-service-rest</artifactId>
@@ -87,9 +87,7 @@
         </plugins>
     </build>
 
-    <!-- Profiles -->
     <profiles>
-
         <profile>
             <id>heroku</id>
             <activation>
@@ -121,14 +119,6 @@
                                             <version>9.3.3.v20150827</version>
                                             <destFileName>jetty-runner.jar</destFileName>
                                         </artifactItem>
-                                        <!--<artifactItem>-->
-                                            <!--<groupId>polyfills</groupId>-->
-                                            <!--<artifactId>polyfill-service-rest</artifactId>-->
-                                            <!--<version>1.0-SNAPSHOT</version>-->
-                                            <!--<type>war</type>-->
-                                            <!--<overWrite>true</overWrite>-->
-                                            <!--<outputDirectory>target/</outputDirectory>-->
-                                        <!--</artifactItem>-->
                                     </artifactItems>
                                 </configuration>
                             </execution>
@@ -137,6 +127,5 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 </project>
