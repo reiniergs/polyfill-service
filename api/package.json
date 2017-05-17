@@ -30,6 +30,7 @@
     "express": "^4.4.4",
     "fast-stats": "0.0.3",
     "graphite": "0.0.6",
+    "graceful-fs": "~4.1.4",
     "handlebars": "^4.0.5",
     "html5shiv": "^3.7.3",
     "intersection-observer": "^0.1.1",

@@ -17,7 +17,8 @@
 
     <modules>
         <module>api</module>
-        <module>webapp</module>
+        <module>rest</module>
+        <module>web</module>
     </modules>
 
     <dependencies>
@@ -210,43 +211,6 @@
                     <check/>
                 </configuration>
             </plugin>
-            <!-- Node plugin to compile polyfills sources -->
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.0</version>
-
-                <configuration>
-                    <nodeVersion>v6.7.0</nodeVersion>
-                    <npmVersion>3.10.3</npmVersion>
-                    <installDirectory>target</installDirectory>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <skip>${skipNpm}</skip>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm install</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                            <skip>${skipNpm}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- coverage report with coveralls -->
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
@@ -259,7 +223,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
             <id>dev</id>
