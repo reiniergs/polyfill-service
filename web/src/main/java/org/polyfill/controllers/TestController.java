@@ -48,7 +48,7 @@ public class TestController {
      * @param model data model for runner page
      * @return mocha test runner page
      */
-    @RequestMapping(value = "/test/tests", method = RequestMethod.GET)
+    @RequestMapping(value = "/tests", method = RequestMethod.GET)
     public String polyfillsMochaTests(@RequestHeader("User-Agent") String headerUA,
                                       @RequestParam Map<String, String> params,
                                       Model model) {

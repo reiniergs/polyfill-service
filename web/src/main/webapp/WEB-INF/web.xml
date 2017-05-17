@@ -6,14 +6,26 @@
 
     <display-name>Polyfill Service</display-name>
 
+    <!-- Web app controller -->
     <servlet>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>webapp</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>webapp</servlet-name>
         <url-pattern>/web/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Mocha test controller -->
+    <servlet>
+        <servlet-name>test</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>test</servlet-name>
+        <url-pattern>/test/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
