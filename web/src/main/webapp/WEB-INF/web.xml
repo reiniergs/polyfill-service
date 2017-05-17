@@ -13,7 +13,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/test/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
