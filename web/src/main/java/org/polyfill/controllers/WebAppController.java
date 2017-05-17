@@ -24,7 +24,7 @@ public class WebAppController {
     @Autowired
     PolyfillService polyfillService;
 
-    @RequestMapping(value = "/web/polyfills", method = RequestMethod.GET)
+    @RequestMapping(value = "/polyfills", method = RequestMethod.GET)
     public View polyfillApi() {
         Map<String, Polyfill> polyfills = polyfillService.getAllPolyfills();
         List<Map<String, Object>> polyfillsMainMetaData = getPolyfillsMainMetaData(polyfills);
@@ -32,7 +32,7 @@ public class WebAppController {
         return new JsonView(polyfillsMainMetaData);
     }
 
-    @RequestMapping(value = "/web/polyfill/{name:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/polyfill/{name:.+}", method = RequestMethod.GET)
     public View polyfillApi(@PathVariable String name) {
         Polyfill polyfill = polyfillService.getPolyfill(name);
 

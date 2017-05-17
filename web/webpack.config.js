@@ -5,9 +5,9 @@ let path = require('path');
 let CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const TARGET = process.env.npm_lifecycle_event;
-const WEB_DIR = './';
+const WEB_DIR = 'src/main/webapp/';
 const BUILD_DIR = path.resolve(__dirname, WEB_DIR + 'assets/js');
-const APP_DIR = path.resolve(__dirname, 'app/');
+const APP_DIR = path.resolve(__dirname,  'app/');
 
 var commonConfig = {
     entry: {

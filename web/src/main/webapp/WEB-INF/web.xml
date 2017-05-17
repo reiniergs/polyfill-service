@@ -13,7 +13,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/test/*</url-pattern>
+        <url-pattern>/web/*</url-pattern>
     </servlet-mapping>
 
     <servlet>

@@ -14,7 +14,7 @@ export const loadPolyfill = () => {
             }
         });
 
-        request.open('GET', '/api/web/polyfills', true);
+        request.open('GET', '/web/polyfills', true);
         request.send();
     }
 };
@@ -50,7 +50,7 @@ export const loadPolyfillMeta = function (name) {
             }
         });
 
-        request.open('GET', `/api/web/polyfill/${name}`, true);
+        request.open('GET', `/web/polyfill/${name}`, true);
         request.send();
     }
 };

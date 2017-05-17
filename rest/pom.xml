@@ -15,17 +15,6 @@
     </parent>
 
     <dependencies>
-        <!-- handlebars -->
-        <dependency>
-            <groupId>com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
-            <version>4.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jknack</groupId>
-            <artifactId>handlebars-springmvc</artifactId>
-            <version>4.0.3</version>
-        </dependency>
         <!-- api library -->
         <dependency>
             <groupId>polyfills</groupId>
