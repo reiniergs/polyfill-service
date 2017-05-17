@@ -19,7 +19,7 @@ import java.util.Map;
 @Configuration
 @PropertySource("classpath:config.properties")
 @ComponentScan(basePackages = {"org.polyfill.api"})
-public class ApiConfig {
+public class PolyfillApiConfig {
 
     private static final String POLYFILLS_DIST = "polyfills";
     private static final String ALIASES_CONFIG = "aliases.json";

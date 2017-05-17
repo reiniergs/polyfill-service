@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Created by smo on 3/25/17.
  */
 @Controller
+@RequestMapping("test")
 public class TestController {
 
     // supported query params

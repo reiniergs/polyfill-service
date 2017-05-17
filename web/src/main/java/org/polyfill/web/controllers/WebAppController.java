@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by reinier.guerra on 2/22/17.
  */
 @Controller
+@RequestMapping("web")
 public class WebAppController {
 
     @Autowired

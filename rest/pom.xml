@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>polyfill-service-rest</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>polyfills</groupId>

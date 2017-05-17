@@ -1,4 +1,6 @@
 
+const API_URL_BASE = '/api/web';
+
 export const LOAD_POLYFILLS = 'LOAD_POLYFILLS';
 export const loadPolyfill = () => {
 
@@ -14,7 +16,7 @@ export const loadPolyfill = () => {
             }
         });
 
-        request.open('GET', '/web/polyfills', true);
+        request.open('GET', `${API_URL_BASE}/polyfills`, true);
         request.send();
     }
 };
@@ -50,7 +52,7 @@ export const loadPolyfillMeta = function (name) {
             }
         });
 
-        request.open('GET', `/web/polyfill/${name}`, true);
+        request.open('GET', `${API_URL_BASE}/polyfill/${name}`, true);
         request.send();
     }
 };
