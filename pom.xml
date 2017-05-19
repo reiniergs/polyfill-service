@@ -80,15 +80,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>repo.auraframework.org</id>
-            <url>http://repo.auraframework.org/libs-release</url>
-        </repository>
-    </repositories>
     <distributionManagement>
         <repository>
             <id>repo.auraframework.org</id>
