@@ -2,9 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
-    <groupId>polyfills</groupId>
+    <name>polyfill-service</name>
+    <description>Polyfill Service is a java library to get javascript polyfills suitable for the requesting user agent.</description>
+    <url>https://github.com/reiniergs/polyfill-service</url>
+    <inceptionYear>2017</inceptionYear>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.polyfills</groupId>
     <artifactId>polyfill-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -12,15 +17,97 @@
     <properties>
         <jettyVersion>9.4.0.v20161208</jettyVersion>
         <spring.version>4.3.3.RELEASE</spring.version>
-        <packaging.type>pom</packaging.type>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <scm>
+        <connection>scm:git:git@github.com:reiniergs/polyfill-service.git</connection>
+        <developerConnection>scm:git:ssh@github.com:reiniergs/polyfill-service.git</developerConnection>
+        <url>https://github.com/reiniergs/polyfill-service/tree/master</url>
+        <tag>master</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+            <comments>
+                MIT License
+
+                Copyright (c) 2017 Reinier Guerra, Shaocong Mo and Bhargav Venkataraman
+
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is
+                furnished to do so, subject to the following conditions:
+
+                The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                SOFTWARE.
+            </comments>
+        </license>
+    </licenses>
 
     <modules>
         <module>api</module>
         <module>rest</module>
         <module>web</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.polyfills</groupId>
+                <artifactId>polyfill-service-api</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.polyfills</groupId>
+                <artifactId>polyfill-service-rest</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>maven.auraframework.org</id>
+            <url>http://maven.auraframework.org/libs-release</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>repo.auraframework.org</id>
+            <url>http://repo.auraframework.org/libs-release</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>maven.auraframework.org</id>
+            <name>maven.auraframework.org-releases</name>
+            <url>http://maven.auraframework.org/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.auraframework.org</id>
+            <name>maven.auraframework.org-snapshots</name>
+            <url>http://maven.auraframework.org/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -74,8 +161,49 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Node plugin settings -->
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.0</version>
+
+                    <configuration>
+                        <nodeVersion>v6.7.0</nodeVersion>
+                        <npmVersion>3.10.3</npmVersion>
+                        <installDirectory>target</installDirectory>
+                    </configuration>
+
+                    <executions>
+                        <execution>
+                            <id>install node and npm</id>
+                            <goals>
+                                <goal>install-node-and-npm</goal>
+                            </goals>
+                            <phase>generate-resources</phase>
+                            <configuration>
+                                <skip>${skip.npm}</skip>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>npm install</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <arguments>install</arguments>
+                                <skip>${skip.npm}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
-            <!-- java compiler version -->
+            <!-- maven plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -84,6 +212,16 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
             </plugin>
             <!-- jetty -->
             <plugin>
@@ -136,6 +274,8 @@
                     <skipTests>${skip.unit.tests}</skipTests>
                     <excludes>
                         <exclude>src/integration-test/*.java</exclude>
+                        <exclude>*IntegrationTest.java</exclude>
+                        <exclude>*IT.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -204,6 +344,44 @@
                 <skip.integration.tests>false</skip.integration.tests>
                 <skip.unit.tests>true</skip.unit.tests>
             </properties>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- java docs and sources jar -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <configuration>
+                            <destDir>src/main/webapp/docs</destDir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
