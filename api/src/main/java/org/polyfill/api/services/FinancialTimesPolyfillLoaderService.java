@@ -1,6 +1,5 @@
 package org.polyfill.api.services;
 
-import org.apache.commons.io.FilenameUtils;
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.interfaces.ConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
@@ -11,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -114,9 +114,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     }
 
     private String getBaseDirectoryName(Resource resource) throws IOException {
-        // using string manipulation to handle path here because if resource is from jar,
-        // we cannot create a file/path instance from it
-        String dirPathString = FilenameUtils.getFullPathNoEndSeparator(resource.getURI().toString());
-        return FilenameUtils.getName(dirPathString);
+        Path path = FileSystems.getDefault().getPath(resource.getURI().toString());
+        return path.getParent().getFileName().toString();
     }
 }

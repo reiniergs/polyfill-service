@@ -1,10 +1,10 @@
 package org.polyfill.api.interfaces;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ResourceUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +19,13 @@ public interface ResourceLoaderService {
 
     default String resourceToString(Resource resource) throws IOException {
         try (InputStream is = resource.getInputStream()) {
-            return IOUtils.toString(is, StandardCharsets.UTF_8);
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
         }
     }
 

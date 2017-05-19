@@ -3,11 +3,13 @@ package org.polyfill.api.services;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Query;
 import org.polyfill.api.interfaces.QueryLoaderService;
+import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +26,21 @@ import java.util.List;
  */
 @Primary
 @Service("xml")
-class XMLQueryLoaderService implements QueryLoaderService {
+class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService {
 
     @Override
-    public Query loadQuery(String filePath) {
-        Document xmlDoc = loadXMLDoc(filePath);
-        if (xmlDoc == null) {
-            return null;
-        }
-        return new Query(getFeatures(xmlDoc));
+    public Query loadQuery(String filePath) throws IOException {
+        File file = new File(filePath);
+        InputSource is = new InputSource(file.toURI().toASCIIString());
+        Document doc = loadXMLDoc(is);
+        return new Query(getFeatures(doc));
+    }
+
+    @Override
+    public Query loadQuery(InputStream inputStream) throws IOException {
+        InputSource is = new InputSource(inputStream);
+        Document doc = loadXMLDoc(is);
+        return new Query(getFeatures(doc));
     }
 
     /**
@@ -91,21 +100,19 @@ class XMLQueryLoaderService implements QueryLoaderService {
     }
 
     /**
-     * Load XML file from filePath into a Document object
-     * @param filePath file path to the xml file
-     * @return Document object containing data from xml file
+     * Get xml document parser
+     * @return xml document parser
      */
-    private Document loadXMLDoc(String filePath) {
-        File xmlFile = new File(filePath);
+    private Document loadXMLDoc(InputSource is) throws IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(xmlFile);
+            Document doc = dBuilder.parse(is);
             doc.getDocumentElement().normalize();
             return doc;
-        } catch (SAXException | ParserConfigurationException | IOException e1) {
-            return null;
+        } catch (SAXException | ParserConfigurationException e) {
+            throw new IOException(e);
         }
     }
 }
