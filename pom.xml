@@ -85,27 +85,20 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>maven.auraframework.org</id>
-            <url>http://maven.auraframework.org/libs-release</url>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
             <id>repo.auraframework.org</id>
             <url>http://repo.auraframework.org/libs-release</url>
         </repository>
     </repositories>
     <distributionManagement>
         <repository>
-            <id>maven.auraframework.org</id>
-            <name>maven.auraframework.org-releases</name>
-            <url>http://maven.auraframework.org/libs-release-local</url>
+            <id>repo.auraframework.org</id>
+            <name>repo.auraframework.org-releases</name>
+            <url>http://repo.auraframework.org/libs-release-local</url>
         </repository>
         <snapshotRepository>
-            <id>maven.auraframework.org</id>
-            <name>maven.auraframework.org-snapshots</name>
-            <url>http://maven.auraframework.org/libs-snapshot-local</url>
+            <id>repo.auraframework.org</id>
+            <name>repo.auraframework.org-snapshots</name>
+            <url>http://repo.auraframework.org/libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
