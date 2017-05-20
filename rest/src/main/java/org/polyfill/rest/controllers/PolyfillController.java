@@ -62,11 +62,16 @@ public class PolyfillController {
         List<String> featuresToExclude = getFeaturesToExclude(params);
         String uaString = getUserAgent(headerUA, params);
         boolean loadOnUnknown = getLoadOnUnknown(params);
+        List<String> globalFlags = getList(params, GLOBAL_FLAGS, ",");
+        boolean isAlwaysForAll = globalFlags.contains(Feature.ALWAYS);
+        boolean isGatedForAll = globalFlags.contains(Feature.GATED);
 
         Query query = new Query(featuresRequested)
                 .setLoadOnUnknownUA(loadOnUnknown)
                 .excludeFeatures(featuresToExclude)
-                .setMinify(doMinify);
+                .setMinify(doMinify)
+                .setAlwaysForAll(isAlwaysForAll)
+                .setGatedForAll(isGatedForAll);
 
         return polyfillService.getPolyfillsSource(query, uaString, true);
     }
@@ -78,13 +83,6 @@ public class PolyfillController {
 
         if (featureList.isEmpty()) {
             featureList.add(new Feature("default"));
-        }
-
-        if (params.containsKey(GLOBAL_FLAGS)) {
-            // use Feature as a utility to set global flags on other features
-            List<String> flags = getList(params, GLOBAL_FLAGS, ",");
-            Feature global = new Feature("flags", flags.contains(Feature.GATED), flags.contains(Feature.ALWAYS));
-            featureList.forEach(featureOption -> featureOption.copyFlags(global));
         }
 
         return featureList;

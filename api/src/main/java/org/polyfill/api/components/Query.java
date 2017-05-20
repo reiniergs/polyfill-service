@@ -16,6 +16,8 @@ public class Query {
     private Set<String> excludes = new HashSet<>();
     private boolean doLoadOnUnknownUA = false;
     private boolean doMinify = false;
+    private boolean isGatedForAll = false;
+    private boolean isAlwaysForAll = false;
 
     // extra options
     private boolean doIncludeDependencies = true;
@@ -63,11 +65,29 @@ public class Query {
     }
 
     public boolean doMinify() {
-        return doMinify;
+        return this.doMinify;
     }
 
     public Query setMinify(boolean doMinify) {
         this.doMinify = doMinify;
+        return this;
+    }
+
+    public boolean isGatedForAll() {
+        return this.isGatedForAll;
+    }
+
+    public Query setGatedForAll(boolean isGatedForAll) {
+        this.isGatedForAll = isGatedForAll;
+        return this;
+    }
+
+    public boolean isAlwaysForAll() {
+        return isAlwaysForAll;
+    }
+
+    public Query setAlwaysForAll(boolean isAlwaysForAll) {
+        this.isAlwaysForAll = isAlwaysForAll;
         return this;
     }
 }

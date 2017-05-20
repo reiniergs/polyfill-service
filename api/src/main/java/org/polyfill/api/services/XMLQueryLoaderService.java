@@ -7,6 +7,7 @@ import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -32,15 +33,21 @@ class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService
     public Query loadQuery(String filePath) throws IOException {
         File file = new File(filePath);
         InputSource is = new InputSource(file.toURI().toASCIIString());
-        Document doc = loadXMLDoc(is);
-        return new Query(getFeatures(doc));
+        return loadQueryFromXMLDoc(is);
     }
 
     @Override
     public Query loadQuery(InputStream inputStream) throws IOException {
         InputSource is = new InputSource(inputStream);
+        return loadQueryFromXMLDoc(is);
+    }
+
+    private Query loadQueryFromXMLDoc(InputSource is) throws IOException {
         Document doc = loadXMLDoc(is);
-        return new Query(getFeatures(doc));
+        return new Query(getFeatures(doc))
+                .excludeFeatures(getExcludes(doc))
+                .setAlwaysForAll(getBoolNode(doc, Feature.ALWAYS))
+                .setGatedForAll(getBoolNode(doc, Feature.GATED));
     }
 
     /**
@@ -50,14 +57,28 @@ class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService
      */
     private List<Feature> getFeatures(Document doc) {
         List<Feature> features = new ArrayList<>();
-        NodeList nodeList = doc.getElementsByTagName("polyfill");
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Feature feature = getFeature(nodeList.item(i));
+        NodeList nodes = getNodeList(doc, "polyfills", "polyfill");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Feature feature = getFeature(nodes.item(i));
             if (feature != null) {
                 features.add(feature);
             }
         }
         return features;
+    }
+
+    /**
+     * Get a list of features to exclude from a Document object
+     * @param doc document object containing query configurations
+     * @return a list of features to exclude
+     */
+    private List<String> getExcludes(Document doc) {
+        List<String> excludes = new ArrayList<>();
+        NodeList nodes = getNodeList(doc, "excludes", "polyfill");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            excludes.add(getNodeValue(nodes.item(i)));
+        }
+        return excludes;
     }
 
     /**
@@ -73,6 +94,29 @@ class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService
             return new Feature(name, isGated, isAlways);
         }
         return null;
+    }
+
+    private NodeList getNodeList(Document doc, String containerName, String childName) {
+        NodeList containerNode = doc.getElementsByTagName(containerName);
+        if (containerNode.getLength() > 0 && containerNode.item(0).getNodeType() == Node.ELEMENT_NODE) {
+            Element container = (Element)containerNode.item(0);
+            return container.getElementsByTagName(childName);
+        }
+        return containerNode;
+    }
+
+    /**
+     * Get boolean value of node
+     * @param doc document object containing query configurations
+     * @param nodeName tag name of the node
+     * @return boolean value of node; if node doesn't exist, default to false
+     */
+    private boolean getBoolNode(Document doc, String nodeName) {
+        NodeList nodeList = doc.getElementsByTagName(nodeName);
+        if (nodeList.getLength() > 0) {
+            return Boolean.valueOf(getNodeValue(nodeList.item(0)));
+        }
+        return false;
     }
 
     /**

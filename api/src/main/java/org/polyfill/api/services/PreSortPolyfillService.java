@@ -85,6 +85,8 @@ class PreSortPolyfillService implements PolyfillService {
 
         Map<String, Feature> featureSet = new HashMap<>();
         for (Feature feature : query.getFeatures()) {
+            if (query.isAlwaysForAll()) feature.setAlways(true);
+            if (query.isGatedForAll()) feature.setGated(true);
             featureSet.put(feature.getName(), feature);
         }
 
