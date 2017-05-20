@@ -19,7 +19,8 @@ import static junit.framework.TestCase.*;
 public class XMLQueryLoaderServiceTest {
 
     private XMLQueryLoaderService queryLoaderService = new XMLQueryLoaderService();
-    private final String testXMLName = "query-config.xml";
+    private final String testXML = "query-config.xml";
+    private final String testXMLWithFlags = "query-config-flags.xml";
     private final String testResourceFolderName = "queries";
 
     @Test
@@ -34,7 +35,7 @@ public class XMLQueryLoaderServiceTest {
 
     @Test
     public void testNumFeaturesLoaded() throws Exception {
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         assertEquals("There should be 5 features defined to be loaded", 5, query.getFeatures().size());
     }
 
@@ -42,7 +43,7 @@ public class XMLQueryLoaderServiceTest {
     public void testFeaturesLoaded() throws Exception {
         List<String> expectedFeatures = Arrays.asList("default",
                 "GFeature", "AFeature", "GAFeature", "NGAFeature");
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         for (int i = 0; i < expectedFeatures.size(); i++) {
             assertEquals(expectedFeatures.get(i), query.getFeatures().get(i).getName());
         }
@@ -50,28 +51,28 @@ public class XMLQueryLoaderServiceTest {
 
     @Test
     public void testGatedFeature() throws Exception {
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         Feature featureReq = getFeatureByName(query, "GFeature");
         assertTrue("GFeature should be gated", featureReq.isGated());
     }
 
     @Test
     public void testAlwaysFeature() throws Exception {
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         Feature featureReq = getFeatureByName(query, "AFeature");
         assertTrue("AFeature should be always loaded", featureReq.isAlways());
     }
 
     @Test
     public void testGatedAlwaysFeature() throws Exception {
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         Feature featureReq = getFeatureByName(query, "GAFeature");
         assertTrue("GAFeature should be gated and always loaded", featureReq.isGated() && featureReq.isAlways());
     }
 
     @Test
     public void testNonGatedAlwaysFeature() throws Exception {
-        Query query = loadTestQuery(testXMLName);
+        Query query = loadTestQuery(testXML);
         Feature featureReq = getFeatureByName(query, "NGAFeature");
         assertTrue("GAFeature should not be gated and always loaded", !featureReq.isGated() && !featureReq.isAlways());
     }
@@ -80,10 +81,32 @@ public class XMLQueryLoaderServiceTest {
     public void testGetQueryFromInputStream() throws Exception {
         List<String> expectedFeatures = Arrays.asList("default",
                 "GFeature", "AFeature", "GAFeature", "NGAFeature");
-        Resource resource = queryLoaderService.getResource(testResourceFolderName, testXMLName);
+        Resource resource = queryLoaderService.getResource(testResourceFolderName, testXML);
         Query query = queryLoaderService.loadQuery(resource.getInputStream());
         for (int i = 0; i < expectedFeatures.size(); i++) {
             assertEquals(expectedFeatures.get(i), query.getFeatures().get(i).getName());
+        }
+    }
+
+    @Test
+    public void testGlobalGated() throws Exception {
+        Query query = loadTestQuery(testXMLWithFlags);
+        assertTrue("All should be gated", query.isGatedForAll());
+    }
+
+    @Test
+    public void testGlobalAlways() throws Exception {
+        Query query = loadTestQuery(testXMLWithFlags);
+        assertTrue("All should be always loaded", query.isAlwaysForAll());
+    }
+
+    @Test
+    public void testExcludedFeatures() throws Exception {
+        List<String> expectedExcludes = Arrays.asList("ExcludedFeature1", "ExcludedFeature2");
+        Query query = loadTestQuery(testXML);
+        for (String exclude : expectedExcludes) {
+            assertTrue("Incorrect excludes loaded: " + query.getExcludes(),
+                    query.getExcludes().contains(exclude));
         }
     }
 
