@@ -2,6 +2,8 @@
 <query>
     <gated>true</gated>
     <always>true</always>
+    <minified>true</minified>
+    <loadOnUnknownUA>true</loadOnUnknownUA>
     <polyfills>
         <polyfill gated="false" always="false">default</polyfill>
     </polyfills>

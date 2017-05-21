@@ -46,6 +46,8 @@ class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService
         Document doc = loadXMLDoc(is);
         return new Query(getFeatures(doc))
                 .excludeFeatures(getExcludes(doc))
+                .setMinify(getBoolNode(doc, "minified"))
+                .setLoadOnUnknownUA(getBoolNode(doc, "loadOnUnknownUA"))
                 .setAlwaysForAll(getBoolNode(doc, Feature.ALWAYS))
                 .setGatedForAll(getBoolNode(doc, Feature.GATED));
     }
@@ -89,8 +91,8 @@ class XMLQueryLoaderService implements QueryLoaderService, ResourceLoaderService
     private Feature getFeature(Node node) {
         String name = getNodeValue(node);
         if (name != null) {
-            boolean isGated = getBoolAttr(node, "gated");
-            boolean isAlways = getBoolAttr(node, "always");
+            boolean isGated = getBoolAttr(node, Feature.GATED);
+            boolean isAlways = getBoolAttr(node, Feature.ALWAYS);
             return new Feature(name, isGated, isAlways);
         }
         return null;
