@@ -1,7 +1,6 @@
 package org.polyfill.api.components;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -11,11 +10,6 @@ import java.util.List;
  * Created by reinier.guerra on 1/24/17.
  */
 public class TSortTest {
-
-    @Before
-    public void setUp() {
-
-    }
 
     @Test
     public void testTSortVariantOne() throws Exception {

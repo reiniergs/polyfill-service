@@ -1,6 +1,7 @@
 package org.polyfill.api.services;
 
 import org.polyfill.api.components.Feature;
+import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
 import org.springframework.stereotype.Service;
 
@@ -39,12 +40,34 @@ class PolyfillsOutputService {
      */
     private String getSources(List<Feature> features, boolean minify) {
         String sources = features.stream()
-                .map(feature -> feature.getSource(minify))
+                .map(feature -> getSource(feature, minify))
                 .collect(Collectors.joining());
         if (sources.isEmpty()) {
             return minify ? "" : NO_POLYFILLS_MESSAGE;
         }
         return wrapInClosure(sources, minify);
+    }
+
+    /**
+     * Get source of a feature
+     * @param feature feature
+     * @param minify whether to minify source
+     * @return source of feature
+     */
+    private String getSource(Feature feature, boolean minify) {
+        Polyfill polyfill = feature.getPolyfill();
+        String detectSource = polyfill.getDetectSource();
+        String source = minify ? polyfill.getMinSource() : polyfill.getRawSource();
+        source = (source == null) ? "" : source;
+
+        boolean wrapInDetect = feature.isGated() && detectSource != null;
+
+        if (wrapInDetect && !"".equals(detectSource)) {
+            String lf = minify ? "" : "\n";
+            return "if(!(" + detectSource + ")){" + lf + source + lf + "}" + lf + lf;
+        }
+
+        return source;
     }
 
     /**
@@ -112,8 +135,9 @@ class PolyfillsOutputService {
      */
     private String formatFeatureLoaded(Feature feature) {
         String license = "";
-        if (feature.getLicense() != null) {
-            license = ", License: " + feature.getLicense();
+        Polyfill polyfill = feature.getPolyfill();
+        if (polyfill.getLicense() != null) {
+            license = ", License: " + polyfill.getLicense();
         }
 
         String relatedFeatures = "";
