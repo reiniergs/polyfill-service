@@ -8,7 +8,7 @@
 ## Table of content
 - [Why? The problem](#why)
 - [A better way](#solution)
-- [API](https://github.com/reiniergs/polyfill-service/blob/master/API.md)
+- [API](https://github.com/reiniergs/polyfill-service/blob/master/rest)
 - [Running locally](#running-locally)
 - [Run tests](#tests)
 - [Java docs](#java-docs)
