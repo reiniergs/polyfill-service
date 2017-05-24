@@ -60,9 +60,11 @@ class PreSortPolyfillService implements PolyfillService {
     }
 
     @Override
-    public List<Feature> getFeatures(Query query, String uaString) {
+    public List<Polyfill> getPolyfills(Query query, String uaString) {
         UserAgent userAgent = uaString == null ? null : userAgentParserService.parse(uaString);
-        return getFeatures(userAgent, query);
+        return getFeatures(userAgent, query).stream()
+                .map(feature -> feature.getPolyfill())
+                .collect(Collectors.toList());
     }
 
     @Override

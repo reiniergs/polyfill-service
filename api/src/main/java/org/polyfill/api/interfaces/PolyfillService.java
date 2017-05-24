@@ -29,25 +29,15 @@ public interface PolyfillService {
     /**
      * Return a list of features containing all sources of polyfills.
      * Alias feature will expand into specific features.
-     * Query fields:
-     * - featureList - list of polyfill/alias names with options like always and/or gated
-     * - exclude list - list of features to exclude
-     * - whether to load features when user agent is unknown
-     * - whether to include dependencies
      * @param query config object with information about what features to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
-     * @return list of features
+     * @return list of polyfills
      */
-    List<Feature> getFeatures(Query query, String userAgentString);
+    List<Polyfill> getPolyfills(Query query, String userAgentString);
 
     /**
      * Return a string of the sources of requested polyfills
      * Alias feature will expand into specific features.
-     * Query fields:
-     * - featureList - list of polyfill/alias names with options like always and/or gated
-     * - exclude list - list of features to exclude
-     * - whether to load features when user agent is unknown
-     * - whether to include dependencies
      * @param query config object with information about what features to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @return source of all requested and valid polyfills
@@ -57,11 +47,6 @@ public interface PolyfillService {
     /**
      * Return a string of the sources of requested polyfills
      * Alias feature will expand into specific features.
-     * Query fields:
-     * - featureList - list of polyfill/alias names with options like always and/or gated
-     * - exclude list - list of features to exclude
-     * - whether to load features when user agent is unknown
-     * - whether to include dependencies
      * @param query config object with information about what features to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @param isDebugMode whether to add debug information in the header before the polyfills source

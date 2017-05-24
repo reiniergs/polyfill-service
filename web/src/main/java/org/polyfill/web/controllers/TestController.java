@@ -76,10 +76,7 @@ public class TestController {
     }
 
     private List<Polyfill> getTestPolyfills(String uaString, Query query) {
-        Map<String, Polyfill> allPolyfills = polyfillService.getAllPolyfills();
-        return polyfillService.getFeatures(query, uaString).stream()
-                .map(feature -> allPolyfills.get(feature.getName()))
-                .collect(Collectors.toList());
+        return polyfillService.getPolyfills(query, uaString);
     }
 
     private List<Map<String, Object>> getTestFeatures(List<Polyfill> polyfillList) {
