@@ -33,11 +33,11 @@ public class PolyfillController {
     PolyfillService polyfillService;
 
     @RequestMapping(
-            value={"polyfill.{doMinify:min}.{type:[^.]+}", "polyfill.{type:[^.]+}" },
+            value={"polyfill.{minify:min}.{type:[^.]+}", "polyfill.{type:[^.]+}" },
             method = RequestMethod.GET)
     public ResponseEntity polyfillApi(@RequestHeader("User-Agent") String headerUA,
                                       @RequestParam Map<String, String> params,
-                                      @PathVariable Optional<String> doMinify,
+                                      @PathVariable Optional<String> minify,
                                       @PathVariable String type,
                                       Model model) {
         final HttpHeaders httpHeaders= new HttpHeaders();
@@ -45,7 +45,7 @@ public class PolyfillController {
         if (type.equals("js")) {
             httpHeaders.add("Content-Type", "text/javascript; charset=utf-8");
             httpHeaders.add("Access-Control-Allow-Origin", "*");
-            String output = getPolyfillsSource(headerUA, params, doMinify.isPresent());
+            String output = getPolyfillsSource(headerUA, params, minify.isPresent());
             return new ResponseEntity<>(output, httpHeaders, HttpStatus.OK);
         } else {
             httpHeaders.add("Content-Type", "text/html; charset=utf-8");

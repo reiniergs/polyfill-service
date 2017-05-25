@@ -28,7 +28,7 @@ class PolyfillsOutputService {
     public String getPolyfillsSource(String uaString, Query query,
                                      List<Feature> featuresLoaded, boolean isDebugMode) {
         String debugInfo = isDebugMode ? getDebugInfo(uaString, query, featuresLoaded) : "";
-        String sources = getSources(featuresLoaded, query.doMinify());
+        String sources = getSources(featuresLoaded, query.shouldMinify());
         return !debugInfo.isEmpty() && !sources.isEmpty()
                 ? debugInfo + "\n\n" + sources
                 : debugInfo + sources;
@@ -88,7 +88,7 @@ class PolyfillsOutputService {
      * @return header comments containing debug info
      */
     private String getDebugInfo(String uaString, Query query, List<Feature> featuresLoaded) {
-        if (query.doMinify()) {
+        if (query.shouldMinify()) {
             return MIN_MESSAGE;
         }
 
