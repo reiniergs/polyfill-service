@@ -8,6 +8,7 @@ const TARGET = process.env.npm_lifecycle_event;
 const WEB_DIR = 'src/main/webapp/';
 const BUILD_DIR = path.resolve(__dirname, WEB_DIR + 'assets/js');
 const APP_DIR = path.resolve(__dirname,  'app/');
+const INDEX_PATH = WEB_DIR + "index.html";
 
 var commonConfig = {
     entry: {
@@ -34,13 +35,13 @@ var commonConfig = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin([WEB_DIR + 'assets/js', WEB_DIR + 'index.html'], {
+        new CleanWebpackPlugin([WEB_DIR + 'assets/js', INDEX_PATH], {
             root: path.resolve(__dirname),
             verbose: true,
             dry: false
         }),
         new HtmlWebpackPlugin({
-            filename: path.resolve(__dirname, WEB_DIR + 'index.html'),
+            filename: path.resolve(__dirname, INDEX_PATH),
             template: 'app/templates/webpack-app-template.hbs',
             title: 'Polyfill as a service',
             appMountId: 'app',
