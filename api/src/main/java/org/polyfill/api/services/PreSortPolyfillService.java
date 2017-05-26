@@ -60,9 +60,11 @@ class PreSortPolyfillService implements PolyfillService {
     }
 
     @Override
-    public List<Feature> getFeatures(Query query, String uaString) {
+    public List<Polyfill> getPolyfills(Query query, String uaString) {
         UserAgent userAgent = uaString == null ? null : userAgentParserService.parse(uaString);
-        return getFeatures(userAgent, query);
+        return getFeatures(userAgent, query).stream()
+                .map(feature -> feature.getPolyfill())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -78,7 +80,7 @@ class PreSortPolyfillService implements PolyfillService {
     }
 
     private List<Feature> getFeatures(UserAgent userAgent, Query query) {
-        if ((userAgent != null && !isUserAgentSupported(userAgent) && !query.doLoadOnUnknownUA())
+        if ((userAgent != null && !isUserAgentSupported(userAgent) && !query.shouldLoadOnUnknownUA())
                 || query.getFeatures().isEmpty()) {
             return Collections.emptyList();
         }
@@ -91,11 +93,11 @@ class PreSortPolyfillService implements PolyfillService {
         }
 
         resolveFeatures(featureSet, this::resolveAlias, true);
-        filterForTargetingUA(featureSet, userAgent, query.doLoadOnUnknownUA());
+        filterForTargetingUA(featureSet, userAgent, query.shouldLoadOnUnknownUA());
 
-        if (query.doIncludeDependencies()) {
+        if (query.shouldIncludeDependencies()) {
             resolveFeatures(featureSet, this::resolveDependencies, false);
-            filterForTargetingUA(featureSet, userAgent, query.doLoadOnUnknownUA());
+            filterForTargetingUA(featureSet, userAgent, query.shouldLoadOnUnknownUA());
         }
 
         filterExcludes(featureSet, query.getExcludes());

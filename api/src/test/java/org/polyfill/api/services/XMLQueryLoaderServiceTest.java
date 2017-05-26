@@ -103,13 +103,13 @@ public class XMLQueryLoaderServiceTest {
     @Test
     public void testMinified() throws Exception {
         Query query = loadTestQuery(testXMLWithFlags);
-        assertTrue("Polyfills should be minified", query.doMinify());
+        assertTrue("Polyfills should be minified", query.shouldMinify());
     }
 
     @Test
     public void testLoadOnUnknownUA() throws Exception {
         Query query = loadTestQuery(testXMLWithFlags);
-        assertTrue("Polyfills should be loaded when UA is unknown", query.doLoadOnUnknownUA());
+        assertTrue("Polyfills should be loaded when UA is unknown", query.shouldLoadOnUnknownUA());
     }
 
     @Test

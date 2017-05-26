@@ -1,16 +1,37 @@
-# API reference
+<a name="top"></a>
+# Polyfill Service RESTful API
 
-## GET /api/polyfill<var>:minify</var>.<var>:type</var>
+## Table of Contents
+- [Setup](#setup)
+- [API reference](#api-reference)
+    - [GET API](#get)
+        - [URL Variables](#url-variables)
+        - [Query Parameters](#query-parameters)
+
+<a name="setup"></a>
+## Setup
+First, import Spring configuration to let Spring bootstraps the API **AND** the controllers for the RESTful API endpoints. This can be done inside any spring bean, preferably in a @Configuration class.
+```java
+@Import(PolyfillApiControllerConfig.class)
+```
+
+<a name="api-reference"></a>
+## API reference
+
+<a name="get"></a>
+### GET /api/polyfill<var>:minify</var>.<var>:type</var>
 
 Fetch a polyfill bundle.
 
-### URL Variables
+<a name="url-variables"></a>
+#### URL Variables
 * `minify`
     * Whether to minify the result. If omitted, output will include the full polyfill source, and a header comment with debug information about the user agent and which polyfills have been included in the bundle. If set to `.min`, the output will be minified.
 * `type`
     * Set to `js`. Currently we only support JavaScript polyfills, but the `css` type is reserved for future use.
 
-### Query Parameters
+<a name="query-parameters"></a>
+#### Query Parameters
 * `features`
     * List of browser features to polyfill. Accepts a comma-separated list of feature names. Available feature names are shown on the [Browsers and Features](/v{{apiversion}}/docs/features/) page, though group aliases such as 'es5' and 'es6' are also accepted (these are defined in the polyfills' config.json files - [here's an example](https://github.com/Financial-Times/polyfill-service/blob/master/polyfills/Array/from/config.json)).
     * Each feature name may optionally be appended with zero or more of the following flags:

@@ -85,31 +85,12 @@ public class Feature {
         this.polyfill = polyfill;
     }
 
-    public String getSource(boolean minify) {
-        String detectSource = this.polyfill.getDetectSource();
-        String source = minify ? this.polyfill.getMinSource() : this.polyfill.getRawSource();
-        source = (source == null) ? "" : source;
-
-        boolean wrapInDetect = this.isGated && detectSource != null;
-
-        if (wrapInDetect && !"".equals(detectSource)) {
-            String lf = minify ? "" : "\n";
-            return "if(!(" + detectSource + ")){" + lf + source + lf + "}" + lf + lf;
-        }
-
-        return source;
+    public Polyfill getPolyfill() {
+        return this.polyfill;
     }
 
     public void copyFlags(Feature feature) {
         this.isGated = feature.isGated;
         this.isAlways = feature.isAlways;
-    }
-
-    public String getLicense() {
-        return this.polyfill.getLicense();
-    }
-
-    public List<String> getDependencies() {
-        return this.polyfill.getDependencies();
     }
 }

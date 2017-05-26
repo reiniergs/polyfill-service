@@ -14,13 +14,13 @@ public class Query {
 
     // filters
     private Set<String> excludes = new HashSet<>();
-    private boolean doLoadOnUnknownUA = false;
-    private boolean doMinify = false;
-    private boolean isGatedForAll = false;
-    private boolean isAlwaysForAll = false;
+    private boolean loadOnUnknownUA = false;
+    private boolean minify = false;
+    private boolean gatedForAll = false;
+    private boolean alwaysForAll = false;
 
     // extra options
-    private boolean doIncludeDependencies = true;
+    private boolean includeDependencies = true;
 
     public Query(List<Feature> features) {
         this.features = features;
@@ -46,48 +46,48 @@ public class Query {
         return this;
     }
 
-    public boolean doLoadOnUnknownUA() {
-        return this.doLoadOnUnknownUA;
+    public boolean shouldLoadOnUnknownUA() {
+        return this.loadOnUnknownUA;
     }
 
-    public Query setLoadOnUnknownUA(boolean doLoadOnUnknownUA) {
-        this.doLoadOnUnknownUA = doLoadOnUnknownUA;
+    public Query setLoadOnUnknownUA(boolean loadOnUnknownUA) {
+        this.loadOnUnknownUA = loadOnUnknownUA;
         return this;
     }
 
-    public boolean doIncludeDependencies() {
-        return this.doIncludeDependencies;
+    public boolean shouldIncludeDependencies() {
+        return this.includeDependencies;
     }
 
-    public Query setIncludeDependencies(boolean doIncludeDependencies) {
-        this.doIncludeDependencies = doIncludeDependencies;
+    public Query setIncludeDependencies(boolean includeDependencies) {
+        this.includeDependencies = includeDependencies;
         return this;
     }
 
-    public boolean doMinify() {
-        return this.doMinify;
+    public boolean shouldMinify() {
+        return this.minify;
     }
 
-    public Query setMinify(boolean doMinify) {
-        this.doMinify = doMinify;
+    public Query setMinify(boolean minify) {
+        this.minify = minify;
         return this;
     }
 
     public boolean isGatedForAll() {
-        return this.isGatedForAll;
+        return this.gatedForAll;
     }
 
-    public Query setGatedForAll(boolean isGatedForAll) {
-        this.isGatedForAll = isGatedForAll;
+    public Query setGatedForAll(boolean gatedForAll) {
+        this.gatedForAll = gatedForAll;
         return this;
     }
 
     public boolean isAlwaysForAll() {
-        return isAlwaysForAll;
+        return this.alwaysForAll;
     }
 
-    public Query setAlwaysForAll(boolean isAlwaysForAll) {
-        this.isAlwaysForAll = isAlwaysForAll;
+    public Query setAlwaysForAll(boolean alwaysForAll) {
+        this.alwaysForAll = alwaysForAll;
         return this;
     }
 }
