@@ -8,7 +8,8 @@
 ## Table of content
 - [Why? The problem](#why)
 - [A better way](#solution)
-- [API](https://github.com/reiniergs/polyfill-service/blob/master/rest)
+- [Java API](https://github.com/reiniergs/polyfill-service/blob/master/api)
+- [RESTful API](https://github.com/reiniergs/polyfill-service/blob/master/rest)
 - [Running locally](#running-locally)
 - [Run tests](#tests)
 - [Java docs](#java-docs)
@@ -54,18 +55,10 @@ Essentially, what we want from a polyfill delivery system is a way to send a sin
 <a name="running locally"></a>
 ### Running Locally
 
-Clone the project onto your local machine:
+Clone and build the project
 ```bash
 $ git clone https://github.com/reiniergs/polyfill-service.git
-```
-
-Change to your cloned project directory
-```bash
 $ cd polyfill-service
-```
-
-Build the project
-```
 $ mvn clean install
 ```
 
@@ -83,7 +76,8 @@ After the server starts up, navigate to `http://localhost:8080` to test that it 
 <a name="tests"></a>
 ### Run Tests
 ```
-$ mvn test
+$ mvn test # run unit tests
+$ mvn verify -Pintegration-test # run integration tests
 ```
 
 **[⬆ back to top](#top)**
