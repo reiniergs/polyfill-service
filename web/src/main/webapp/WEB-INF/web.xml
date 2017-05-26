@@ -16,15 +16,6 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>docs</servlet-name>
-        <jsp-file>/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>docs</servlet-name>
-        <url-pattern>/docs</url-pattern>
-    </servlet-mapping>
-
     <welcome-file-list>
         <welcome-file>/index.html</welcome-file>
     </welcome-file-list>

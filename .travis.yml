@@ -4,7 +4,7 @@ jdk:
 install:
   - mvn clean install
 script:
-  - mvn verify -DskipNpm -Dmaven.javadoc.skip=true -Pintegration-test
+  - mvn verify -Dskip.npm -Pintegration-test
 after_success:
   - mvn cobertura:cobertura coveralls:report
   - ./deploy.sh
