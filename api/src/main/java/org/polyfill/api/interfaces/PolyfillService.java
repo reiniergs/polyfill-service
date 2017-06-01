@@ -1,6 +1,5 @@
 package org.polyfill.api.interfaces;
 
-import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
 
@@ -22,14 +21,14 @@ public interface PolyfillService {
 
     /**
      * Gets all the polyfills
-     * @return - a Map with all the polyfill, keys are polyfill names values are instance of Polyfill
+     * @return - a Map with all the polyfill, keys are polyfill names values are instances of polyfill
      */
     Map<String, Polyfill> getAllPolyfills();
 
     /**
-     * Return a list of features containing all sources of polyfills.
-     * Alias feature will expand into specific features.
-     * @param query config object with information about what features to get
+     * Return a list of polyfills containing all sources of polyfills.
+     * Alias polyfill will expand into specific polyfills.
+     * @param query config object with information about what polyfills to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @return list of polyfills
      */
@@ -37,8 +36,8 @@ public interface PolyfillService {
 
     /**
      * Return a string of the sources of requested polyfills
-     * Alias feature will expand into specific features.
-     * @param query config object with information about what features to get
+     * Alias polyfill will expand into specific polyfills.
+     * @param query config object with information about what polyfills to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @return source of all requested and valid polyfills
      */
@@ -46,8 +45,8 @@ public interface PolyfillService {
 
     /**
      * Return a string of the sources of requested polyfills
-     * Alias feature will expand into specific features.
-     * @param query config object with information about what features to get
+     * Alias polyfill will expand into specific polyfills.
+     * @param query config object with information about what polyfills to get
      * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @param isDebugMode whether to add debug information in the header before the polyfills source
      * @return source of all requested and valid polyfills
