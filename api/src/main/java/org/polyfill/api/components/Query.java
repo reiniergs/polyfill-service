@@ -14,9 +14,9 @@ public class Query {
 
     // filters
     private Set<String> excludes = new HashSet<>();
-    private boolean loadOnUnknownUA = false;
-    private boolean minify = false;
-    private boolean gatedForAll = false;
+    private boolean loadOnUnknownUA = true;
+    private boolean minify = true;
+    private boolean gatedForAll = true;
     private boolean alwaysForAll = false;
 
     // extra options
