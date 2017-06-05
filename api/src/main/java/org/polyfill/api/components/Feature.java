@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * Created by smo on 2/24/17.
+ * Wrapper for carrying query information along with polyfill
  */
 public class Feature {
     public static final String ALWAYS = "always";

@@ -73,7 +73,7 @@ public class PolyfillController {
                 .setAlwaysForAll(isAlwaysForAll)
                 .setGatedForAll(isGatedForAll);
 
-        return polyfillService.getPolyfillsSource(query, uaString, true);
+        return polyfillService.getPolyfillsSource(uaString, query, true);
     }
 
     private List<Feature> getFeatures(Map<String, String> params) {

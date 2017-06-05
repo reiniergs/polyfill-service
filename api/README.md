@@ -79,6 +79,6 @@ Query query = queryLoaderService.loadQuery(config);
 @Autowired
 PolyfillService polyfillService;
 ...
-// fetch with the query config object and a user agent string
-String output = polyfillService.getPolyfillsSource(query, userAgentString);
+// fetch with a user agent string and an optional query config object and 
+String output = polyfillService.getPolyfillsSource(userAgentString, query);
 ```

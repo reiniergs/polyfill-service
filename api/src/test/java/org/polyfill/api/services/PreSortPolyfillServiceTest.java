@@ -3,7 +3,6 @@ package org.polyfill.api.services;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.api.components.Feature;
-import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
 import org.polyfill.api.configurations.MockBrowserAliasesConfig;
 import org.polyfill.api.configurations.MockPolyfillsConfig;
@@ -189,16 +188,16 @@ public class PreSortPolyfillServiceTest {
                 .collect(Collectors.joining());
     }
 
-    private String getPolyfillsRawSources(String userAgentString, Query query) {
-        return getPolyfillsSources(userAgentString, query, false);
+    private String getPolyfillsRawSources(String uaString, Query query) {
+        return getPolyfillsSources(uaString, query, false);
     }
 
-    private String getPolyfillsMinSources(String userAgentString, Query query) {
-        return getPolyfillsSources(userAgentString, query, true);
+    private String getPolyfillsMinSources(String uaString, Query query) {
+        return getPolyfillsSources(uaString, query, true);
     }
 
-    private String getPolyfillsSources(String userAgentString, Query query, boolean minify) {
-        return polyfillService.getPolyfills(query, userAgentString).stream()
+    private String getPolyfillsSources(String uaString, Query query, boolean minify) {
+        return polyfillService.getPolyfills(uaString, query).stream()
                 .map(polyfill -> minify ? polyfill.getMinSource() : polyfill.getRawSource())
                 .collect(Collectors.joining());
     }

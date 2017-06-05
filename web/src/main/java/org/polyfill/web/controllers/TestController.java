@@ -76,7 +76,7 @@ public class TestController {
     }
 
     private List<Polyfill> getTestPolyfills(String uaString, Query query) {
-        return polyfillService.getPolyfills(query, uaString);
+        return polyfillService.getPolyfills(uaString, query);
     }
 
     private List<Map<String, Object>> getTestFeatures(List<Polyfill> polyfillList) {

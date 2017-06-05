@@ -1,6 +1,8 @@
 package org.polyfill.api.configurations;
 
+import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.Query;
 import org.polyfill.api.interfaces.ConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -66,5 +69,13 @@ public class PolyfillApiConfig {
     @Bean
     public Map<String, Polyfill> polyfills() throws IOException {
         return polyfillLoaderService.loadPolyfills(POLYFILLS_DIST);
+    }
+
+    @Bean
+    public Query defaultQuery() {
+        return new Query(Collections.singletonList(new Feature("all")))
+                .setMinify(true)
+                .setLoadOnUnknownUA(true)
+                .setGatedForAll(true);
     }
 }

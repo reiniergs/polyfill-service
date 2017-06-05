@@ -26,30 +26,45 @@ public interface PolyfillService {
     Map<String, Polyfill> getAllPolyfills();
 
     /**
-     * Return a list of polyfills containing all sources of polyfills.
+     * Return a list of polyfills containing all sources of polyfills using default query setting
      * Alias polyfill will expand into specific polyfills.
-     * @param query config object with information about what polyfills to get
-     * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
+     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @return list of polyfills
      */
-    List<Polyfill> getPolyfills(Query query, String userAgentString);
+    List<Polyfill> getPolyfills(String uaString);
 
     /**
-     * Return a string of the sources of requested polyfills
+     * Return a list of polyfills containing all sources of polyfills.
      * Alias polyfill will expand into specific polyfills.
+     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @param query config object with information about what polyfills to get
-     * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
+     * @return list of polyfills
+     */
+    List<Polyfill> getPolyfills(String uaString, Query query);
+
+    /**
+     * Return a string of the sources of requested polyfills using default query setting
+     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @return source of all requested and valid polyfills
      */
-    String getPolyfillsSource(Query query, String userAgentString);
+    String getPolyfillsSource(String uaString);
 
     /**
      * Return a string of the sources of requested polyfills
      * Alias polyfill will expand into specific polyfills.
+     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
      * @param query config object with information about what polyfills to get
-     * @param userAgentString user agent string; can be in normalized format e.g. chrome/53.0.0
+     * @return source of all requested and valid polyfills
+     */
+    String getPolyfillsSource(String uaString, Query query);
+
+    /**
+     * Return a string of the sources of requested polyfills
+     * Alias polyfill will expand into specific polyfills.
+     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
+     * @param query config object with information about what polyfills to get
      * @param isDebugMode whether to add debug information in the header before the polyfills source
      * @return source of all requested and valid polyfills
      */
-    String getPolyfillsSource(Query query, String userAgentString, boolean isDebugMode);
+    String getPolyfillsSource(String uaString, Query query, boolean isDebugMode);
 }

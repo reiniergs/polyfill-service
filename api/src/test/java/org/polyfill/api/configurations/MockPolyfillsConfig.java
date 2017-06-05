@@ -1,19 +1,26 @@
 package org.polyfill.api.configurations;
 
+import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.Query;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by smo on 3/4/17.
  */
 @Configuration
 public class MockPolyfillsConfig {
+
+    @Bean
+    public Query defaultQuery() {
+        return new Query(Collections.singletonList(new Feature("all")))
+                .setMinify(true)
+                .setLoadOnUnknownUA(true)
+                .setGatedForAll(true);
+    }
 
     @Bean
     public Map<String, Object> aliases() {
