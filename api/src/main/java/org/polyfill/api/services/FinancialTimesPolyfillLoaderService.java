@@ -15,7 +15,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by smo on 2/25/17.
@@ -68,6 +67,9 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
         Queue<String> processQueue = new LinkedList<>(activePolyfills);
         while (!processQueue.isEmpty()) {
             String polyfillName = processQueue.remove();
+            if (polyfills.containsKey(polyfillName)) {
+                continue;
+            }
 
             // resolve alias
             Object polyfillGroup = this.aliases.get(polyfillName);
@@ -80,11 +82,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
             try {
                 Polyfill polyfill = loadPolyfill(polyfillDir);
                 polyfills.put(polyfill.getName(), polyfill);
-
-                // resolve dependencies
-                polyfill.getDependencies().stream()
-                        .filter(dependency -> !polyfills.containsKey(dependency))
-                        .forEach(processQueue::add);
+                processQueue.addAll(polyfill.getDependencies());
             } catch (IOException e) {
                 System.err.println("Error loading polyfill from directory: " + polyfillDir.toString());
             }
