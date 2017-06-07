@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class JsonPolyfillConfigLoaderServiceTest {
 
-    private static final String CONFIG_DIR_PATH = "config_loader_tests";
+    private static final String CONFIG_DIR_PATH = "polyfill_configs";
 
     private final PolyfillConfigLoaderService configLoaderService = new JsonConfigLoaderService();
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurations>
+    <gated>false</gated>
+    <minify>false</minify>
+    <load-on-unknown-ua>false</load-on-unknown-ua>
+    <polyfills>
+        <polyfill>a.a</polyfill>
+        <polyfill>a.b</polyfill>
+        <polyfill>c</polyfill>
+    </polyfills>
+</configurations>

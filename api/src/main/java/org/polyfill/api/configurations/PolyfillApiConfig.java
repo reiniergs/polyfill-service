@@ -1,6 +1,7 @@
 package org.polyfill.api.configurations;
 
 import org.polyfill.api.components.Feature;
+import org.polyfill.api.components.PolyfillServiceConfigLocation;
 import org.polyfill.api.components.Query;
 import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.interfaces.ServiceConfigLoaderService;
@@ -24,6 +25,8 @@ public class PolyfillApiConfig {
 
     @Autowired
     ServiceConfigLoaderService serviceConfigLoaderService;
+    @Autowired(required = false)
+    private PolyfillServiceConfigLocation serviceConfigLocation;
 
     @Value("${project.version}")
     private String projectVersion;
@@ -43,7 +46,7 @@ public class PolyfillApiConfig {
 
     @Bean
     public ServiceConfig serviceConfig() {
-        return serviceConfigLoaderService.loadConfig();
+        return serviceConfigLoaderService.loadConfig(serviceConfigLocation);
     }
 
     @Bean

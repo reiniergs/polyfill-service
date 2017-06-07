@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.XStream;
 import org.polyfill.api.components.PolyfillServiceConfigLocation;
 import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.interfaces.ServiceConfigLoaderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,8 @@ import java.io.IOException;
 @Service("xml")
 public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService {
 
-    @Autowired(required = false)
-    private PolyfillServiceConfigLocation serviceConfigLocation;
-
     @Override
-    public ServiceConfig loadConfig() {
+    public ServiceConfig loadConfig(PolyfillServiceConfigLocation serviceConfigLocation) {
         if (serviceConfigLocation != null) {
             XStream xStream = getConfiguredXStream();
             try {

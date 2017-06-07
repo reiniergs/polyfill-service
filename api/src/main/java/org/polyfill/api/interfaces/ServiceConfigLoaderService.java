@@ -1,5 +1,6 @@
 package org.polyfill.api.interfaces;
 
+import org.polyfill.api.components.PolyfillServiceConfigLocation;
 import org.polyfill.api.components.ServiceConfig;
 
 /**
@@ -11,5 +12,5 @@ public interface ServiceConfigLoaderService {
      * Load service configurations from file
      * @return service configuration object
      */
-    ServiceConfig loadConfig();
+    ServiceConfig loadConfig(PolyfillServiceConfigLocation serviceConfigLocation);
 }
