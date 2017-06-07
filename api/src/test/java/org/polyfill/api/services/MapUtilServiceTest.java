@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  */
 public class MapUtilServiceTest {
 
-    private ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
+    private ConfigLoaderService configLoaderService = new JsonConfigLoaderService();
     private MapUtilService mapUtilService = new MapUtilService();
     private String testConfigFilePath = "map_util_test.json";
 

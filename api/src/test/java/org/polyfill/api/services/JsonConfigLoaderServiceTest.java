@@ -13,9 +13,9 @@ import static org.junit.Assert.*;
 /**
  * Created by bvenkataraman on 10/13/16.
  */
-public class JSONConfigLoaderServiceTest {
+public class JsonConfigLoaderServiceTest {
 
-    private final ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
+    private final ConfigLoaderService configLoaderService = new JsonConfigLoaderService();
     private final String testFolderName = "config_loader_tests";
 
     @Test

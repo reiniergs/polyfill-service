@@ -23,7 +23,7 @@ public class FinancialTimesPolyfillLoaderServiceTest {
     @InjectMocks
     private FinancialTimesPolyfillLoaderService polyfillLoader;
     @Spy
-    private ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
+    private ConfigLoaderService configLoaderService = new JsonConfigLoaderService();
     @Spy
     private ServiceConfig serviceConfig = new ServiceConfig();
 

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Service("json")
 @Primary
-class JSONConfigLoaderService implements ConfigLoaderService, ResourceLoaderService {
+class JsonConfigLoaderService implements ConfigLoaderService, ResourceLoaderService {
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
