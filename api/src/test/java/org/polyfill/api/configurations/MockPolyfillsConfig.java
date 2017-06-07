@@ -34,6 +34,7 @@ public class MockPolyfillsConfig {
             put("default", Arrays.asList("a", "b", "c"));
             put("es6", Arrays.asList("b", "c", "d"));
             put("foo", Arrays.asList("c", "e"));
+            put("eee", Arrays.asList("e"));
         }};
     }
 
@@ -96,7 +97,7 @@ public class MockPolyfillsConfig {
             .build();
 
         Polyfill polyfillE = new Polyfill.Builder("e")
-            .aliases(Arrays.asList("foo"))
+            .aliases(Arrays.asList("foo", "eee"))
             .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
             }})

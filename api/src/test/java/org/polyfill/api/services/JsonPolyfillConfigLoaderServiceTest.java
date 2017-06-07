@@ -15,14 +15,15 @@ import static org.junit.Assert.*;
  */
 public class JsonPolyfillConfigLoaderServiceTest {
 
-    private final PolyfillConfigLoaderService polyfillConfigLoaderService = new JsonConfigLoaderService();
-    private final String testFolderName = "config_loader_tests";
+    private static final String CONFIG_DIR_PATH = "config_loader_tests";
+
+    private final PolyfillConfigLoaderService configLoaderService = new JsonConfigLoaderService();
 
     @Test
     public void testInvalidFilePath() throws Exception {
         Map<String, Object> resultantConfigMap = null;
         try {
-            resultantConfigMap = polyfillConfigLoaderService.getConfig("config.jsosn");
+            resultantConfigMap = configLoaderService.getConfig("config.jsosn");
             fail("Should throw IOException when file path is incorrect");
         } catch (IOException e) {
             assertNull("Should not return anything when there's IOException", resultantConfigMap);
@@ -33,7 +34,7 @@ public class JsonPolyfillConfigLoaderServiceTest {
     public void testInvalidFileFormat() throws Exception {
         Map<String, Object> resultantConfigMap = null;
         try {
-            resultantConfigMap = polyfillConfigLoaderService.getConfig(testFolderName, "json_loader.js");
+            resultantConfigMap = configLoaderService.getConfig(CONFIG_DIR_PATH, "json_loader.js");
             fail("Should throw IOException when file type is incorrect");
         } catch (IOException e) {
             assertNull("Should not return anything when there's IOException", resultantConfigMap);
@@ -44,7 +45,7 @@ public class JsonPolyfillConfigLoaderServiceTest {
     public void testGetConfigWithStringPath() throws Exception {
         Map<String, Object> expectedConfigMap = getSimpleConfig();
         try {
-            Map<String, Object> actualConfigMap = polyfillConfigLoaderService.getConfig(testFolderName, "json_loader.json");
+            Map<String, Object> actualConfigMap = configLoaderService.getConfig(CONFIG_DIR_PATH, "json_loader.json");
             assertTrue("The two config maps do not match", expectedConfigMap.equals(actualConfigMap));
         } catch (IOException e) {
             fail("Should not throw IOException when file exists");

@@ -53,7 +53,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
 
     @Override
     public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
-        List<String> activePolyfills = serviceConfig.getActivePolyfills();
+        List<String> activePolyfills = serviceConfig.getPolyfills();
         if (activePolyfills.isEmpty()) {
             return loadAllPolyfills(polyfillsPath);
         }

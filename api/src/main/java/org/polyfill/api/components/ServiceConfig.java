@@ -13,22 +13,6 @@ public class ServiceConfig {
     private boolean minify = true;
     private boolean loadOnUnknownUA = true;
 
-    public List<String> getActivePolyfills() {
-        return this.polyfills;
-    }
-
-    public boolean shouldGate() {
-        return this.gated;
-    }
-
-    public boolean shouldMinify() {
-        return this.minify;
-    }
-
-    public boolean shouldLoadOnUnknownUA() {
-        return this.loadOnUnknownUA;
-    }
-
     public String toString() {
         return "ServiceConfig: {"
                 + "\n\tpolyfills: " + this.polyfills
@@ -36,5 +20,41 @@ public class ServiceConfig {
                 + ",\n\tminify: " + this.minify
                 + ",\n\tload-on-unknown-ua: " + this.loadOnUnknownUA
                 + "\n}";
+    }
+
+    public List<String> getPolyfills() {
+        return this.polyfills;
+    }
+
+    public ServiceConfig setPolyfills(List<String> polyfills) {
+        this.polyfills = polyfills;
+        return this;
+    }
+
+    public boolean shouldGate() {
+        return this.gated;
+    }
+
+    public ServiceConfig setGated(boolean gated) {
+        this.gated = gated;
+        return this;
+    }
+
+    public boolean shouldMinify() {
+        return this.minify;
+    }
+
+    public ServiceConfig setMinify(boolean minify) {
+        this.minify = minify;
+        return this;
+    }
+
+    public boolean shouldLoadOnUnknownUA() {
+        return this.loadOnUnknownUA;
+    }
+
+    public ServiceConfig setLoadOnUnknownUA(boolean loadOnUnknownUA) {
+        this.loadOnUnknownUA = loadOnUnknownUA;
+        return this;
     }
 }
