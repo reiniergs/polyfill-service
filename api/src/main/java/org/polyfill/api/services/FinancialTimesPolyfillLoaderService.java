@@ -14,10 +14,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +43,9 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private static final String MIN_FILENAME = "min.js";
     private static final String RAW_FILENAME = "raw.js";
 
+    @javax.annotation.Resource(name = "aliases")
+    private Map<String, Object> aliases;
+
     @Autowired
     private ServiceConfig serviceConfig;
 
@@ -54,20 +54,56 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
 
     @Override
     public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
-        Map<String, Polyfill> polyfills = new HashMap<>();
         List<String> activePolyfills = serviceConfig.getActivePolyfills();
-
         if (activePolyfills.isEmpty()) {
-            activePolyfills = getAllPolyfillNames(polyfillsPath);
+            return loadAllPolyfills(polyfillsPath);
         }
+        return loadPartialPolyfills(polyfillsPath, activePolyfills);
+    }
 
-        activePolyfills.forEach(polyfillName -> {
+    private Map<String, Polyfill> loadPartialPolyfills(String polyfillsPath, List<String> activePolyfills)
+            throws IOException {
+        Map<String, Polyfill> polyfills = new HashMap<>();
+
+        Queue<String> processQueue = new LinkedList<>(activePolyfills);
+        while (!processQueue.isEmpty()) {
+            String polyfillName = processQueue.remove();
+
+            // resolve alias
+            Object polyfillGroup = this.aliases.get(polyfillName);
+            if (polyfillGroup instanceof List) {
+                processQueue.addAll((List)polyfillGroup);
+                continue;
+            }
+
             Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
             try {
                 Polyfill polyfill = loadPolyfill(polyfillDir);
                 polyfills.put(polyfill.getName(), polyfill);
+
+                // resolve dependencies
+                polyfill.getDependencies().stream()
+                        .filter(dependency -> !polyfills.containsKey(dependency))
+                        .forEach(processQueue::add);
             } catch (IOException e) {
                 System.err.println("Error loading polyfill from directory: " + polyfillDir.toString());
+            }
+        }
+
+        return Collections.unmodifiableMap(polyfills);
+    }
+
+    private Map<String, Polyfill> loadAllPolyfills(String polyfillsPath) throws IOException {
+        Map<String, Polyfill> polyfills = new HashMap<>();
+
+        getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
+            try {
+                String polyfillName = getBaseDirectoryName(polyfillResource);
+                Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
+                Polyfill polyfill = loadPolyfill(polyfillDir);
+                polyfills.put(polyfill.getName(), polyfill);
+            } catch (IOException e) {
+                System.err.println("Error loading polyfill from directory: " + polyfillResource.toString());
             }
         });
 
@@ -77,18 +113,6 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     /*
      * Implementation-specific helpers
      */
-    private List<String> getAllPolyfillNames(String polyfillsPath) throws IOException {
-        return getResources(polyfillsPath, "*", "meta.json").stream()
-                .map(polyfillResource -> {
-                    try {
-                        return getBaseDirectoryName(polyfillResource);
-                    } catch (IOException e) {
-                        return null;
-                    }
-                })
-                .filter(polyfillName -> polyfillName != null)
-                .collect(Collectors.toList());
-    }
 
     private Polyfill loadPolyfill(Path polyfillDirPath) throws IOException {
         String polyfillDir = polyfillDirPath.toString();
