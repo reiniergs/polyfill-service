@@ -2,7 +2,7 @@ package org.polyfill.api.services;
 
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.ServiceConfig;
-import org.polyfill.api.interfaces.ConfigLoaderService;
+import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
 import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private ServiceConfig serviceConfig;
 
     @Autowired
-    private ConfigLoaderService configLoader;
+    private PolyfillConfigLoaderService configLoader;
 
     @Override
     public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {

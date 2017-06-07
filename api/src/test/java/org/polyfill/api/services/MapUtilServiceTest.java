@@ -1,7 +1,7 @@
 package org.polyfill.api.services;
 
 import org.junit.Test;
-import org.polyfill.api.interfaces.ConfigLoaderService;
+import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  */
 public class MapUtilServiceTest {
 
-    private ConfigLoaderService configLoaderService = new JsonConfigLoaderService();
+    private PolyfillConfigLoaderService polyfillConfigLoaderService = new JsonConfigLoaderService();
     private MapUtilService mapUtilService = new MapUtilService();
     private String testConfigFilePath = "map_util_test.json";
 
@@ -20,7 +20,7 @@ public class MapUtilServiceTest {
     public void testGetInSingleValue() throws Exception {
 
         String expectedValue = "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-math.acosh";
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
 
         assertNotNull("Map returned should not be empty", resultantConfigMap);
         assertEquals("Attribute value does not match", expectedValue, mapUtilService.getFromMap(resultantConfigMap, "spec"));
@@ -29,7 +29,7 @@ public class MapUtilServiceTest {
     @Test
     public void testGetInFromArrays() throws Exception {
 
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
         assertNotNull("Map returned should not be empty",  resultantConfigMap);
 
         assertEquals("Alias config mismatch", "default-2.0", mapUtilService.getFromMap(resultantConfigMap, "aliases.1"));
@@ -40,7 +40,7 @@ public class MapUtilServiceTest {
     public void testGetInFromMaps() throws Exception {
 
         String expectedValue = "<12";
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
 
         assertNotNull("Map returned should not be empty",  resultantConfigMap);
         assertEquals("IE config mismatch", expectedValue, mapUtilService.getFromMap(resultantConfigMap, "my.ie"));
@@ -49,7 +49,7 @@ public class MapUtilServiceTest {
     @Test
     public void testGetInFromMixedHierarchy() throws Exception {
 
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
 
         assertNotNull("Map returned should not be empty", resultantConfigMap);
         assertEquals("Attribute value does not match", "bonjour", mapUtilService.getFromMap(resultantConfigMap, "my.myBrowser.ios_saf.0.hi.french"));
@@ -58,7 +58,7 @@ public class MapUtilServiceTest {
     @Test
     public void testInvalidAttributeFromMixedHierarchy() throws Exception {
 
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
 
         assertNotNull("Map returned should not be empty", resultantConfigMap);
         assertNull(mapUtilService.getFromMap(resultantConfigMap, "my.myBrowser.ios_saf.7"));
@@ -68,7 +68,7 @@ public class MapUtilServiceTest {
     public void testIntermediateValue() throws Exception {
 
         String expectedValue = "[{hi={english=hello, french=bonjour}}, First one, Second one]";
-        Map<String, Object> resultantConfigMap = configLoaderService.getConfig(testConfigFilePath);
+        Map<String, Object> resultantConfigMap = polyfillConfigLoaderService.getConfig(testConfigFilePath);
 
         assertNotNull("Map returned should not be empty", resultantConfigMap);
         assertEquals("Attribute value mismatch", expectedValue, mapUtilService.getFromMap(resultantConfigMap, "my.myBrowser.ios_saf").toString());

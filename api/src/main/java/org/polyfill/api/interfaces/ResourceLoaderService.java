@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by smo on 4/30/17.
+ * Utility interface for all loader service that needs to load project resources.
  */
 public interface ResourceLoaderService {
 

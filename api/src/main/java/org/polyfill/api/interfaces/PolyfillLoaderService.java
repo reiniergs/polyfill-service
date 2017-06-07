@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Created by smo on 2/26/17.
- * Service to load and construct polyfill from file system
+ * Service to load and construct polyfill objects.
  */
 public interface PolyfillLoaderService {
 

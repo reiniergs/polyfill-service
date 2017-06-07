@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by smo on 6/6/17.
+ * Simple object to hold polyfill service configurations.
  */
 public class ServiceConfig {
     private List<String> polyfills = Collections.emptyList();

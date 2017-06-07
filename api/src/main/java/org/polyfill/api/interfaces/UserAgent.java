@@ -2,6 +2,7 @@ package org.polyfill.api.interfaces;
 
 /**
  * Created by reinier.guerra on 10/12/16.
+ * Simple object for holding useful user agent properties.
  */
 public interface UserAgent {
 

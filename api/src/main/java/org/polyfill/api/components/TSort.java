@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Graph object to do topological sort.
+ */
 public class TSort {
 
     private List<Relation> T;

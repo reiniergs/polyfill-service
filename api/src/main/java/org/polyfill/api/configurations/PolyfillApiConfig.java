@@ -15,6 +15,7 @@ import java.util.Collections;
 
 /**
  * Created by reinier.guerra on 1/24/17.
+ * Configuration class to load API classes and hold project info and service-wide configs.
  */
 @Configuration
 @PropertySource("classpath:config.properties")

@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Created by smo on 2/4/17.
- * Service to handle polyfill queries.
+ * API Service to handle polyfill queries.
  */
 public interface PolyfillService {
 

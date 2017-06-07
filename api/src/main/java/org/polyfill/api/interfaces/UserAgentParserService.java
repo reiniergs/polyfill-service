@@ -2,7 +2,7 @@ package org.polyfill.api.interfaces;
 
 /**
  * Created by smo on 2/26/17.
- * Service to parse user agent string.
+ * Service to parse user agent string into user agent object.
  */
 public interface UserAgentParserService {
 
