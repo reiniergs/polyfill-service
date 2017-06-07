@@ -20,26 +20,37 @@ public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService
     @Autowired(required = false)
     private PolyfillServiceConfigLocation serviceConfigLocation;
 
+    @Override
     public ServiceConfig loadConfig() {
-        if (serviceConfigLocation == null) {
-            return new ServiceConfig();
-        } else {
-            return readSettings(serviceConfigLocation);
+        if (serviceConfigLocation != null) {
+            XStream xStream = getConfiguredXStream();
+            try {
+                return (ServiceConfig)xStream.fromXML(serviceConfigLocation.getInputStream());
+            } catch (IOException e) {
+                System.err.println("Error trying to load service configuration file! "
+                        + "Will use default configurations.");
+                e.printStackTrace();
+            }
         }
+
+        return new ServiceConfig();
     }
 
-    private ServiceConfig readSettings(PolyfillServiceConfigLocation location) {
-        XStream xStream = new XStream();
-        xStream.alias("configurations", ServiceConfig.class);
-        xStream.alias("polyfill", String.class);
+    /**
+     * Set up xstream to load service configuration xml
+     * @return xstream object
+     */
+    private XStream getConfiguredXStream() {
+        XStream xstream = new XStream();
+        // only allow ServiceConfig object for xstream to de/serialize due to security reasons
+        XStream.setupDefaultSecurity(xstream);
+        xstream.allowTypes(new Class[]{ServiceConfig.class});
 
-        try {
-            return (ServiceConfig)xStream.fromXML(location.getInputStream());
-        } catch (IOException e) {
-            System.err.println("Error trying to load service configuration file. "
-                    + "Will use default configurations.");
-            e.printStackTrace();
-            return new ServiceConfig();
-        }
+        // map fields to tags for different names
+        xstream.alias("configurations", ServiceConfig.class);
+        xstream.alias("polyfill", String.class);
+        xstream.aliasField("load-on-unknown-ua", ServiceConfig.class, "loadOnUnknownUa");
+
+        return xstream;
     }
 }

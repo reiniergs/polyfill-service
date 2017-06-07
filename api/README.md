@@ -46,9 +46,9 @@ e.g.
     <!-- gate all polyfills -->
     <gated>true</gated>
     <!-- send minified source -->
-    <minified>true</minified>
+    <minify>true</minify>
     <!-- load polyfills when user agent is unknown -->
-    <loadOnUnknownUA>true</loadOnUnknownUA>
+    <load-on-unknown-ua>true</load-on-unknown-ua>
 
     <polyfills>
         <polyfill>es6</polyfill>

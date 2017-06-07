@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurations>
+
+    <gated>true</gated>
+    <minify>true</minify>
+    <load-on-unknown-ua>true</load-on-unknown-ua>
+
     <polyfills>
         <polyfill>WeakMap</polyfill>
         <polyfill>Symbol</polyfill>
