@@ -57,7 +57,7 @@ public class PreSortPolyfillServiceTest {
     @Test
     public void testUnknownUserAgentShouldReturnEmpty() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query(features);
+        Query query = new Query(features).setLoadOnUnknownUA(false);
         String actual = getPolyfillsRawSources("firefox/1", query);
         String expected = "";
         assertEquals(expected, actual);
@@ -75,7 +75,7 @@ public class PreSortPolyfillServiceTest {
     @Test
     public void testUserAgentNotMeetBaselineNullifyAlwaysFlag() {
         List<Feature> features = Arrays.asList(new Feature("default", false, true));
-        Query query = new Query(features);
+        Query query = new Query(features).setLoadOnUnknownUA(false);
         String actual = getPolyfillsRawSources("firefox/1", query);
         String expected = "";
         assertEquals(expected, actual);

@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.configurations.MockPolyfillsConfig;
 import org.polyfill.api.interfaces.ConfigLoaderService;
 
@@ -23,6 +24,8 @@ public class FinancialTimesPolyfillLoaderServiceTest {
     private FinancialTimesPolyfillLoaderService polyfillLoader;
     @Spy
     private ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
+    @Spy
+    private ServiceConfig serviceConfig = new ServiceConfig();
 
     private MockPolyfillsConfig polyfillsConfig = new MockPolyfillsConfig();
 

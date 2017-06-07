@@ -3,6 +3,7 @@ package org.polyfill.api.configurations;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
+import org.polyfill.api.components.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,11 @@ import java.util.*;
  */
 @Configuration
 public class MockPolyfillsConfig {
+
+    @Bean
+    public ServiceConfig serviceConfig() {
+        return new ServiceConfig();
+    }
 
     @Bean
     public Query defaultQuery() {
