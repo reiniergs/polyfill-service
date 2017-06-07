@@ -44,7 +44,7 @@ public class PolyfillsOutputServiceTest {
     @Test
     public void testRawNoPolyfillsLoaded() throws Exception {
         List<Feature> requestedList = Collections.singletonList(new Feature("default"));
-        Query query = new Query(requestedList).setMinify(false);
+        Query query = new Query.Builder(requestedList).setMinify(false).build();
         String actual = polyfillsOutputService.getPolyfillsSource(UA_STRING, query, EMPTY_LIST, true);
         String expected =
                 "/* " + PROJECT_VERSION_LINE +"\n" +
@@ -59,7 +59,7 @@ public class PolyfillsOutputServiceTest {
     @Test
     public void testMinNoPolyfillsLoaded() throws Exception {
         List<Feature> requestedList = Collections.singletonList(new Feature("default"));
-        Query query = new Query(requestedList).setMinify(true);
+        Query query = new Query.Builder(requestedList).setMinify(true).build();
         String actual = polyfillsOutputService.getPolyfillsSource(null, query, EMPTY_LIST, true);
         String expected = MIN_MESSAGE;
         assertEquals(expected, actual);
@@ -122,7 +122,7 @@ public class PolyfillsOutputServiceTest {
         List<Feature> requestedList = Arrays.asList(featureRequested);
         List<Feature> loadedList = Arrays.asList(featureLoaded1, featureLoaded2);
 
-        Query query = new Query(requestedList).setMinify(minify);
+        Query query = new Query.Builder(requestedList).setMinify(minify).build();
         String actual = polyfillsOutputService.getPolyfillsSource(UA_STRING, query, loadedList, isDebugMode);
 
         assertEquals(expected, actual);

@@ -22,10 +22,11 @@ public class MockPolyfillsConfig {
 
     @Bean
     public Query defaultQuery() {
-        return new Query(Collections.singletonList(new Feature("all")))
-                .setMinify(true)
-                .setLoadOnUnknownUA(true)
-                .setGatedForAll(true);
+        return new Query.Builder(Collections.singletonList(new Feature("all")))
+            .setMinify(true)
+            .setLoadOnUnknownUA(true)
+            .setGatedForAll(true)
+            .build();
     }
 
     @Bean

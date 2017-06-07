@@ -10,6 +10,7 @@ import org.polyfill.api.components.ServiceConfig;
 public interface ServiceConfigLoaderService {
     /**
      * Load service configurations from file
+     * @param serviceConfigLocation location of service configurations file
      * @return service configuration object
      */
     ServiceConfig loadConfig(PolyfillServiceConfigLocation serviceConfigLocation);

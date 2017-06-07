@@ -52,9 +52,10 @@ public class PolyfillApiConfig {
     @Bean
     public Query defaultQuery() {
         ServiceConfig serviceConfig = this.serviceConfig();
-        return new Query(Collections.singletonList(new Feature("all")))
-                .setMinify(serviceConfig.shouldMinify())
-                .setLoadOnUnknownUA(serviceConfig.shouldLoadOnUnknownUA())
-                .setGatedForAll(serviceConfig.shouldGate());
+        return new Query.Builder(Collections.singletonList(new Feature("all")))
+            .setMinify(serviceConfig.shouldMinify())
+            .setLoadOnUnknownUA(serviceConfig.shouldLoadOnUnknownUA())
+            .setGatedForAll(serviceConfig.shouldGate())
+            .build();
     }
 }
