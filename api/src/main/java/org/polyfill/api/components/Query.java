@@ -1,5 +1,6 @@
 package org.polyfill.api.components;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,16 +15,22 @@ public class Query {
 
     // filters
     private Set<String> excludes = new HashSet<>();
-    private boolean loadOnUnknownUA = false;
-    private boolean minify = false;
-    private boolean gatedForAll = false;
+    private boolean loadOnUnknownUA = true;
+    private boolean minify = true;
+    private boolean gatedForAll = true;
     private boolean alwaysForAll = false;
 
     // extra options
     private boolean includeDependencies = true;
 
-    public Query(List<Feature> features) {
-        this.features = features;
+    private Query(Builder builder) {
+        this.features = builder.features;
+        this.excludes = builder.excludes;
+        this.loadOnUnknownUA = builder.loadOnUnknownUA;
+        this.minify = builder.minify;
+        this.gatedForAll = builder.gatedForAll;
+        this.alwaysForAll = builder.alwaysForAll;
+        this.includeDependencies = builder.includeDependencies;
     }
 
     public List<Feature> getFeatures() {
@@ -34,60 +41,86 @@ public class Query {
         return this.excludes;
     }
 
-    public Query excludeFeatures(String ... features) {
-        for (String feature : features) {
-            this.excludes.add(feature);
-        }
-        return this;
-    }
-
-    public Query excludeFeatures(List<String> features) {
-        this.excludes.addAll(features);
-        return this;
-    }
-
     public boolean shouldLoadOnUnknownUA() {
         return this.loadOnUnknownUA;
-    }
-
-    public Query setLoadOnUnknownUA(boolean loadOnUnknownUA) {
-        this.loadOnUnknownUA = loadOnUnknownUA;
-        return this;
     }
 
     public boolean shouldIncludeDependencies() {
         return this.includeDependencies;
     }
 
-    public Query setIncludeDependencies(boolean includeDependencies) {
-        this.includeDependencies = includeDependencies;
-        return this;
-    }
-
     public boolean shouldMinify() {
         return this.minify;
-    }
-
-    public Query setMinify(boolean minify) {
-        this.minify = minify;
-        return this;
     }
 
     public boolean isGatedForAll() {
         return this.gatedForAll;
     }
 
-    public Query setGatedForAll(boolean gatedForAll) {
-        this.gatedForAll = gatedForAll;
-        return this;
-    }
-
     public boolean isAlwaysForAll() {
         return this.alwaysForAll;
     }
 
-    public Query setAlwaysForAll(boolean alwaysForAll) {
-        this.alwaysForAll = alwaysForAll;
-        return this;
+    public static class Builder {
+        // features to request
+        private List<Feature> features;
+
+        // filters
+        private Set<String> excludes = new HashSet<>();
+        private boolean loadOnUnknownUA = true;
+        private boolean minify = true;
+        private boolean gatedForAll = true;
+        private boolean alwaysForAll = false;
+
+        // extra options
+        private boolean includeDependencies = true;
+
+        public Builder(List<Feature> features) {
+            this.features = features;
+            this.excludes = new HashSet<>();
+            this.loadOnUnknownUA = true;
+            this.minify = true;
+            this.gatedForAll = true;
+            this.alwaysForAll = false;
+            this.includeDependencies = true;
+        }
+
+        public Query build() {
+            return new Query(this);
+        }
+
+        public Builder excludeFeatures(String ... features) {
+            return excludeFeatures(Arrays.asList(features));
+        }
+
+        public Builder excludeFeatures(List<String> features) {
+            this.excludes.addAll(features);
+            return this;
+        }
+
+        public Builder setLoadOnUnknownUA(boolean loadOnUnknownUA) {
+            this.loadOnUnknownUA = loadOnUnknownUA;
+            return this;
+        }
+
+        public Builder setMinify(boolean minify) {
+            this.minify = minify;
+            return this;
+        }
+
+        public Builder setAlwaysForAll(boolean alwaysForAll) {
+            this.alwaysForAll = alwaysForAll;
+            return this;
+        }
+
+        public Builder setGatedForAll(boolean gatedForAll) {
+            this.gatedForAll = gatedForAll;
+            return this;
+        }
+
+        public Builder setIncludeDependencies(boolean includeDependencies) {
+            this.includeDependencies = includeDependencies;
+            return this;
+        }
     }
 }

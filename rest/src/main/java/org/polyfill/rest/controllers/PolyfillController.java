@@ -57,7 +57,7 @@ public class PolyfillController {
      * Helpers
      ******************************************************/
 
-    private String getPolyfillsSource(String headerUA, Map<String, String> params, boolean doMinify) {
+    private String getPolyfillsSource(String headerUA, Map<String, String> params, boolean minify) {
         List<Feature> featuresRequested = getFeatures(params);
         List<String> featuresToExclude = getFeaturesToExclude(params);
         String uaString = getUserAgent(headerUA, params);
@@ -66,14 +66,15 @@ public class PolyfillController {
         boolean isAlwaysForAll = globalFlags.contains(Feature.ALWAYS);
         boolean isGatedForAll = globalFlags.contains(Feature.GATED);
 
-        Query query = new Query(featuresRequested)
-                .setLoadOnUnknownUA(loadOnUnknown)
-                .excludeFeatures(featuresToExclude)
-                .setMinify(doMinify)
-                .setAlwaysForAll(isAlwaysForAll)
-                .setGatedForAll(isGatedForAll);
+        Query query = new Query.Builder(featuresRequested)
+            .setLoadOnUnknownUA(loadOnUnknown)
+            .excludeFeatures(featuresToExclude)
+            .setMinify(minify)
+            .setAlwaysForAll(isAlwaysForAll)
+            .setGatedForAll(isGatedForAll)
+            .build();
 
-        return polyfillService.getPolyfillsSource(query, uaString, true);
+        return polyfillService.getPolyfillsSource(uaString, query, true);
     }
 
     private List<Feature> getFeatures(Map<String, String> params) {

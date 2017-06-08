@@ -1,13 +1,13 @@
 package org.polyfill.api.configurations;
 
+import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.Query;
+import org.polyfill.api.components.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by smo on 3/4/17.
@@ -16,11 +16,26 @@ import java.util.Map;
 public class MockPolyfillsConfig {
 
     @Bean
+    public ServiceConfig serviceConfig() {
+        return new ServiceConfig();
+    }
+
+    @Bean
+    public Query defaultQuery() {
+        return new Query.Builder(Collections.singletonList(new Feature("all")))
+            .setMinify(true)
+            .setLoadOnUnknownUA(true)
+            .setGatedForAll(true)
+            .build();
+    }
+
+    @Bean
     public Map<String, Object> aliases() {
         return new HashMap<String, Object>(){{
             put("default", Arrays.asList("a", "b", "c"));
             put("es6", Arrays.asList("b", "c", "d"));
             put("foo", Arrays.asList("c", "e"));
+            put("eee", Arrays.asList("e"));
         }};
     }
 
@@ -83,7 +98,7 @@ public class MockPolyfillsConfig {
             .build();
 
         Polyfill polyfillE = new Polyfill.Builder("e")
-            .aliases(Arrays.asList("foo"))
+            .aliases(Arrays.asList("foo", "eee"))
             .browserRequirements(new HashMap<String, String>(){{
                 put("chrome", "*");
             }})

@@ -1,7 +1,7 @@
 package org.polyfill.api.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.polyfill.api.interfaces.ConfigLoaderService;
+import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Service("json")
 @Primary
-class JSONConfigLoaderService implements ConfigLoaderService, ResourceLoaderService {
+class JsonConfigLoaderService implements PolyfillConfigLoaderService, ResourceLoaderService {
 
     ObjectMapper jsonMapper = new ObjectMapper();
 

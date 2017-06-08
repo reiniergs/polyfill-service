@@ -1,7 +1,8 @@
 package org.polyfill.api.services;
 
 import org.polyfill.api.components.Polyfill;
-import org.polyfill.api.interfaces.ConfigLoaderService;
+import org.polyfill.api.components.ServiceConfig;
+import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
 import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by smo on 2/25/17.
@@ -28,7 +26,7 @@ import java.util.Map;
  * - raw.js
  */
 @Primary
-@Service("financial times")
+@Service("all")
 class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, ResourceLoaderService {
 
     private static final String ALIASES_KEY = "aliases";
@@ -44,10 +42,77 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private static final String MIN_FILENAME = "min.js";
     private static final String RAW_FILENAME = "raw.js";
 
-    @Autowired
-    private ConfigLoaderService configLoader;
+    @javax.annotation.Resource(name = "aliases")
+    private Map<String, Object> aliases;
 
-    public Polyfill loadPolyfill(Path polyfillDirPath) throws IOException {
+    @Autowired
+    private ServiceConfig serviceConfig;
+
+    @Autowired
+    private PolyfillConfigLoaderService configLoader;
+
+    @Override
+    public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
+        List<String> activePolyfills = serviceConfig.getPolyfills();
+        if (activePolyfills.isEmpty()) {
+            return loadAllPolyfills(polyfillsPath);
+        }
+        return loadPartialPolyfills(polyfillsPath, activePolyfills);
+    }
+
+    private Map<String, Polyfill> loadPartialPolyfills(String polyfillsPath, List<String> activePolyfills)
+            throws IOException {
+        Map<String, Polyfill> polyfills = new HashMap<>();
+
+        Queue<String> processQueue = new LinkedList<>(activePolyfills);
+        while (!processQueue.isEmpty()) {
+            String polyfillName = processQueue.remove();
+            if (polyfills.containsKey(polyfillName)) {
+                continue;
+            }
+
+            // resolve alias
+            Object polyfillGroup = this.aliases.get(polyfillName);
+            if (polyfillGroup instanceof List) {
+                processQueue.addAll((List)polyfillGroup);
+                continue;
+            }
+
+            Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
+            try {
+                Polyfill polyfill = loadPolyfill(polyfillDir);
+                polyfills.put(polyfill.getName(), polyfill);
+                processQueue.addAll(polyfill.getDependencies());
+            } catch (IOException e) {
+                System.err.println("Error loading polyfill from directory: " + polyfillDir.toString());
+            }
+        }
+
+        return Collections.unmodifiableMap(polyfills);
+    }
+
+    private Map<String, Polyfill> loadAllPolyfills(String polyfillsPath) throws IOException {
+        Map<String, Polyfill> polyfills = new HashMap<>();
+
+        getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
+            try {
+                String polyfillName = getBaseDirectoryName(polyfillResource);
+                Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
+                Polyfill polyfill = loadPolyfill(polyfillDir);
+                polyfills.put(polyfill.getName(), polyfill);
+            } catch (IOException e) {
+                System.err.println("Error loading polyfill from directory: " + polyfillResource.toString());
+            }
+        });
+
+        return Collections.unmodifiableMap(polyfills);
+    }
+
+    /*
+     * Implementation-specific helpers
+     */
+
+    private Polyfill loadPolyfill(Path polyfillDirPath) throws IOException {
         String polyfillDir = polyfillDirPath.toString();
         Map<String, Object> meta = configLoader.getConfig(polyfillDir, META_FILENAME);
         String rawSource = resourceToString(getResource(polyfillDir, RAW_FILENAME));
@@ -66,29 +131,6 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
                 .isTestable( getIsTestable(meta) )
                 .build();
     }
-
-    @Override
-    public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
-        Map<String, Polyfill> polyfills = new HashMap<>();
-
-        getResources(polyfillsPath, "*", "meta.json")
-            .forEach(polyfillResource -> {
-                try {
-                    String polyfillDirName = getBaseDirectoryName(polyfillResource);
-                    Path polyfillDir = Paths.get(polyfillsPath, polyfillDirName);
-                    Polyfill polyfill = loadPolyfill(polyfillDir);
-                    polyfills.put(polyfill.getName(), polyfill);
-                } catch (IOException e) {
-                    System.err.println("Error loading polyfill from directory: " + polyfillResource.toString());
-                }
-            });
-
-        return Collections.unmodifiableMap(polyfills);
-    }
-
-    /*
-     * Implementation-specific helpers
-     */
 
     private boolean getIsTestable(Map<String, Object> meta) {
         Map<String, Object> testMap = getMap(meta, TEST_KEY);

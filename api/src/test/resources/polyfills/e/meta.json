@@ -1,6 +1,7 @@
 {
     "aliases": [
-        "foo"
+        "foo",
+        "eee"
     ],
     "browsers": {
         "chrome": "*"

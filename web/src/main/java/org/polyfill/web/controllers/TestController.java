@@ -59,9 +59,10 @@ public class TestController {
         String uaString = "targeted".equals(mode) ? params.getOrDefault(UA_OVERRIDE, headerUA) : null;
 
         List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
-        Query query = new Query(reqFeatureList)
-                .setIncludeDependencies(false)
-                .setLoadOnUnknownUA(false);
+        Query query = new Query.Builder(reqFeatureList)
+            .setIncludeDependencies(false)
+            .setLoadOnUnknownUA(false)
+            .build();
 
         List<Polyfill> polyfills = getTestPolyfills(uaString, query);
         List<Map<String, Object>> testFeatures = getTestFeatures(polyfills);
@@ -76,7 +77,7 @@ public class TestController {
     }
 
     private List<Polyfill> getTestPolyfills(String uaString, Query query) {
-        return polyfillService.getPolyfills(query, uaString);
+        return polyfillService.getPolyfills(uaString, query);
     }
 
     private List<Map<String, Object>> getTestFeatures(List<Polyfill> polyfillList) {

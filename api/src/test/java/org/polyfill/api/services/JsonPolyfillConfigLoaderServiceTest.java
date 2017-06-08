@@ -1,7 +1,7 @@
 package org.polyfill.api.services;
 
 import org.junit.Test;
-import org.polyfill.api.interfaces.ConfigLoaderService;
+import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,10 +13,11 @@ import static org.junit.Assert.*;
 /**
  * Created by bvenkataraman on 10/13/16.
  */
-public class JSONConfigLoaderServiceTest {
+public class JsonPolyfillConfigLoaderServiceTest {
 
-    private final ConfigLoaderService configLoaderService = new JSONConfigLoaderService();
-    private final String testFolderName = "config_loader_tests";
+    private static final String CONFIG_DIR_PATH = "polyfill_configs";
+
+    private final PolyfillConfigLoaderService configLoaderService = new JsonConfigLoaderService();
 
     @Test
     public void testInvalidFilePath() throws Exception {
@@ -33,7 +34,7 @@ public class JSONConfigLoaderServiceTest {
     public void testInvalidFileFormat() throws Exception {
         Map<String, Object> resultantConfigMap = null;
         try {
-            resultantConfigMap = configLoaderService.getConfig(testFolderName, "json_loader.js");
+            resultantConfigMap = configLoaderService.getConfig(CONFIG_DIR_PATH, "json_loader.js");
             fail("Should throw IOException when file type is incorrect");
         } catch (IOException e) {
             assertNull("Should not return anything when there's IOException", resultantConfigMap);
@@ -44,7 +45,7 @@ public class JSONConfigLoaderServiceTest {
     public void testGetConfigWithStringPath() throws Exception {
         Map<String, Object> expectedConfigMap = getSimpleConfig();
         try {
-            Map<String, Object> actualConfigMap = configLoaderService.getConfig(testFolderName, "json_loader.json");
+            Map<String, Object> actualConfigMap = configLoaderService.getConfig(CONFIG_DIR_PATH, "json_loader.json");
             assertTrue("The two config maps do not match", expectedConfigMap.equals(actualConfigMap));
         } catch (IOException e) {
             fail("Should not throw IOException when file exists");

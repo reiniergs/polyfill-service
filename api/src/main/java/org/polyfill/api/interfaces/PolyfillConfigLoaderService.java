@@ -5,8 +5,9 @@ import java.util.Map;
 
 /**
  * Created by bvenkataraman on 10/19/16.
+ * Service to load polyfill related configurations. e.g. aliases, browser requirements, etc.
  */
-public interface ConfigLoaderService {
+public interface PolyfillConfigLoaderService {
 
     /**
      * Retrieve a JSON config file from specified path and convert it into a Map

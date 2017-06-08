@@ -2,7 +2,7 @@ package org.polyfill.api.interfaces;
 
 /**
  * Created by smo on 2/26/17.
- * Service to check version number
+ * Service to check version number.
  */
 public interface VersionUtilService {
 
