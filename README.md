@@ -8,8 +8,8 @@
 ## Table of content
 - [Why? The problem](#why)
 - [A better way](#solution)
-- [Java API](/polyfill-service/blob/master/api/README.md)
-- [RESTful API](/polyfill-service/blob/master/rest/README.md)
+- [Java API](/api/README.md)
+- [RESTful API](/rest/README.md)
 - [Running locally](#running-locally)
 - [Run tests](#tests)
 - [Java docs](#java-docs)
