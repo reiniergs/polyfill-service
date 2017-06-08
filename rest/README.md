@@ -10,6 +10,20 @@
 
 <a name="setup"></a>
 ## Setup
+Include dependency in pom.xml
+```xml
+<dependency>
+    <groupId>org.polyfills</groupId>
+    <artifactId>polyfill-service-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+<dependency>
+    <groupId>org.polyfills</groupId>
+    <artifactId>polyfill-service-rest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
 First, import Spring configuration to let Spring bootstraps the API **AND** the controllers for the RESTful API endpoints. This can be done inside any spring bean, preferably in a @Configuration class.
 ```java
 @Import(PolyfillApiControllerConfig.class)
