@@ -15,12 +15,12 @@ Include dependency in pom.xml
 <dependency>
     <groupId>org.polyfills</groupId>
     <artifactId>polyfill-service-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${polyfillServiceVersion}</version>
 </dependency>
 <dependency>
     <groupId>org.polyfills</groupId>
     <artifactId>polyfill-service-rest</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${polyfillServiceVersion}</version>
 </dependency>
 ```
 
