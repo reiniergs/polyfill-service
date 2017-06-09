@@ -4,6 +4,7 @@ import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.VersionNumber;
 import net.sf.uadetector.service.UADetectorServiceFactory;
+import org.polyfill.api.components.LRUCache;
 import org.polyfill.api.interfaces.UserAgent;
 import org.polyfill.api.interfaces.UserAgentParserService;
 import org.springframework.context.annotation.Primary;
@@ -23,25 +24,33 @@ import java.util.regex.Pattern;
 @Service("uadetector")
 class UADetectorBasedUserAgentParserService implements UserAgentParserService {
 
+    private static final int MAX_UA_STRING_LENGTH = 300; // real ua string is usually less than 255
+    private static final int MAX_NORMALIZED_UA_LENGTH = 22; // XXXXXXXXXX/###.###.### (22 chars)
+
     private final UserAgentStringParser uaParser = UADetectorServiceFactory.getResourceModuleParser();
     private final Pattern normalizePattern = Pattern.compile("^(\\w+)\\/(\\d+(\\.\\d+(\\.\\d+)?)?)$");
+    private final LRUCache<String, UserAgent> cache = new LRUCache<>(5000);
 
     @Resource(name = "browserAliases")
     private Map<String, Object> browserAliases;
 
     @Override
     public UserAgent parse(String uaString) {
-        uaString = (uaString == null) ? "unknown/0.0.0" : uaString.trim();
+        uaString = (uaString == null)
+            ? "unknown/0.0.0"
+            : uaString.substring(0, Math.min(MAX_UA_STRING_LENGTH, uaString.length())).trim();
 
         String family, versionString;
 
         // normalized user agent e.g. firefox/1.2.3
         Matcher uaMatcher = normalizePattern.matcher(uaString);
-        if (uaMatcher.find()) {
+        if (uaString.length() < MAX_NORMALIZED_UA_LENGTH && uaMatcher.find()) {
             family = uaMatcher.group(1);
             versionString = uaMatcher.group(2);
 
-        // normal user agent, need to parse
+        } else if (cache.containsKey(uaString)) {
+            return cache.get(uaString);
+
         } else {
             ReadableUserAgent readableUA = uaParser.parse(stripIOSWebViewBrowsers(uaString));
             VersionNumber version = readableUA.getVersionNumber();
@@ -70,7 +79,10 @@ class UADetectorBasedUserAgentParserService implements UserAgentParserService {
             }
         }
 
-        return new UserAgentImpl(family, versionString);
+        UserAgent userAgent = new UserAgentImpl(family, versionString);
+        cache.put(uaString, userAgent);
+
+        return userAgent;
     }
 
     /**
