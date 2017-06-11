@@ -1,12 +1,14 @@
 package org.polyfill.perf.services;
 
+import com.inamik.text.tables.GridTable;
 import com.inamik.text.tables.SimpleTable;
+import com.inamik.text.tables.grid.Border;
+import com.inamik.text.tables.grid.Util;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
 import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.interfaces.PolyfillService;
-import org.polyfill.perf.components.TablePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,15 @@ public class PerfReportService {
     @Autowired
     private PolyfillService polyfillService;
 
+    private List<String> headers = Arrays.asList(
+        "User Agent",
+        "Average Query",
+        "Raw Source",
+        "Min Source",
+        "Gzip Min Source",
+        "# of Polyfills",
+        "Polyfills");
+
     private Query rawSourceQuery;
     private Query minSourceQuery;
 
@@ -58,7 +69,7 @@ public class PerfReportService {
     }
 
     public void printConfigurations() {
-        print("Configurations:\n");
+        print("# Configurations");
         print(serviceConfig.toString());
 
         Set<String> polyfillNames = polyfillService.getAllPolyfills().keySet();
@@ -68,50 +79,60 @@ public class PerfReportService {
     }
 
     public void printMeasurements() {
-        print("Measurements:");
+        print("# Measurements");
 
-        TablePrinter tablePrinter = new TablePrinter("\t");
+        SimpleTable table = SimpleTable.of();
 
-        // headers
-        tablePrinter.addRow(
-            "User Agent",
-            "Polyfills",
-            "Number of Polyfills",
-            "Average Query Time",
-            "Raw Source Size",
-            "Min Source Size",
-            "Gzipped Min Source Size"
-        );
+        table.nextRow();
+        for (String header : this.headers) {
+            table = table.nextCell().addLine(header);
+        }
 
         for (Map.Entry<String, String> entry : uaMap.entrySet()) {
             String uaName = entry.getKey();
             String uaString = entry.getValue();
 
             List<Polyfill> polyfillsLoaded = polyfillService.getPolyfills(uaString);
+            String rawSource = polyfillService.getPolyfillsSource(uaString, rawSourceQuery);
+            String minSource = polyfillService.getPolyfillsSource(uaString, minSourceQuery);
+
             List<String> polyfillNames = polyfillsLoaded.stream()
                 .map(Polyfill::getName)
                 .collect(Collectors.toList());
 
             double avgElapsedTime = cpuTimeMeasureService.getMeasurement(uaString);
-
-            String rawSource = polyfillService.getPolyfillsSource(uaString, rawSourceQuery);
-            String minSource = polyfillService.getPolyfillsSource(uaString, minSourceQuery);
             int rawSourceByteSize = sizeMeasureService.getByteSize(rawSource);
             int minSourceByteSize = sizeMeasureService.getByteSize(minSource);
             int gzipMinSourceByteSize = sizeMeasureService.getGzipByteSize(minSource);
 
-            tablePrinter.addRow(
+            List<Object> fields = Arrays.asList(
                 uaName,
-                polyfillNames.toString(),
-                polyfillNames.size() + "",
                 formatMs(avgElapsedTime),
                 formatBytes(rawSourceByteSize),
                 formatBytes(minSourceByteSize),
-                formatBytes(gzipMinSourceByteSize)
-                );
+                formatBytes(gzipMinSourceByteSize),
+                polyfillNames.size() + "",
+                polyfillNames
+            );
+
+            table = table.nextRow();
+            for (Object field : fields) {
+                if (field instanceof String) {
+                    table = table.nextCell().addLine((String)field);
+                } else if (field instanceof List) {
+                    table = table.nextCell();
+                    List<String> items = (List)field;
+                    for (String item : items) {
+                        table = table.addLine(item);
+                    }
+                }
+            }
         }
 
-        tablePrinter.printToFile("./perf.tsv");
+        GridTable gridTable = table.toGrid();
+        gridTable = Border.of(Border.Chars.of('+', '-', '|')).apply(gridTable);
+
+        Util.print(gridTable);
     }
 
     private String formatMs(double ms) {

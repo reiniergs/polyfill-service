@@ -19,5 +19,31 @@
             <groupId>org.polyfills</groupId>
             <artifactId>polyfill-service-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.steveash.itxttbl</groupId>
+            <artifactId>inamik-text-tables</artifactId>
+            <version>0.1</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- java class runner -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>org.polyfill.perf.Runner</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
