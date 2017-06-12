@@ -63,6 +63,7 @@
         <module>api</module>
         <module>rest</module>
         <module>web</module>
+        <module>perf</module>
     </modules>
 
     <dependencyManagement>
