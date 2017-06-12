@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Import(PolyfillApiConfig.class)
 @Configuration
 @ComponentScan(basePackages = {"org.polyfill.perf"})
-public class TestAppConfig {
+public class RunnerConfig {
 
     @Autowired
     private UserAgentParserService uaParser;
