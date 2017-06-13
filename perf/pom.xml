@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.polyfills</groupId>
         <artifactId>polyfill-service</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.9.9</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -42,6 +42,14 @@
                 </executions>
                 <configuration>
                     <mainClass>org.polyfill.perf.Runner</mainClass>
+                </configuration>
+            </plugin>
+            <!-- skip deployment for this; not a library -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
