@@ -44,6 +44,14 @@
                     <mainClass>org.polyfill.perf.Runner</mainClass>
                 </configuration>
             </plugin>
+            <!-- skip deployment for this; not a library -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
