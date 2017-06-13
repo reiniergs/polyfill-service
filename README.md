@@ -13,7 +13,7 @@
 - [Running locally](#running-locally)
 - [Run tests](#tests)
 - [Java docs](#java-docs)
-
+- [Performance](/perf/README.md)
 
 
 <a name="why"></a>
