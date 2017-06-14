@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.XStream;
 import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.interfaces.PolyfillServiceConfigLocation;
 import org.polyfill.api.interfaces.ServiceConfigLoaderService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

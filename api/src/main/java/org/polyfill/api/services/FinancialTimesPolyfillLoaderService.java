@@ -6,7 +6,6 @@ import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
 import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 

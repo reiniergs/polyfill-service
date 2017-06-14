@@ -7,7 +7,6 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 import org.polyfill.api.components.LRUCache;
 import org.polyfill.api.interfaces.UserAgent;
 import org.polyfill.api.interfaces.UserAgentParserService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

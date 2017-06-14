@@ -1,12 +1,14 @@
 package org.polyfill.api.services;
 
 import org.polyfill.api.components.Feature;
-import org.polyfill.api.components.Query;
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.Query;
 import org.polyfill.api.components.TSort;
-import org.polyfill.api.interfaces.*;
+import org.polyfill.api.interfaces.PolyfillService;
+import org.polyfill.api.interfaces.UserAgent;
+import org.polyfill.api.interfaces.UserAgentParserService;
+import org.polyfill.api.interfaces.VersionUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
