@@ -1,7 +1,6 @@
 package org.polyfill.api.services;
 
 import org.polyfill.api.interfaces.VersionUtilService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.regex.Pattern;
  * Created by scottmo on 10/20/16
  * Service to check version number
  */
-@Primary
 @Service("semver")
 class SemVerUtilService implements VersionUtilService {
 

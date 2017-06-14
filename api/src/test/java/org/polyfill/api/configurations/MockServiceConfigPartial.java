@@ -13,7 +13,6 @@ import java.util.Arrays;
 @Configuration
 public class MockServiceConfigPartial {
     @Bean
-    @Primary
     public ServiceConfig serviceConfig() {
         return new ServiceConfig().setPolyfills(Arrays.asList("d", "eee"));
     }
