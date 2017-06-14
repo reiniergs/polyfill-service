@@ -1,6 +1,5 @@
 package org.polyfill.api.interfaces;
 
-import org.polyfill.api.components.PolyfillServiceConfigLocation;
 import org.polyfill.api.components.ServiceConfig;
 
 /**

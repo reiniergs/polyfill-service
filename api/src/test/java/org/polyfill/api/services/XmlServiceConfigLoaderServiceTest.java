@@ -1,7 +1,7 @@
 package org.polyfill.api.services;
 
 import org.junit.Test;
-import org.polyfill.api.components.PolyfillServiceConfigLocation;
+import org.polyfill.api.components.PolyfillServiceConfigFileLocation;
 import org.polyfill.api.components.ServiceConfig;
 
 import java.io.File;
@@ -18,7 +18,7 @@ public class XmlServiceConfigLoaderServiceTest {
 
     @Test
     public void testLoadConfig() {
-        PolyfillServiceConfigLocation serviceConfigLocation = new PolyfillServiceConfigLocation(
+        PolyfillServiceConfigFileLocation serviceConfigLocation = new PolyfillServiceConfigFileLocation(
             new File("./src/test/resources/service_configs/config.xml"));
         ServiceConfig actualConfig = serviceConfigLoaderService.loadConfig(serviceConfigLocation);
         ServiceConfig expectedConfig = new ServiceConfig()
@@ -31,7 +31,7 @@ public class XmlServiceConfigLoaderServiceTest {
 
     @Test
     public void testLoadConfigWithInvalidPath() {
-        PolyfillServiceConfigLocation serviceConfigLocation = new PolyfillServiceConfigLocation(
+        PolyfillServiceConfigFileLocation serviceConfigLocation = new PolyfillServiceConfigFileLocation(
             new File("wrong/path"));
         ServiceConfig actualConfig = serviceConfigLoaderService.loadConfig(serviceConfigLocation);
         ServiceConfig expectedConfig = new ServiceConfig();

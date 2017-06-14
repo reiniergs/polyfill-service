@@ -1,9 +1,10 @@
 package org.polyfill.perf.configurations;
 
-import org.polyfill.api.components.PolyfillServiceConfigLocation;
+import org.polyfill.api.components.PolyfillServiceConfigFileLocation;
 import org.polyfill.api.configurations.PolyfillApiConfig;
 import org.polyfill.api.interfaces.UserAgentParserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.polyfill.api.interfaces.PolyfillServiceConfigLocation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +56,6 @@ public class RunnerConfig {
 
     @Bean
     public PolyfillServiceConfigLocation location() {
-        return new PolyfillServiceConfigLocation(new File("./perf/src/main/resources/service-config.xml"));
+        return new PolyfillServiceConfigFileLocation(new File("./perf/src/main/resources/service-config.xml"));
     }
 }
