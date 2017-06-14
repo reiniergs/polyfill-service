@@ -51,7 +51,7 @@ Polyfill Service provides some options to customize the behavior of fetching pol
 e.g.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<query>
+<configurations>
     <!-- gate all polyfills -->
     <gated>true</gated>
     <!-- send minified source -->
@@ -64,7 +64,7 @@ e.g.
         <polyfill>Element.prototype.classList</polyfill>
         <polyfill>Element.prototype.cloneNode</polyfill>
     </polyfills>
-</query>
+</configurations>
 ```
 
 <a name="fetching-polyfills"></a>
