@@ -1,5 +1,7 @@
 package org.polyfill.api.components;
 
+import org.polyfill.api.interfaces.PolyfillServiceConfigLocation;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,11 +12,11 @@ import java.io.InputStream;
  * Wrapper object to store pointer to service configuration file.
  * This should allow us to support other object type in the future. e.g. InputStream.
  */
-public class PolyfillServiceConfigLocation {
+public class PolyfillServiceConfigFileLocation implements PolyfillServiceConfigLocation {
 
     private File file;
 
-    public PolyfillServiceConfigLocation(File file) {
+    public PolyfillServiceConfigFileLocation(File file) {
         this.file = file;
     }
 

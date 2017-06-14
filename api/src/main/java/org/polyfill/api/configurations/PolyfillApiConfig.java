@@ -1,9 +1,9 @@
 package org.polyfill.api.configurations;
 
 import org.polyfill.api.components.Feature;
-import org.polyfill.api.components.PolyfillServiceConfigLocation;
 import org.polyfill.api.components.Query;
 import org.polyfill.api.components.ServiceConfig;
+import org.polyfill.api.interfaces.PolyfillServiceConfigLocation;
 import org.polyfill.api.interfaces.ServiceConfigLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
