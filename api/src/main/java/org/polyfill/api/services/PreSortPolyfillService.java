@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  * dependencies to avoid doing topological sorting on every query.
  */
 @Service("presort")
-@Primary
 class PreSortPolyfillService implements PolyfillService {
 
     @Resource(name = "polyfills")

@@ -25,7 +25,6 @@ import java.util.*;
  * - min.js
  * - raw.js
  */
-@Primary
 @Service("all")
 class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, ResourceLoaderService {
 

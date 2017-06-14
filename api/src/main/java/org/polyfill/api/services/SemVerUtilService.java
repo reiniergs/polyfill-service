@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * Created by scottmo on 10/20/16
  * Service to check version number
  */
-@Primary
 @Service("semver")
 class SemVerUtilService implements VersionUtilService {
 

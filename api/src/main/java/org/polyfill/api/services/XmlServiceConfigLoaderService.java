@@ -12,7 +12,6 @@ import java.io.IOException;
 /**
  * Created by smo on 6/6/17.
  */
-@Primary
 @Service("xml")
 public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService {
 

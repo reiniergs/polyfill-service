@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
  * Created by smo
  * Service to parse user agent string.
  */
-@Primary
 @Service("uadetector")
 class UADetectorBasedUserAgentParserService implements UserAgentParserService {
 

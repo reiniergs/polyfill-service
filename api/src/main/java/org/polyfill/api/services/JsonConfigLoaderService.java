@@ -16,7 +16,6 @@ import java.util.Map;
  * Created by bvenkataraman on 10/13/16.
  */
 @Service("json")
-@Primary
 class JsonConfigLoaderService implements PolyfillConfigLoaderService, ResourceLoaderService {
 
     ObjectMapper jsonMapper = new ObjectMapper();
