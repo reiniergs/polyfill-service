@@ -110,18 +110,10 @@ public class PolyfillController {
     // e.g. Array.of|always|gated -> ["Array.of", "always", "gated"]
     // index 0 is name, index > 0 is flag
     private Feature parseFeature(String featureQuery) {
-        String[] nameAndFlags = featureQuery.split("\\|");
-        String name = nameAndFlags[0];
-        boolean isGated = false;
-        boolean isAlways = false;
-        for (int i = 1; i < nameAndFlags.length; i++) {
-            switch (nameAndFlags[i]) {
-                case Feature.GATED:
-                    isGated = true; break;
-                case Feature.ALWAYS:
-                    isAlways = true; break;
-            }
-        }
+        List<String> nameAndFlags = Arrays.asList(featureQuery.split("\\|"));
+        String name = nameAndFlags.get(0);
+        boolean isGated = nameAndFlags.contains(Feature.GATED);
+        boolean isAlways = nameAndFlags.contains(Feature.ALWAYS);
         return new Feature(name, isGated, isAlways);
     }
 }
