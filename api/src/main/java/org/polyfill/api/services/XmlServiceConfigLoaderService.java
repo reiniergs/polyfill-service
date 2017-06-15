@@ -7,6 +7,7 @@ import org.polyfill.api.interfaces.ServiceConfigLoaderService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by smo on 6/6/17.
@@ -18,8 +19,8 @@ public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService
     public ServiceConfig loadConfig(PolyfillServiceConfigLocation serviceConfigLocation) {
         if (serviceConfigLocation != null) {
             XStream xStream = getConfiguredXStream();
-            try {
-                return (ServiceConfig)xStream.fromXML(serviceConfigLocation.getInputStream());
+            try (InputStream is = serviceConfigLocation.getInputStream()) {
+                return (ServiceConfig)xStream.fromXML(is);
             } catch (IOException e) {
                 System.err.println("Error trying to load service configuration file! "
                         + "Will use default configurations.");
