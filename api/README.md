@@ -52,11 +52,11 @@ e.g.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <configurations>
-    <!-- gate all polyfills -->
+    <!-- gate all polyfills. default: true -->
     <gated>true</gated>
-    <!-- send minified source -->
+    <!-- send minified source. default: true -->
     <minify>true</minify>
-    <!-- load polyfills when user agent is unknown -->
+    <!-- load polyfills when user agent is unknown. default: true -->
     <load-on-unknown-ua>true</load-on-unknown-ua>
 
     <polyfills>

@@ -9,9 +9,10 @@ import javax.annotation.Resource;
 
 /**
  * Created by smo on 6/9/17.
+ * Service to measure polyfill service's main API's performance.
  */
 @Service
-public class CpuTimeMeasureService {
+class PolyfillApiPerfMeasureService {
 
     @Resource(name = "testIterations")
     private int testIterations;
@@ -32,7 +33,7 @@ public class CpuTimeMeasureService {
         System.out.println("Finished warming up\n");
     }
 
-    public double getMeasurement(String uaString) {
+    double getAvgElapsedTime(String uaString) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < testIterations; i++) {
