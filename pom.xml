@@ -353,6 +353,10 @@
                             <directory>web/src/main/webapp/docs</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
+                        <fileset>
+                            <directory>api/src/main/resources/polyfills</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
