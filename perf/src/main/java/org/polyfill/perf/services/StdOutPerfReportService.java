@@ -41,6 +41,8 @@ public class StdOutPerfReportService implements PerfReportService {
     private PolyfillService polyfillService;
     @Autowired
     private UserAgentParserService uaParserService;
+    @Autowired
+    private Query defaultQuery;
 
     private List<String> headers = Arrays.asList(
         "User Agent",
@@ -56,9 +58,8 @@ public class StdOutPerfReportService implements PerfReportService {
 
     @PostConstruct
     private void init() {
-        List<Feature> featureRequest = Collections.singletonList(new Feature("all"));
-        rawSourceQuery = new Query.Builder(featureRequest).setMinify(false).build();
-        minSourceQuery = new Query.Builder(featureRequest).setMinify(true).build();
+        rawSourceQuery = new Query.Builder(defaultQuery.getFeatures()).setMinify(false).build();
+        minSourceQuery = new Query.Builder(defaultQuery.getFeatures()).setMinify(true).build();
     }
 
     @Override
@@ -101,6 +102,7 @@ public class StdOutPerfReportService implements PerfReportService {
             // measure source sizes
             String rawSource = polyfillService.getPolyfillsSource(uaString, rawSourceQuery);
             String minSource = polyfillService.getPolyfillsSource(uaString, minSourceQuery);
+
             int rawSourceByteSize = sizeMeasureService.getByteSize(rawSource);
             int minSourceByteSize = sizeMeasureService.getByteSize(minSource);
             int gzipMinSourceByteSize = sizeMeasureService.getGzipByteSize(minSource);

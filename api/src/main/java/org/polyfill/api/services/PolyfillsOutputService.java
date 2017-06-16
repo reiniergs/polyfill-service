@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 class PolyfillsOutputService {
 
-    private static final String NO_POLYFILLS_MESSAGE = "/* No polyfills found for current settings */";
-    private static final String MIN_MESSAGE = "/* Disable minification (remove `.min` from URL path) for more info */";
+    private static final String NO_POLYFILLS_MESSAGE = "No polyfills found for current settings";
+    private static final String MIN_MESSAGE = "Disable minification (remove `.min` from URL path) for more info";
 
     @Resource(name = "projectVersion")
     private String projectVersion;
@@ -27,11 +27,10 @@ class PolyfillsOutputService {
 
     public String getPolyfillsSource(String uaString, Query query,
                                      List<Feature> featuresLoaded, boolean isDebugMode) {
-        String debugInfo = isDebugMode ? getDebugInfo(uaString, query, featuresLoaded) : "";
+        String debugInfo = isDebugMode ? getDebugInfo(uaString, query, featuresLoaded): "";
         String sources = getSources(featuresLoaded, query.shouldMinify());
-        return !debugInfo.isEmpty() && !sources.isEmpty()
-                ? debugInfo + "\n\n" + sources
-                : debugInfo + sources;
+        String separator = !debugInfo.isEmpty() && !sources.isEmpty() ? "\n\n" : "";
+        return debugInfo + separator + sources;
     }
 
     /**
@@ -42,10 +41,7 @@ class PolyfillsOutputService {
         String sources = features.stream()
                 .map(feature -> getSource(feature, minify))
                 .collect(Collectors.joining());
-        if (sources.isEmpty()) {
-            return minify ? "" : NO_POLYFILLS_MESSAGE;
-        }
-        return wrapInClosure(sources, minify);
+        return sources.isEmpty() ? "" : wrapInClosure(sources, minify);
     }
 
     /**
@@ -89,7 +85,7 @@ class PolyfillsOutputService {
      */
     private String getDebugInfo(String uaString, Query query, List<Feature> featuresLoaded) {
         if (query.shouldMinify()) {
-            return MIN_MESSAGE;
+            return buildCommentBlock(MIN_MESSAGE);
         }
 
         List<String> headers = new ArrayList<>();
@@ -108,11 +104,13 @@ class PolyfillsOutputService {
             headers.add("Features requested: " + featuresRequestedLine);
         }
 
-        if (!featuresLoaded.isEmpty()) {
-            headers.add(""); // new line
+        headers.add(""); // new line
+        if (featuresLoaded.isEmpty()) {
+            headers.add(NO_POLYFILLS_MESSAGE);
+        } else {
             List<String> featuresLoadedLines = featuresLoaded.stream()
-                    .map(this::formatFeatureLoaded)
-                    .collect(Collectors.toList());
+                .map(this::formatFeatureLoaded)
+                .collect(Collectors.toList());
             headers.addAll(featuresLoadedLines);
         }
 
@@ -124,8 +122,11 @@ class PolyfillsOutputService {
      * @return lines wrapped in a comment block
      */
     private String buildCommentBlock(List<String> lines) {
-        String comments = lines.stream().collect(Collectors.joining("\n * "));
-        return "/* " + comments + " */";
+        return buildCommentBlock(lines.stream().collect(Collectors.joining("\n * ")));
+    }
+    
+    private String buildCommentBlock(String line) {
+        return "/* " + line + " */";
     }
 
     /**

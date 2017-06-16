@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by reinier.guerra on 1/24/17.
@@ -52,7 +54,11 @@ public class PolyfillApiConfig {
     @Bean
     public Query defaultQuery() {
         ServiceConfig serviceConfig = this.serviceConfig();
-        return new Query.Builder(Collections.singletonList(new Feature("all")))
+        List<Feature> polyfillRequestList = serviceConfig.getPolyfills().stream()
+            .map(Feature::new)
+            .collect(Collectors.toList());
+
+        return new Query.Builder(polyfillRequestList)
             .setMinify(serviceConfig.shouldMinify())
             .setLoadOnUnknownUA(serviceConfig.shouldLoadOnUnknownUA())
             .setGatedForAll(serviceConfig.shouldGate())

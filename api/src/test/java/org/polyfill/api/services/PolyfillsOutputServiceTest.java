@@ -34,7 +34,7 @@ public class PolyfillsOutputServiceTest {
     private static final String PROJECT_VERSION_LINE = "Polyfill service v" + PROJECT_VERSION;
     private static final String PROJECT_URL_LINE = "For detailed credits and licence information see " + PROJECT_URL;
     private static final String USER_AGENT_LINE = "UA detected: " + UA_STRING;
-    private static final String NO_POLYFILLS_MESSAGE = "/* No polyfills found for current settings */";
+    private static final String NO_POLYFILLS_MESSAGE = "No polyfills found for current settings";
     private static final String MIN_MESSAGE = "/* Disable minification (remove `.min` from URL path) for more info */";
     private static final List<Feature> EMPTY_LIST = Collections.emptyList();
 
@@ -47,12 +47,13 @@ public class PolyfillsOutputServiceTest {
         Query query = new Query.Builder(requestedList).setMinify(false).build();
         String actual = polyfillsOutputService.getPolyfillsSource(UA_STRING, query, EMPTY_LIST, true);
         String expected =
-                "/* " + PROJECT_VERSION_LINE +"\n" +
-                " * " + PROJECT_URL_LINE + "\n" +
-                " * \n" +
-                " * " + USER_AGENT_LINE + "\n" +
-                " * Features requested: default */\n\n" +
-                NO_POLYFILLS_MESSAGE;
+            "/* " + PROJECT_VERSION_LINE +
+            "\n * " + PROJECT_URL_LINE +
+            "\n * " +
+            "\n * " + USER_AGENT_LINE +
+            "\n * Features requested: default" +
+            "\n * " +
+            "\n * " + NO_POLYFILLS_MESSAGE + " */";
         assertEquals(expected, actual);
     }
 

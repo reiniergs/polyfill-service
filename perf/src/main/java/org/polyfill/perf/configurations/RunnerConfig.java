@@ -22,7 +22,7 @@ public class RunnerConfig {
 
     @Bean
     public int testIterations() {
-        return 15000;
+        return 30000;
     };
 
     @Bean
