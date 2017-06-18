@@ -4,6 +4,7 @@ import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.ServiceConfig;
 import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
+import org.polyfill.api.interfaces.PolyfillLocation;
 import org.polyfill.api.interfaces.ResourceLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -50,16 +51,24 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private PolyfillConfigLoaderService configLoader;
 
     @Override
-    public Map<String, Polyfill> loadPolyfills(String polyfillsPath) throws IOException {
-        List<String> activePolyfills = serviceConfig.getPolyfills();
-        if (activePolyfills.isEmpty()) {
-            return loadAllPolyfills(polyfillsPath);
+    public Map<String, Polyfill> loadPolyfills(List<PolyfillLocation> polyfillLocations)
+            throws IOException {
+
+        if (polyfillLocations == null || polyfillLocations.isEmpty()) {
+            return Collections.emptyMap();
         }
-        return loadPartialPolyfills(polyfillsPath, activePolyfills);
+
+        List<String> activePolyfills = serviceConfig.getPolyfills();
+        if (!activePolyfills.isEmpty()) {
+            return loadPartialPolyfills(polyfillLocations, activePolyfills);
+        }
+
+        return loadAllPolyfills(polyfillLocations);
     }
 
-    private Map<String, Polyfill> loadPartialPolyfills(String polyfillsPath, List<String> activePolyfills)
-            throws IOException {
+    private Map<String, Polyfill> loadPartialPolyfills(List<PolyfillLocation> polyfillLocations,
+            List<String> activePolyfills) {
+
         Map<String, Polyfill> polyfills = new HashMap<>();
 
         Queue<String> processQueue = new LinkedList<>(activePolyfills);
@@ -70,38 +79,42 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
             }
 
             // resolve alias
-            Object polyfillGroup = this.aliases.get(polyfillName);
-            if (polyfillGroup instanceof List) {
-                processQueue.addAll((List)polyfillGroup);
+            List<String> polyfillGroup = this.aliases.get(polyfillName);
+            if (polyfillGroup != null) {
+                processQueue.addAll(polyfillGroup);
                 continue;
             }
 
-            Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
-            try {
-                Polyfill polyfill = loadPolyfill(polyfillDir);
-                polyfills.put(polyfill.getName(), polyfill);
+            Polyfill polyfill = loadPolyfill(polyfillLocations, polyfillName);
+            if (polyfill != null) {
+                polyfills.put(polyfillName, polyfill);
                 processQueue.addAll(polyfill.getDependencies());
-            } catch (IOException e) {
-                System.err.println("Error loading polyfill from directory: " + polyfillDir.toString());
             }
         }
 
         return Collections.unmodifiableMap(polyfills);
     }
 
-    private Map<String, Polyfill> loadAllPolyfills(String polyfillsPath) throws IOException {
+    private Map<String, Polyfill> loadAllPolyfills(List<PolyfillLocation> polyfillLocations)
+            throws IOException {
+
         Map<String, Polyfill> polyfills = new HashMap<>();
 
-        getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
-            try {
-                String polyfillName = getBaseDirectoryName(polyfillResource);
-                Path polyfillDir = Paths.get(polyfillsPath, polyfillName);
-                Polyfill polyfill = loadPolyfill(polyfillDir);
-                polyfills.put(polyfill.getName(), polyfill);
-            } catch (IOException e) {
-                System.err.println("Error loading polyfill from directory: " + polyfillResource.toString());
-            }
-        });
+        for (PolyfillLocation location : polyfillLocations) {
+            String polyfillsPath = location.getPath();
+            getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
+                try {
+                    String polyfillName = getBaseDirectoryName(polyfillResource);
+                    if (!polyfills.containsKey(polyfillName)) {
+                        Polyfill polyfill = loadPolyfill(polyfillsPath, polyfillName);
+                        polyfills.put(polyfill.getName(), polyfill);
+                    }
+                } catch (IOException e) {
+                    System.err.println("[Warning] Unable to load polyfill from resource: "
+                        + polyfillResource.toString());
+                }
+            });
+        }
 
         return Collections.unmodifiableMap(polyfills);
     }
@@ -110,13 +123,31 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
      * Implementation-specific helpers
      */
 
-    private Polyfill loadPolyfill(Path polyfillDirPath) throws IOException {
-        String polyfillDir = polyfillDirPath.toString();
+    private Polyfill loadPolyfill(List<PolyfillLocation> polyfillLocationList, String polyfillName) {
+        Polyfill polyfill = null;
+        for (PolyfillLocation location : polyfillLocationList) {
+            try {
+                polyfill = loadPolyfill(location.getPath(), polyfillName);
+                // found polyfill, no need to look at other locations
+                break;
+            } catch (IOException e) {
+                // ignore. unable to find polyfill from current directory
+            }
+        }
+        // just log if polyfill is not found in any polyfill location
+        if (polyfill == null) {
+            System.err.println("[Warning] Unable to load polyfill: " + polyfillName);
+        }
+        return polyfill;
+    }
+
+    private Polyfill loadPolyfill(String polyfillsPath, String polyfillName) throws IOException {
+        String polyfillDir = Paths.get(polyfillsPath, polyfillName).toString();
         Map<String, Object> meta = configLoader.getConfig(polyfillDir, META_FILENAME);
         String rawSource = resourceToString(getResource(polyfillDir, RAW_FILENAME));
         String minSource = resourceToString(getResource(polyfillDir, MIN_FILENAME));
 
-        return new Polyfill.Builder(polyfillDirPath.getFileName().toString())
+        return new Polyfill.Builder(polyfillName)
                 .rawSource( rawSource )
                 .minSource( minSource )
                 .aliases( getList(meta, ALIASES_KEY) )

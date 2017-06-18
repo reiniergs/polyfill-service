@@ -1,13 +1,17 @@
 package org.polyfill.api.configurations;
 
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.PolyfillLocationString;
 import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
+import org.polyfill.api.interfaces.PolyfillLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +22,9 @@ import java.util.Map;
 public class PolyfillSourceConfig {
 
     private static final String DEFAULT_POLYFILLS_LOCATION = "polyfills";
+
+    @Autowired(required = false)
+    private List<PolyfillLocation> customPolyfillLocations;
 
     @Autowired
     private PolyfillConfigLoaderService polyfillConfigLoaderService;
@@ -49,6 +56,14 @@ public class PolyfillSourceConfig {
 
     @Bean
     public Map<String, Polyfill> polyfills() throws IOException {
-        return polyfillLoaderService.loadPolyfills(POLYFILLS_DIST);
+        List<PolyfillLocation> polyfillLocationList = new ArrayList<>();
+        // custom polyfill directories
+        if (customPolyfillLocations != null && !customPolyfillLocations.isEmpty()) {
+            polyfillLocationList.addAll(customPolyfillLocations);
+        }
+        // add default polyfill directory last to let custom polyfills take priority
+        polyfillLocationList.add(new PolyfillLocationString(DEFAULT_POLYFILLS_LOCATION));
+
+        return polyfillLoaderService.loadPolyfills(polyfillLocationList);
     }
 }
