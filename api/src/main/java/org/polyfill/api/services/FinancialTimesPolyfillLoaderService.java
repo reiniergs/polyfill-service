@@ -41,7 +41,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private static final String RAW_FILENAME = "raw.js";
 
     @javax.annotation.Resource(name = "aliases")
-    private Map<String, Object> aliases;
+    private Map<String, List<String>> aliases;
 
     @Autowired
     private ServiceConfig serviceConfig;

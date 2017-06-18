@@ -30,8 +30,8 @@ public class MockPolyfillsConfig {
     }
 
     @Bean
-    public Map<String, Object> aliases() {
-        return new HashMap<String, Object>(){{
+    public Map<String, List<String>> aliases() {
+        return new HashMap<String, List<String>>(){{
             put("default", Arrays.asList("a", "b", "c"));
             put("es6", Arrays.asList("b", "c", "d"));
             put("foo", Arrays.asList("c", "e"));
@@ -40,8 +40,8 @@ public class MockPolyfillsConfig {
     }
 
     @Bean
-    public Map<String, Object> browserBaselines() {
-        return new HashMap<String, Object>(){{
+    public Map<String, String> browserBaselines() {
+        return new HashMap<String, String>(){{
             put("chrome", "*");
             put("firefox", ">=3.6");
         }};

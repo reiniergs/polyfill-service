@@ -17,7 +17,7 @@ import java.util.Map;
 @Configuration
 public class PolyfillSourceConfig {
 
-    private static final String POLYFILLS_DIST = "polyfills";
+    private static final String DEFAULT_POLYFILLS_LOCATION = "polyfills";
 
     @Autowired
     private PolyfillConfigLoaderService polyfillConfigLoaderService;
@@ -26,18 +26,25 @@ public class PolyfillSourceConfig {
     private PolyfillLoaderService polyfillLoaderService;
 
     @Bean
-    public Map<String, Object> aliases() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "aliases.json");
+    public Map<String, List<String>> aliases() throws IOException, ClassCastException {
+        // Just cast here directly, no need to do the casting later.
+        // If it fails the cast, we know something is wrong.
+        return (Map<String, List<String>>)(Map)polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "aliases.json");
     }
 
     @Bean
     public Map<String, Object> browserAliases() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "browserAliases.json");
+        return polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "browserAliases.json");
     }
 
     @Bean
-    public Map<String, Object> browserBaselines() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "browserBaselines.json");
+    public Map<String, String> browserBaselines() throws IOException, ClassCastException {
+        // Just cast here directly, no need to do the casting later.
+        // If it fails the cast, we know something is wrong.
+        return (Map<String, String>)(Map)polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "browserBaselines.json");
     }
 
     @Bean

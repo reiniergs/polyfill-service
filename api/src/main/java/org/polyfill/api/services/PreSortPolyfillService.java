@@ -29,10 +29,10 @@ class PreSortPolyfillService implements PolyfillService {
     private Map<String, Polyfill> polyfills;
 
     @Resource(name = "browserBaselines")
-    private Map<String, Object> browserBaselines;
+    private Map<String, String> browserBaselines;
 
     @Resource(name = "aliases")
-    private Map<String, Object> aliases;
+    private Map<String, List<String>> aliases;
 
     @Resource(name = "defaultQuery")
     private Query defaultQuery;
@@ -178,10 +178,9 @@ class PreSortPolyfillService implements PolyfillService {
     private boolean isUserAgentSupported(UserAgent userAgent) {
         if (userAgent == null) return false;
 
-        Object baselineVersion = browserBaselines.get(userAgent.getFamily());
-        String clientUAVersion = userAgent.getVersion();
-        return baselineVersion instanceof String
-                && versionChecker.isVersionInRange(clientUAVersion, (String)baselineVersion);
+        String baselineVersion = browserBaselines.get(userAgent.getFamily());
+        return baselineVersion != null
+            && versionChecker.isVersionInRange(userAgent.getVersion(), baselineVersion);
     }
 
     /**
@@ -245,9 +244,9 @@ class PreSortPolyfillService implements PolyfillService {
         if ("all".equals(feature.getName())) {
             return getAllFeatures(feature);
         } else {
-            Object featureGroup = this.aliases.get(feature.getName());
-            if (featureGroup instanceof List) {
-                return ((List<String>) featureGroup).stream()
+            List<String> featureGroup = this.aliases.get(feature.getName());
+            if (featureGroup != null) {
+                return (featureGroup).stream()
                         .map(featureName -> new Feature(featureName, feature))
                         .collect(Collectors.toList());
             }
