@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Query;
-import org.polyfill.api.configurations.MockBrowserAliasesConfig;
-import org.polyfill.api.configurations.MockPolyfillsConfig;
-import org.polyfill.api.configurations.MockProjectInfoConfig;
+import org.polyfill.api.configurations.BrowserAliasesConfig;
+import org.polyfill.api.configurations.PolyfillsConfig;
+import org.polyfill.api.configurations.ProjectInfoConfig;
 import org.polyfill.api.interfaces.PolyfillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,9 +23,9 @@ import static junit.framework.TestCase.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         loader=AnnotationConfigContextLoader.class,
-        classes={MockPolyfillsConfig.class,
-                MockBrowserAliasesConfig.class,
-                MockProjectInfoConfig.class,
+        classes={PolyfillsConfig.class,
+                BrowserAliasesConfig.class,
+                ProjectInfoConfig.class,
                 SemVerUtilService.class,
                 UADetectorBasedUserAgentParserService.class,
                 PolyfillsOutputService.class,

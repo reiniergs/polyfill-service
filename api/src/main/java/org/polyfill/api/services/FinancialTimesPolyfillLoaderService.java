@@ -15,6 +15,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by smo on 2/25/17.
@@ -51,8 +52,7 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
     private PolyfillConfigLoaderService configLoader;
 
     @Override
-    public Map<String, Polyfill> loadPolyfills(List<PolyfillLocation> polyfillLocations)
-            throws IOException {
+    public Map<String, Polyfill> loadPolyfills(List<PolyfillLocation> polyfillLocations) {
 
         if (polyfillLocations == null || polyfillLocations.isEmpty()) {
             return Collections.emptyMap();
@@ -95,25 +95,28 @@ class FinancialTimesPolyfillLoaderService implements PolyfillLoaderService, Reso
         return Collections.unmodifiableMap(polyfills);
     }
 
-    private Map<String, Polyfill> loadAllPolyfills(List<PolyfillLocation> polyfillLocations)
-            throws IOException {
+    private Map<String, Polyfill> loadAllPolyfills(List<PolyfillLocation> polyfillLocations) {
 
         Map<String, Polyfill> polyfills = new HashMap<>();
 
         for (PolyfillLocation location : polyfillLocations) {
             String polyfillsPath = location.getPath();
-            getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
-                try {
-                    String polyfillName = getBaseDirectoryName(polyfillResource);
-                    if (!polyfills.containsKey(polyfillName)) {
-                        Polyfill polyfill = loadPolyfill(polyfillsPath, polyfillName);
-                        polyfills.put(polyfill.getName(), polyfill);
+            try {
+                getResources(polyfillsPath, "*", "meta.json").forEach(polyfillResource -> {
+                    try {
+                        String polyfillName = getBaseDirectoryName(polyfillResource);
+                        if (!polyfills.containsKey(polyfillName)) {
+                            Polyfill polyfill = loadPolyfill(polyfillsPath, polyfillName);
+                            polyfills.put(polyfill.getName(), polyfill);
+                        }
+                    } catch (IOException e) {
+                        System.err.println("[Warning] Unable to load polyfill from resource: "
+                                + polyfillResource.toString());
                     }
-                } catch (IOException e) {
-                    System.err.println("[Warning] Unable to load polyfill from resource: "
-                        + polyfillResource.toString());
-                }
-            });
+                });
+            } catch (IOException e) {
+                System.err.println("[Warning] Unable to load polyfills from " + polyfillsPath);
+            }
         }
 
         return Collections.unmodifiableMap(polyfills);

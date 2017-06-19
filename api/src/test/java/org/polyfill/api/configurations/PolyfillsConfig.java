@@ -13,7 +13,7 @@ import java.util.*;
  * Created by smo on 3/4/17.
  */
 @Configuration
-public class MockPolyfillsConfig {
+public class PolyfillsConfig {
 
     @Bean
     public ServiceConfig serviceConfig() {

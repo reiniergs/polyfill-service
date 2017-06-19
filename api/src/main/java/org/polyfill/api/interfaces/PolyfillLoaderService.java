@@ -15,8 +15,7 @@ public interface PolyfillLoaderService {
     /**
      * Load all polyfills within {@code polyfillsPath}
      * @param locations directories containing a list of polyfill directories
-     * @return map of loaded polyfills
-     * @throws IOException if {@code polyfillsPath} is a nonexistent directory
+     * @return map of loaded polyfills; empty map if locations are invalid
      */
-    Map<String, Polyfill> loadPolyfills(List<PolyfillLocation> locations) throws IOException;
+    Map<String, Polyfill> loadPolyfills(List<PolyfillLocation> locations);
 }

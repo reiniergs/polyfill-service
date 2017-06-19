@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by smo on 3/4/17.
  */
 @Configuration
-public class MockBrowserAliasesConfig {
+public class BrowserAliasesConfig {
     @Bean
     public Map<String, Object> browserAliases() {
         return new HashMap<String, Object>(){{

@@ -1,0 +1,6 @@
+{
+    "browsers": {
+        "chrome": "<50"
+    },
+    "detectSource": "g.detectSource"
+}

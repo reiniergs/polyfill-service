@@ -1,0 +1,11 @@
+{
+    "browsers": {
+        "chrome": "<50",
+        "firefox": "31"
+    },
+    "dependencies": [
+        "c",
+        "g"
+    ],
+    "detectSource": "d.detectSource"
+}

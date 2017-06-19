@@ -55,7 +55,7 @@ public class PolyfillSourceConfig {
     }
 
     @Bean
-    public Map<String, Polyfill> polyfills() throws IOException {
+    public Map<String, Polyfill> polyfills() {
         List<PolyfillLocation> polyfillLocationList = new ArrayList<>();
         // custom polyfill directories
         if (customPolyfillLocations != null && !customPolyfillLocations.isEmpty()) {
