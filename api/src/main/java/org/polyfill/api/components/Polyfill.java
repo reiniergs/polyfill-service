@@ -21,18 +21,20 @@ public class Polyfill {
     private List<String> dependencies;
     private Map<String, String> browserRequirements;
 
-    private Polyfill(Builder builder) {
-        this.name = builder.name;
-        this.rawSource = builder.rawSource;
-        this.minSource = builder.minSource;
-        this.detectSource = builder.detectSource;
-        this.testsSource = builder.testsSource;
-        this.license = builder.license;
-        this.repository = builder.repository;
-        this.isTestable = builder.isTestable;
-        this.aliases = builder.aliases;
-        this.dependencies = builder.dependencies;
-        this.browserRequirements = builder.browserRequirements;
+    private Polyfill() {}
+
+    private Polyfill(Polyfill polyfill) {
+        this.name = polyfill.name;
+        this.rawSource = polyfill.rawSource;
+        this.minSource = polyfill.minSource;
+        this.detectSource = polyfill.detectSource;
+        this.testsSource = polyfill.testsSource;
+        this.license = polyfill.license;
+        this.repository = polyfill.repository;
+        this.isTestable = polyfill.isTestable;
+        this.aliases = polyfill.aliases;
+        this.dependencies = polyfill.dependencies;
+        this.browserRequirements = polyfill.browserRequirements;
     }
 
     /**
@@ -162,82 +164,73 @@ public class Polyfill {
      */
     public static class Builder {
 
-        private String name;
-        private String rawSource;
-        private String minSource;
-        private String detectSource;
-        private String testsSource;
-        private String license;
-        private String repository;
-        private boolean isTestable;
-        private List<String> aliases;
-        private List<String> dependencies;
-        private Map<String, String> browserRequirements;
+        private Polyfill polyfill;
 
         public Builder(String name) {
-            this.name = name;
-            this.isTestable = false;
-            this.aliases = Collections.emptyList();
-            this.dependencies = Collections.emptyList();
-            this.browserRequirements = Collections.emptyMap();
+            this.polyfill = new Polyfill();
+            this.polyfill.name = name;
+            this.polyfill.isTestable = false;
+            this.polyfill.aliases = Collections.emptyList();
+            this.polyfill.dependencies = Collections.emptyList();
+            this.polyfill.browserRequirements = Collections.emptyMap();
         }
 
         public Polyfill build() {
-            return new Polyfill(this);
+            return new Polyfill(this.polyfill);
         }
 
         public Builder rawSource(String rawSource) {
-            this.rawSource = rawSource;
+            this.polyfill.rawSource = rawSource;
             return this;
         }
 
         public Builder minSource(String minSource) {
-            this.minSource = minSource;
+            this.polyfill.minSource = minSource;
             return this;
         }
 
         public Builder detectSource(String detectSource) {
-            this.detectSource = detectSource;
+            this.polyfill.detectSource = detectSource;
             return this;
         }
 
         public Builder testsSource(String testsSource) {
-            this.testsSource = testsSource;
+            this.polyfill.testsSource = testsSource;
             return this;
         }
 
         public Builder license(String license) {
-            this.license = license;
+            this.polyfill.license = license;
             return this;
         }
 
         public Builder repository(String repository) {
-            this.repository = repository;
+            this.polyfill.repository = repository;
             return this;
         }
 
         public Builder isTestable(boolean testable) {
-            isTestable = testable;
+            this.polyfill.isTestable = testable;
             return this;
         }
 
         public Builder aliases(List<String> aliases) {
             if (aliases != null && !aliases.isEmpty()) {
-                this.aliases = Collections.unmodifiableList(aliases);
+                this.polyfill.aliases = Collections.unmodifiableList(aliases);
             }
             return this;
         }
 
         public Builder dependencies(List<String> dependencies) {
             if (dependencies != null && !dependencies.isEmpty()) {
-                this.dependencies = Collections.unmodifiableList(dependencies);
+                this.polyfill.dependencies = Collections.unmodifiableList(dependencies);
             }
             return this;
         }
 
         public Builder browserRequirements(Map<String, String> browserRequirements) {
             if (browserRequirements != null && !browserRequirements.isEmpty()) {
-                this.browserRequirements = Collections.unmodifiableMap(browserRequirements);
+                this.polyfill.browserRequirements = Collections.unmodifiableMap(browserRequirements);
             }
             return this;
         }

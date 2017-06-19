@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Polyfill;
 import org.polyfill.api.components.Query;
-import org.polyfill.api.configurations.MockProjectInfoConfig;
+import org.polyfill.api.configurations.ProjectInfoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         loader=AnnotationConfigContextLoader.class,
-        classes={MockProjectInfoConfig.class,
+        classes={ProjectInfoConfig.class,
                 PolyfillsOutputService.class
         })
 public class PolyfillsOutputServiceTest {

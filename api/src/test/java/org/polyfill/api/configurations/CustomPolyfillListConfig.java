@@ -6,14 +6,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by smo on 6/7/17.
  */
 @Configuration
-public class MockServiceConfigPartial {
+public class CustomPolyfillListConfig {
     @Bean
     public ServiceConfig serviceConfig() {
-        return new ServiceConfig().setPolyfills(Arrays.asList("d", "eee"));
+        List<String> polyfillList = Arrays.asList("d", "eee");
+        return new ServiceConfig().setPolyfills(polyfillList);
     }
 }

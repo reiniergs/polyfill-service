@@ -23,14 +23,16 @@ public class Query {
     // extra options
     private boolean includeDependencies = true;
 
-    private Query(Builder builder) {
-        this.features = builder.features;
-        this.excludes = builder.excludes;
-        this.loadOnUnknownUA = builder.loadOnUnknownUA;
-        this.minify = builder.minify;
-        this.gatedForAll = builder.gatedForAll;
-        this.alwaysForAll = builder.alwaysForAll;
-        this.includeDependencies = builder.includeDependencies;
+    private Query() {}
+
+    private Query(Query query) {
+        this.features = query.features;
+        this.excludes = query.excludes;
+        this.loadOnUnknownUA = query.loadOnUnknownUA;
+        this.minify = query.minify;
+        this.gatedForAll = query.gatedForAll;
+        this.alwaysForAll = query.alwaysForAll;
+        this.includeDependencies = query.includeDependencies;
     }
 
     public List<Feature> getFeatures() {
@@ -62,31 +64,21 @@ public class Query {
     }
 
     public static class Builder {
-        // features to request
-        private List<Feature> features;
-
-        // filters
-        private Set<String> excludes = new HashSet<>();
-        private boolean loadOnUnknownUA = true;
-        private boolean minify = true;
-        private boolean gatedForAll = true;
-        private boolean alwaysForAll = false;
-
-        // extra options
-        private boolean includeDependencies = true;
+        private Query query;
 
         public Builder(List<Feature> features) {
-            this.features = features;
-            this.excludes = new HashSet<>();
-            this.loadOnUnknownUA = true;
-            this.minify = true;
-            this.gatedForAll = true;
-            this.alwaysForAll = false;
-            this.includeDependencies = true;
+            this.query = new Query();
+            this.query.features = features;
+            this.query.excludes = new HashSet<>();
+            this.query.loadOnUnknownUA = true;
+            this.query.minify = true;
+            this.query.gatedForAll = true;
+            this.query.alwaysForAll = false;
+            this.query.includeDependencies = true;
         }
 
         public Query build() {
-            return new Query(this);
+            return new Query(this.query);
         }
 
         public Builder excludeFeatures(String ... features) {
@@ -94,32 +86,32 @@ public class Query {
         }
 
         public Builder excludeFeatures(List<String> features) {
-            this.excludes.addAll(features);
+            this.query.excludes.addAll(features);
             return this;
         }
 
         public Builder setLoadOnUnknownUA(boolean loadOnUnknownUA) {
-            this.loadOnUnknownUA = loadOnUnknownUA;
+            this.query.loadOnUnknownUA = loadOnUnknownUA;
             return this;
         }
 
         public Builder setMinify(boolean minify) {
-            this.minify = minify;
+            this.query.minify = minify;
             return this;
         }
 
         public Builder setAlwaysForAll(boolean alwaysForAll) {
-            this.alwaysForAll = alwaysForAll;
+            this.query.alwaysForAll = alwaysForAll;
             return this;
         }
 
         public Builder setGatedForAll(boolean gatedForAll) {
-            this.gatedForAll = gatedForAll;
+            this.query.gatedForAll = gatedForAll;
             return this;
         }
 
         public Builder setIncludeDependencies(boolean includeDependencies) {
-            this.includeDependencies = includeDependencies;
+            this.query.includeDependencies = includeDependencies;
             return this;
         }
     }

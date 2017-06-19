@@ -2,7 +2,7 @@ package org.polyfill.api.services;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.polyfill.api.configurations.MockBrowserAliasesConfig;
+import org.polyfill.api.configurations.BrowserAliasesConfig;
 import org.polyfill.api.interfaces.UserAgent;
 import org.polyfill.api.interfaces.UserAgentParserService;
 import org.polyfill.api.utils.UA;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         loader=AnnotationConfigContextLoader.class,
-        classes={MockBrowserAliasesConfig.class,
+        classes={BrowserAliasesConfig.class,
                 UADetectorBasedUserAgentParserService.class
         })
 public class UADetectorBasedUserAgentParserServiceTest {

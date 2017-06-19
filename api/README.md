@@ -6,6 +6,7 @@
     - [Setup](#setup)
     - [Configurations](#configurations)
     - [Fetching polyfills](#fetching-polyfills)
+    - [Custom Polyfill Location](#custom-polyfill-location)
 
 <a name="usage"></a>
 ## Usage
@@ -77,3 +78,49 @@ PolyfillService polyfillService;
 // without query object, it will load all the polyfills, filtered by the user agent string
 String output = polyfillService.getPolyfillsSource(userAgentString);
 ```
+
+<a name="custom-polyfill-location"></a>
+### Custom Polyfill Location
+
+Polyfill Structure
+```
+resources
+- custom_polyfills
+    - MyPolyfill
+        - meta.json
+        - min.js
+        - raw.js
+```
+
+meta.json Example
+```json
+{
+  "browsers": {
+    "android": "* - 4.4",
+    "bb": "* - 10",
+    "chrome": "* - 31",
+    "firefox": "6 - 28",
+    "ie": "8 - 12",
+    "ie_mob": "*",
+    "ios_saf": "* - 7.1",
+    "op_mini": "*",
+    "opera": "* - 19",
+    "safari": "* - 7",
+    "firefox_mob": "6 - 28"
+  },
+  "dependencies": ["setImmediate", "Array.isArray", "Event"],
+  "license": "MIT",
+  "detectSource": "'Promise' in this",
+  "baseDir": "Promise"
+}
+```
+
+Polyfill Service Hook
+```java
+@Bean
+public PolyfillLocation location() {
+    return PolyfillLocationString("custom_polyfills");
+}
+```
+
+If custom polyfills already exist in Polyfill Service, it will be replaced by your polyfills. The existing aliases will also apply to your custom polyfills. However, note that we don't support custom alias as of now.

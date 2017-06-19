@@ -3,17 +3,24 @@ package org.polyfill.api.services;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.api.components.Polyfill;
-import org.polyfill.api.configurations.MockPolyfillsConfig;
+import org.polyfill.api.components.PolyfillLocationString;
+import org.polyfill.api.configurations.CustomPolyfillsConfig;
+import org.polyfill.api.configurations.PolyfillsConfig;
+import org.polyfill.api.interfaces.PolyfillLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.annotation.Resource;
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.polyfill.api.utils.TestingUtil.assertPolyfillsEqual;
 
 /**
  * Created by smo on 2/26/17.
@@ -21,50 +28,77 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         loader=AnnotationConfigContextLoader.class,
-        classes={MockPolyfillsConfig.class,
+        classes={PolyfillsConfig.class,
+                CustomPolyfillsConfig.class,
                 JsonConfigLoaderService.class,
                 FinancialTimesPolyfillLoaderService.class
         })
 public class FinancialTimesPolyfillLoaderServiceTest {
 
-    private static final String POLYFILLS_PATH = "polyfills";
-
     @Autowired
-    private FinancialTimesPolyfillLoaderService polyfillLoader;
+    private FinancialTimesPolyfillLoaderService service;
 
     @Resource(name = "polyfills")
-    private Map<String, Polyfill> expectedPolyfills;
+    Map<String, Polyfill> defaultPolyfills;
+
+    @Resource(name = "customPolyfills")
+    Map<String, Polyfill> customPolyfills;
+
+    PolyfillLocation defaultLocation = new PolyfillLocationString("polyfills");
+    PolyfillLocation customLocation = new PolyfillLocationString("polyfills_custom");
 
     @Test
-    public void testNumberOfPolyfillsLoaded() {
-        try {
-            Map<String, Polyfill> actualPolyfills = polyfillLoader.loadPolyfills(POLYFILLS_PATH);
-            assertEquals("Number of expectedPolyfills loaded is incorrect",
-                expectedPolyfills.size(), actualPolyfills.size());
-        } catch(IOException e) {
-            fail("Loading polyfills with correct path should not throw IOException");
-        }
+    public void testNumberOfPolyfillsLoadedFromSingleLocation() {
+        List<PolyfillLocation> polyfillLocationList = Arrays.asList(defaultLocation);
+        Map<String, Polyfill> expectedPolyfills = getDefaultExpectedPolyfills();
+        Map<String, Polyfill> actualPolyfills = service.loadPolyfills(polyfillLocationList);
+        assertEquals("Number of expectedPolyfills loaded is incorrect",
+            expectedPolyfills.size(), actualPolyfills.size());
     }
 
     @Test
-    public void testPolyfillsLoaded() {
-        try {
-            Map<String, Polyfill> actualPolyfills = polyfillLoader.loadPolyfills(POLYFILLS_PATH);
-            assertEquals("Loaded polyfills are incorrect",
-                expectedPolyfills.toString(), actualPolyfills.toString());
-        } catch(IOException e) {
-            fail("Loading polyfills with correct path should not throw IOException");
-        }
+    public void testPolyfillsLoadedFromSingleLocation() {
+        List<PolyfillLocation> polyfillLocationList = Arrays.asList(defaultLocation);
+        Map<String, Polyfill> expectedPolyfills = getDefaultExpectedPolyfills();
+        Map<String, Polyfill> actualPolyfills = service.loadPolyfills(polyfillLocationList);
+        assertPolyfillsEqual("Loaded polyfills are incorrect",
+                expectedPolyfills, actualPolyfills);
+    }
+
+    @Test
+    public void testNumberOfPolyfillsLoadedFromMultipleLocation() {
+        List<PolyfillLocation> polyfillLocationList = Arrays.asList(customLocation, defaultLocation);
+        Map<String, Polyfill> expectedPolyfills = getExpectedPolyfillsFromMultipleLocations();
+        Map<String, Polyfill> actualPolyfills = service.loadPolyfills(polyfillLocationList);
+        assertEquals("Number of expectedPolyfills loaded is incorrect",
+                expectedPolyfills.size(), actualPolyfills.size());
+    }
+
+    @Test
+    public void testPolyfillsLoadedFromMultipleLocation() {
+        List<PolyfillLocation> polyfillLocationList = Arrays.asList(customLocation, defaultLocation);
+        Map<String, Polyfill> expectedPolyfills = getExpectedPolyfillsFromMultipleLocations();
+        Map<String, Polyfill> actualPolyfills = service.loadPolyfills(polyfillLocationList);
+        assertPolyfillsEqual("Loaded polyfills are incorrect",
+                expectedPolyfills, actualPolyfills);
     }
 
     @Test
     public void testLoadingPolyfillsFromAWrongPath() {
-        Map<String, Polyfill> actualPolyfills = null;
-        try {
-            actualPolyfills = polyfillLoader.loadPolyfills("wrong/path");
-            fail("Loading polyfills from the wrong path should throw IOException");
-        } catch(IOException e) {
-            assertNull("Should return null when path doesn't exist", actualPolyfills);
-        }
+        PolyfillLocation wrongLocation = new PolyfillLocationString("wrong/path");
+        List<PolyfillLocation> polyfillLocations = Arrays.asList(wrongLocation);
+        Map<String, Polyfill> actualPolyfills = service.loadPolyfills(polyfillLocations);
+        assertTrue("Empty map is created when path is incorrect.", actualPolyfills.isEmpty());
+    }
+
+    Map<String, Polyfill> getDefaultExpectedPolyfills() {
+        return defaultPolyfills;
+    }
+
+    Map<String, Polyfill> getExpectedPolyfillsFromMultipleLocations() {
+        Map<String, Polyfill> polyfills = new HashMap<>();
+        polyfills.putAll(defaultPolyfills);
+        polyfills.putAll(customPolyfills);
+        return polyfills;
     }
 }

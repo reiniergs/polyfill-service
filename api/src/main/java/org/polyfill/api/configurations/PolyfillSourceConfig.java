@@ -1,13 +1,17 @@
 package org.polyfill.api.configurations;
 
 import org.polyfill.api.components.Polyfill;
+import org.polyfill.api.components.PolyfillLocationString;
 import org.polyfill.api.interfaces.PolyfillConfigLoaderService;
 import org.polyfill.api.interfaces.PolyfillLoaderService;
+import org.polyfill.api.interfaces.PolyfillLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +21,10 @@ import java.util.Map;
 @Configuration
 public class PolyfillSourceConfig {
 
-    private static final String POLYFILLS_DIST = "polyfills";
+    private static final String DEFAULT_POLYFILLS_LOCATION = "polyfills";
+
+    @Autowired(required = false)
+    private List<PolyfillLocation> customPolyfillLocations;
 
     @Autowired
     private PolyfillConfigLoaderService polyfillConfigLoaderService;
@@ -26,22 +33,37 @@ public class PolyfillSourceConfig {
     private PolyfillLoaderService polyfillLoaderService;
 
     @Bean
-    public Map<String, Object> aliases() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "aliases.json");
+    public Map<String, List<String>> aliases() throws IOException, ClassCastException {
+        // Just cast here directly, no need to do the casting later.
+        // If it fails the cast, we know something is wrong.
+        return (Map<String, List<String>>)(Map)polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "aliases.json");
     }
 
     @Bean
     public Map<String, Object> browserAliases() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "browserAliases.json");
+        return polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "browserAliases.json");
     }
 
     @Bean
-    public Map<String, Object> browserBaselines() throws IOException {
-        return polyfillConfigLoaderService.getConfig(POLYFILLS_DIST, "browserBaselines.json");
+    public Map<String, String> browserBaselines() throws IOException, ClassCastException {
+        // Just cast here directly, no need to do the casting later.
+        // If it fails the cast, we know something is wrong.
+        return (Map<String, String>)(Map)polyfillConfigLoaderService.getConfig(
+            DEFAULT_POLYFILLS_LOCATION, "browserBaselines.json");
     }
 
     @Bean
-    public Map<String, Polyfill> polyfills() throws IOException {
-        return polyfillLoaderService.loadPolyfills(POLYFILLS_DIST);
+    public Map<String, Polyfill> polyfills() {
+        List<PolyfillLocation> polyfillLocationList = new ArrayList<>();
+        // custom polyfill directories
+        if (customPolyfillLocations != null && !customPolyfillLocations.isEmpty()) {
+            polyfillLocationList.addAll(customPolyfillLocations);
+        }
+        // add default polyfill directory last to let custom polyfills take priority
+        polyfillLocationList.add(new PolyfillLocationString(DEFAULT_POLYFILLS_LOCATION));
+
+        return polyfillLoaderService.loadPolyfills(polyfillLocationList);
     }
 }
