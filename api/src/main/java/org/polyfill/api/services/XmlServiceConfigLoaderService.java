@@ -37,9 +37,6 @@ public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService
      */
     private XStream getConfiguredXStream() {
         XStream xstream = new XStream();
-        // only allow ServiceConfig object for xstream to de/serialize due to security reasons
-        XStream.setupDefaultSecurity(xstream);
-        xstream.allowTypes(new Class[]{ServiceConfig.class});
 
         // map fields to tags for different names
         xstream.alias("configurations", ServiceConfig.class);
