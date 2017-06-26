@@ -20,6 +20,12 @@
             <artifactId>polyfill-service-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.polyfills</groupId>
+            <artifactId>polyfill-service-api</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.steveash.itxttbl</groupId>
             <artifactId>inamik-text-tables</artifactId>
             <version>0.1</version>

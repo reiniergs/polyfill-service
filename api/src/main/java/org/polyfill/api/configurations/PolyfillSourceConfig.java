@@ -41,12 +41,6 @@ public class PolyfillSourceConfig {
     }
 
     @Bean
-    public Map<String, Object> browserAliases() throws IOException {
-        return polyfillConfigLoaderService.getConfig(
-            DEFAULT_POLYFILLS_LOCATION, "browserAliases.json");
-    }
-
-    @Bean
     public Map<String, String> browserBaselines() throws IOException, ClassCastException {
         // Just cast here directly, no need to do the casting later.
         // If it fails the cast, we know something is wrong.

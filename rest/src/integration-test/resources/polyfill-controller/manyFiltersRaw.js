@@ -1,7 +1,7 @@
 /* Polyfill service v1.0-SNAPSHOT
  * For detailed credits and licence information see https://github.com/reiniergs/polyfill-service
  * 
- * UA detected: firefox/23
+ * UA detected: firefox/23.0.0
  * Features requested: modernizr:es6string,Array.isArray
  * 
  * - Object.defineProperty (required by "Array.isArray")

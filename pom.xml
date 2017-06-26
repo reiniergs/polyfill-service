@@ -78,6 +78,13 @@
                 <artifactId>polyfill-service-rest</artifactId>
                 <version>0.10.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.polyfills</groupId>
+                <artifactId>polyfill-service-api</artifactId>
+                <version>0.10.0</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -142,6 +149,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>22.0</version>
         </dependency>
     </dependencies>
 
