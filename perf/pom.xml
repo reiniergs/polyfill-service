@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.polyfills</groupId>
         <artifactId>polyfill-service</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
