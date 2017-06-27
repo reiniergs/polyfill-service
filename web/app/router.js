@@ -7,9 +7,16 @@ import About from './components/About';
 import ApiReference from './components/ApiReference';
 import Polyfill from './components/Polyfill';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-101744464-1');
+
+function fireTracking() {
+    ReactGA.pageview(window.location.hash);
+}
+
 const Root = ({ store }) => (
     <Provider store={ store }>
-        <Router history={ hashHistory }>
+        <Router history={ hashHistory } onUpdate={ fireTracking }>
             <Route path="/" component={ App }>
                 <IndexRedirect to="features"/>
                 <Route path="features" component={ Features }/>
