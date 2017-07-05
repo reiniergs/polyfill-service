@@ -270,7 +270,6 @@ Promise.resolve()
             polyfills.map(polyfill => polyfill.writeOutput(dest))
         ))
     )
-    .then(() => writeConfigFile("browserAliases.json", src, dest))
     .then(() => writeConfigFile("browserBaselines.json", src, dest))
     .then(() => console.log('Sources built successfully'))
     .catch(e => {

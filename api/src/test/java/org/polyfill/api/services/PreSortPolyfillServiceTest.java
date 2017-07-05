@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfill.api.components.Feature;
 import org.polyfill.api.components.Query;
-import org.polyfill.api.configurations.BrowserAliasesConfig;
 import org.polyfill.api.configurations.PolyfillsConfig;
 import org.polyfill.api.configurations.ProjectInfoConfig;
 import org.polyfill.api.interfaces.PolyfillService;
@@ -24,10 +23,9 @@ import static junit.framework.TestCase.assertEquals;
 @ContextConfiguration(
         loader=AnnotationConfigContextLoader.class,
         classes={PolyfillsConfig.class,
-                BrowserAliasesConfig.class,
                 ProjectInfoConfig.class,
                 SemVerUtilService.class,
-                UADetectorBasedUserAgentParserService.class,
+                UADetectorAdapterParserService.class,
                 PolyfillsOutputService.class,
                 PreSortPolyfillService.class
         })
