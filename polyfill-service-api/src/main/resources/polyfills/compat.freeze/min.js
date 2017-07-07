@@ -1,0 +1,1 @@
+!function(){var e=Object.freeze;Object.freeze=function(t){return t&&"object"==typeof t?e(t):t}}();

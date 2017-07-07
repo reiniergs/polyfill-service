@@ -1,0 +1,1 @@
+Object.getPrototypeOf=function(t){if(t!==Object(t))throw new TypeError("Object.getPrototypeOf called on non-object");return t.constructor?t.constructor.prototype:null};
