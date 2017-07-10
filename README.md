@@ -9,12 +9,12 @@
 ## Table of content
 - [Why? The problem](#why)
 - [A better way](#solution)
-- [Java API](/api/README.md)
-- [RESTful API](/rest/README.md)
+- [Java API](/polyfill-service-api/README.md)
+- [RESTful API](/polyfill-service-rest/README.md)
 - [Running locally](#running-locally)
 - [Run tests](#tests)
 - [Java docs](#java-docs)
-- [Performance](/perf/README.md)
+- [Performance](/polyfill-service-perf/README.md)
 
 
 <a name="why"></a>
