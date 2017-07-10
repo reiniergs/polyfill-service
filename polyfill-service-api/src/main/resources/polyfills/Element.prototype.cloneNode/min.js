@@ -1,0 +1,1 @@
+Element.prototype.cloneNode=function(e){return function(t){var c=e.call(this,t);return"checked"in this&&(c.checked=this.checked),c}}(Element.prototype.cloneNode);

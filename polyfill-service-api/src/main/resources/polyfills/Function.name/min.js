@@ -1,0 +1,1 @@
+!function(){var n=Function,t=n.prototype,e=t.constructor,r=function(r){var o,c;return r===n||r===e?c="Function":r!==t&&(o=(""+r).match(/^\s*function\s+([^\(\s]*)\s*/),c=o&&o[1]),c||""};Object.defineProperty(t,"name",{get:function(){var n=this,e=r(n);return n!==t&&Object.defineProperty(n,"name",{value:e,configurable:!0}),e},configurable:!0})}();

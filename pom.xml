@@ -9,9 +9,9 @@
     <inceptionYear>2017</inceptionYear>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.polyfills</groupId>
+    <groupId>org.polyfillservice</groupId>
     <artifactId>polyfill-service</artifactId>
-    <version>0.12.0</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -60,23 +60,23 @@
     </licenses>
 
     <modules>
-        <module>api</module>
-        <module>rest</module>
-        <module>web</module>
-        <module>perf</module>
+        <module>polyfill-service-api</module>
+        <module>polyfill-service-rest</module>
+        <module>polyfill-service-web</module>
+        <module>polyfill-service-perf</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.polyfills</groupId>
+                <groupId>org.polyfillservice</groupId>
                 <artifactId>polyfill-service-api</artifactId>
-                <version>0.12.0</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.polyfills</groupId>
+                <groupId>org.polyfillservice</groupId>
                 <artifactId>polyfill-service-rest</artifactId>
-                <version>0.12.0</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -330,7 +330,7 @@
                         </goals>
                         <phase>install</phase>
                         <configuration>
-                            <reportOutputDirectory>web/src/main/webapp</reportOutputDirectory>
+                            <reportOutputDirectory>polyfill-service-web/src/main/webapp</reportOutputDirectory>
                             <destDir>docs</destDir>
                         </configuration>
                     </execution>
@@ -355,11 +355,11 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>web/src/main/webapp/docs</directory>
+                            <directory>polyfill-service-web/src/main/webapp/docs</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                         <fileset>
-                            <directory>api/src/main/resources/polyfills</directory>
+                            <directory>polyfill-service-api/src/main/resources/polyfills</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>
