@@ -302,7 +302,9 @@
                     <instrumentation>
                         <excludes>
                             <!-- exclude perf report runner from coverage -->
-                            <exclude>**/perf/*.class</exclude>
+                            <exclude>**/perf/**/*.class</exclude>
+                            <!-- exclude configurations coverage -->
+                            <exclude>**/configurations/*.class</exclude>
                         </excludes>
                     </instrumentation>
                 </configuration>
