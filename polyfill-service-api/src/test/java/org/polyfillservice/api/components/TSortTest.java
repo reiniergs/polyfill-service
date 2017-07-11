@@ -1,10 +1,12 @@
 package org.polyfillservice.api.components;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by reinier.guerra on 1/24/17.
@@ -12,7 +14,7 @@ import java.util.List;
 public class TSortTest {
 
     @Test
-    public void testTSortVariantOne() throws Exception {
+    public void testGeneralGraph() {
         TSort tsort = new TSort();
         tsort.addRelation("20", null);
         tsort.addRelation("3", "20");
@@ -28,11 +30,11 @@ public class TSortTest {
 
         List<String> expected = Arrays.asList("3", "5", "7", "20", "8", "11", "2", "9", "10");
         List<String> actual = tsort.sort();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void testTSortVarianTwo() throws Exception {
+    public void testMultipleLeaves() {
         TSort tsort = new TSort();
         tsort.addRelation("b", "a");
         tsort.addRelation("c", "a");
@@ -42,6 +44,30 @@ public class TSortTest {
         tsort.addRelation("c", "d");
         List<String> expected = Arrays.asList("b", "c", "a", "d");
         List<String> actual = tsort.sort();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testCircularGraph() {
+        TSort tsort = new TSort();
+        tsort.addRelation("b", "a");
+        tsort.addRelation("a", "b");
+        assertEquals(Collections.emptyList(), tsort.sort());
+    }
+
+    @Test
+    public void testEmptyRelation() {
+        TSort tsort = new TSort();
+        assertEquals(Collections.emptyList(), tsort.sort());
+    }
+
+    @Test
+    public void testClearRelation() {
+        TSort tsort = new TSort();
+        tsort.addRelation("b", "a");
+        assertEquals(Arrays.asList("b", "a"), tsort.sort());
+
+        tsort.clear();
+        assertEquals(Collections.emptyList(), tsort.sort());
     }
 }
