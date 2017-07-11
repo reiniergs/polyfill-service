@@ -1,6 +1,7 @@
 package org.polyfillservice.api.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,9 +68,9 @@ public class TSort {
             }
         }
 
-        // if graph has edges
         if (T.size() > 0) {
-            System.err.println("This graph has cycle. Aborted.");
+            System.err.println("This is a circular graph. Abort!");
+            return Collections.emptyList();
         }
 
         return sortedList;

@@ -10,10 +10,6 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class FeatureTest {
 
-    private final String minSource = "min";
-    private final String rawSource = "raw";
-    private final String detectSource = "detect";
-
     @Test
     public void testName() {
         Feature feature = new Feature("featureName");
