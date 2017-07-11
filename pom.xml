@@ -299,6 +299,12 @@
                     <!-- aggregated reports for multi-module projects -->
                     <aggregate>true</aggregate>
                     <check/>
+                    <instrumentation>
+                        <excludes>
+                            <!-- exclude perf report runner from coverage -->
+                            <exclude>**/perf/*.class</exclude>
+                        </excludes>
+                    </instrumentation>
                 </configuration>
             </plugin>
             <!-- coverage report with coveralls -->
