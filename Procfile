@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar polyfill-service-web/target/dependency/jetty-runner.jar --port $PORT web/target/*.war
+web: java $JAVA_OPTS -jar polyfill-service-web/target/dependency/jetty-runner.jar --port $PORT polyfill-service-web/target/*.war
