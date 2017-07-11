@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class TestingUtil {
 
     public static void assertPolyfillsEqual(String message,
-                                            Map<String, Polyfill> expected, Map<String, Polyfill> actual) {
+            Map<String, Polyfill> expected, Map<String, Polyfill> actual) {
         for (Map.Entry<String, Polyfill> entry : expected.entrySet()) {
             Polyfill expectedPolyfill = entry.getValue();
             Polyfill actualPolyfill = actual.get(entry.getKey());

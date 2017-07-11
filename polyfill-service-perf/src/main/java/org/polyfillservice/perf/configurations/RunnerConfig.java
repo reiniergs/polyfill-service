@@ -44,6 +44,7 @@ public class RunnerConfig {
 
     @Bean
     public PolyfillServiceConfigLocation location() {
-        return new PolyfillServiceConfigFileLocation(new File("./polyfill-service-perf/src/main/resources/service-config.xml"));
+        File configFile = new File("./polyfill-service-perf/src/main/resources/service-config.xml");
+        return new PolyfillServiceConfigFileLocation(configFile);
     }
 }
