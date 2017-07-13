@@ -15,8 +15,13 @@
     <packaging>pom</packaging>
 
     <properties>
+        <!-- project info for properties file -->
+        <project.version>${version}</project.version>
+        <project.url>https://github.com/reiniergs/polyfill-service</project.url>
+        <!-- some versions -->
         <jettyVersion>9.4.0.v20161208</jettyVersion>
         <spring.version>4.3.3.RELEASE</spring.version>
+        <!-- project config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
