@@ -21,11 +21,12 @@ public class XmlServiceConfigLoaderServiceTest {
         PolyfillServiceConfigFileLocation serviceConfigLocation = new PolyfillServiceConfigFileLocation(
             new File("./src/test/resources/service_configs/config.xml"));
         ServiceConfig actualConfig = serviceConfigLoaderService.loadConfig(serviceConfigLocation);
-        ServiceConfig expectedConfig = new ServiceConfig()
+        ServiceConfig expectedConfig = new ServiceConfig.Builder()
             .setPolyfills(Arrays.asList("a.a", "a.b", "c"))
             .setGated(false)
             .setMinify(false)
-            .setLoadOnUnknownUA(false);
+            .setLoadOnUnknownUA(false)
+            .build();
         assertEquals(expectedConfig.toString(), actualConfig.toString());
     }
 
@@ -34,14 +35,14 @@ public class XmlServiceConfigLoaderServiceTest {
         PolyfillServiceConfigFileLocation serviceConfigLocation = new PolyfillServiceConfigFileLocation(
             new File("wrong/path"));
         ServiceConfig actualConfig = serviceConfigLoaderService.loadConfig(serviceConfigLocation);
-        ServiceConfig expectedConfig = new ServiceConfig();
+        ServiceConfig expectedConfig = new ServiceConfig.Builder().build();
         assertEquals(expectedConfig.toString(), actualConfig.toString());
     }
 
     @Test
     public void testLoadConfigWithNull() {
         ServiceConfig actualConfig = serviceConfigLoaderService.loadConfig(null);
-        ServiceConfig expectedConfig = new ServiceConfig();
+        ServiceConfig expectedConfig = new ServiceConfig.Builder().build();
         assertEquals(expectedConfig.toString(), actualConfig.toString());
     }
 }

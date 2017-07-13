@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by smo on 6/7/17.
@@ -14,7 +13,8 @@ import java.util.List;
 public class CustomPolyfillListConfig {
     @Bean
     public ServiceConfig serviceConfig() {
-        List<String> polyfillList = Arrays.asList("d", "eee");
-        return new ServiceConfig().setPolyfills(polyfillList);
+        return new ServiceConfig.Builder()
+            .setPolyfills( Arrays.asList("d", "eee") )
+            .build();
     }
 }

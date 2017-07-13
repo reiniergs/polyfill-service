@@ -17,7 +17,7 @@ public class PolyfillsConfig {
 
     @Bean
     public ServiceConfig serviceConfig() {
-        return new ServiceConfig();
+        return new ServiceConfig.Builder().build();
     }
 
     @Bean

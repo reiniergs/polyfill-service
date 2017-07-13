@@ -37,9 +37,9 @@ public class PolyfillControllerIT {
     }
 
     @Test
-    public void getDefaultRawPolyfillsWithNoneLoaded() throws Exception {
-        String expectedContent = loadExpectedOutput("defaultRawNoneLoaded.js");
-        this.mockMvc.perform(get("/polyfill.js")
+    public void getDefaultMinPolyfillsWithNoneLoaded() throws Exception {
+        String expectedContent = loadExpectedOutput("defaultMinNoneLoaded.js");
+        this.mockMvc.perform(get("/polyfill.min.js")
                 .header("User-Agent", CHROME_59))
                 .andExpect(status().isOk())
                 .andExpect(content().string(expectedContent))
@@ -47,9 +47,9 @@ public class PolyfillControllerIT {
     }
 
     @Test
-    public void getRawPolyfillsUsingAllFilters() throws Exception {
-        String expectedContent = loadExpectedOutput("manyFiltersRaw.js");
-        this.mockMvc.perform(get("/polyfill.js")
+    public void getMinPolyfillsUsingAllFilters() throws Exception {
+        String expectedContent = loadExpectedOutput("manyFiltersMin.js");
+        this.mockMvc.perform(get("/polyfill.min.js")
                     .header("User-Agent", CHROME_59)
                     .param("ua", "firefox/23")
                     .param("features", "modernizr:es6string|gated,Array.isArray|always")

@@ -1,20 +1,20 @@
 package org.polyfillservice.api.components;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by smo on 6/6/17.
  * Simple object to hold polyfill service configurations.
  */
-public final class ServiceConfig {
-    private List<String> polyfills = Arrays.asList("default");
+public class ServiceConfig {
+    private List<String> polyfills = Collections.emptyList();
     private boolean gated = true;
     private boolean minify = true;
     private boolean loadOnUnknownUA = true;
 
+    // only construct object via builder
     private ServiceConfig() {}
-
     private ServiceConfig(ServiceConfig serviceConfig) {
         this.polyfills = serviceConfig.polyfills;
         this.gated = serviceConfig.gated;
