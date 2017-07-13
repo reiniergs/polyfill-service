@@ -1,17 +1,26 @@
 package org.polyfillservice.api.components;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by smo on 6/6/17.
  * Simple object to hold polyfill service configurations.
  */
-public class ServiceConfig {
-    private List<String> polyfills = Collections.emptyList();
+public final class ServiceConfig {
+    private List<String> polyfills = Arrays.asList("default");
     private boolean gated = true;
     private boolean minify = true;
     private boolean loadOnUnknownUA = true;
+
+    private ServiceConfig() {}
+
+    private ServiceConfig(ServiceConfig serviceConfig) {
+        this.polyfills = serviceConfig.polyfills;
+        this.gated = serviceConfig.gated;
+        this.minify = serviceConfig.minify;
+        this.loadOnUnknownUA = serviceConfig.loadOnUnknownUA;
+    }
 
     public String toString() {
         return "ServiceConfig: {"
@@ -26,35 +35,47 @@ public class ServiceConfig {
         return this.polyfills;
     }
 
-    public ServiceConfig setPolyfills(List<String> polyfills) {
-        this.polyfills = polyfills;
-        return this;
-    }
-
     public boolean shouldGate() {
         return this.gated;
-    }
-
-    public ServiceConfig setGated(boolean gated) {
-        this.gated = gated;
-        return this;
     }
 
     public boolean shouldMinify() {
         return this.minify;
     }
 
-    public ServiceConfig setMinify(boolean minify) {
-        this.minify = minify;
-        return this;
-    }
-
     public boolean shouldLoadOnUnknownUA() {
         return this.loadOnUnknownUA;
     }
 
-    public ServiceConfig setLoadOnUnknownUA(boolean loadOnUnknownUA) {
-        this.loadOnUnknownUA = loadOnUnknownUA;
-        return this;
+    public static class Builder {
+        private ServiceConfig serviceConfig;
+
+        public Builder() {
+            this.serviceConfig = new ServiceConfig();
+        }
+
+        public ServiceConfig build() {
+            return new ServiceConfig(this.serviceConfig);
+        }
+
+        public Builder setPolyfills(List<String> polyfills) {
+            this.serviceConfig.polyfills = polyfills;
+            return this;
+        }
+
+        public Builder setGated(boolean gated) {
+            this.serviceConfig.gated = gated;
+            return this;
+        }
+
+        public Builder setMinify(boolean minify) {
+            this.serviceConfig.minify = minify;
+            return this;
+        }
+
+        public Builder setLoadOnUnknownUA(boolean loadOnUnknownUA) {
+            this.serviceConfig.loadOnUnknownUA = loadOnUnknownUA;
+            return this;
+        }
     }
 }

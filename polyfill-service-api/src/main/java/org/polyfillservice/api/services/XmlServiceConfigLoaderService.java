@@ -28,7 +28,7 @@ public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService
             }
         }
 
-        return new ServiceConfig();
+        return new ServiceConfig.Builder().build();
     }
 
     /**
