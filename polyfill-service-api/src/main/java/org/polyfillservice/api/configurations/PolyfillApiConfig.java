@@ -29,36 +29,28 @@ public class PolyfillApiConfig {
     @Autowired(required = false)
     private PolyfillServiceConfigLocation serviceConfigLocation;
 
-    /**
-     * Link properties file's project version to a bean for a unified way to access it
-     */
+    // Link properties file's project version to a bean for a unified way to access it
     @Bean
     @Value("${project.version}")
     public String projectVersion(String projectVersion) {
         return projectVersion;
     }
 
-    /**
-     * Link properties file's project url to a bean for a unified way to access it
-     */
+    // Link properties file's project url to a bean for a unified way to access it
     @Bean
     @Value("${project.url}")
     public String projectUrl(String projectUrl) {
         return projectUrl;
     }
 
-    /**
-     * Service configuration for setting what polyfills to load initially
-     * and determine values of fields of default query
-     */
+    // Service configuration for setting what polyfills to load initially
+    // and determine values of fields of default query
     @Bean
     public ServiceConfig serviceConfig() {
         return serviceConfigLoaderService.loadConfig(serviceConfigLocation);
     }
 
-    /**
-     * Default query used when query object is not supplied to query service
-     */
+    // Default query used when query object is not supplied to query service
     @Bean
     @Autowired
     public Query defaultQuery(ServiceConfig serviceConfig) {
