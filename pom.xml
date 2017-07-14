@@ -19,6 +19,7 @@
         <spring.version>4.3.3.RELEASE</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <skip.npm>false</skip.npm>
     </properties>
 
     <scm>
@@ -357,22 +358,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>polyfill-service-web/src/main/webapp/docs</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                        <fileset>
-                            <directory>polyfill-service-api/src/main/resources/polyfills</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -397,6 +382,44 @@
                 <skip.unit.tests>true</skip.unit.tests>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
+        </profile>
+
+        <profile>
+            <id>partial-build</id>
+            <properties>
+                <build.profile.id>partial-build</build.profile.id>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <skip.npm>true</skip.npm>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>full-clean</id>
+            <properties>
+                <build.profile.id>full-clean</build.profile.id>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>**/webapp/docs</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                                <fileset>
+                                    <directory>polyfill-service-api/src/main/resources/polyfills</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
