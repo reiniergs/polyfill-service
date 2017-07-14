@@ -69,12 +69,6 @@ public class Query {
         public Builder(List<Feature> features) {
             this.query = new Query();
             this.query.features = features;
-            this.query.excludes = new HashSet<>();
-            this.query.loadOnUnknownUA = true;
-            this.query.minify = true;
-            this.query.gatedForAll = true;
-            this.query.alwaysForAll = false;
-            this.query.includeDependencies = true;
         }
 
         public Query build() {

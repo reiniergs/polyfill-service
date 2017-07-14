@@ -29,38 +29,39 @@ public class PolyfillApiConfig {
     @Autowired(required = false)
     private PolyfillServiceConfigLocation serviceConfigLocation;
 
-    @Value("${project.version}")
-    private String projectVersion;
-
-    @Value("${project.url}")
-    private String projectUrl;
-
+    // Link properties file's project version to a bean for a unified way to access it
     @Bean
-    public String projectVersion() {
+    @Value("${project.version}")
+    public String projectVersion(String projectVersion) {
         return projectVersion;
     }
 
+    // Link properties file's project url to a bean for a unified way to access it
     @Bean
-    public String projectUrl() {
+    @Value("${project.url}")
+    public String projectUrl(String projectUrl) {
         return projectUrl;
     }
 
+    // Service configuration for setting what polyfills to load initially
+    // and determine values of fields of default query
     @Bean
     public ServiceConfig serviceConfig() {
         return serviceConfigLoaderService.loadConfig(serviceConfigLocation);
     }
 
+    // Default query used when query object is not supplied to query service
     @Bean
-    public Query defaultQuery() {
-        ServiceConfig serviceConfig = this.serviceConfig();
+    @Autowired
+    public Query defaultQuery(ServiceConfig serviceConfig) {
         List<Feature> polyfillRequestList = serviceConfig.getPolyfills().stream()
             .map(Feature::new)
             .collect(Collectors.toList());
 
-        return new Query.Builder(polyfillRequestList)
-            .setMinify(serviceConfig.shouldMinify())
-            .setLoadOnUnknownUA(serviceConfig.shouldLoadOnUnknownUA())
-            .setGatedForAll(serviceConfig.shouldGate())
+        return new Query.Builder( polyfillRequestList )
+            .setMinify( serviceConfig.shouldMinify() )
+            .setLoadOnUnknownUA( serviceConfig.shouldLoadOnUnknownUA() )
+            .setGatedForAll( serviceConfig.shouldGate() )
             .build();
     }
 }
