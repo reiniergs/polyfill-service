@@ -11,7 +11,7 @@ To get started, [clone and build](#running-locally) the service. Polyfill Servic
 * Easy to maintain
 * Lightweight and small footprint
 
-We recommend exploring both services to see what works best for your project. Although both services are considered lightweight and performant, the Java API is ideal if you already know which polyfills you want to include or eliminate. 
+We recommend exploring both services to see what works best for your project. Although both services are considered lightweight and performant, the Java API is ideal if you already know which polyfills you want to include or eliminate, and you don't want to make an extra request. 
 
 
 ## Using Polyfill Service
@@ -23,6 +23,7 @@ We recommend exploring both services to see what works best for your project. Al
 - [Run tests](#tests)
 - [Java docs](#java-docs)
 - [Performance](/polyfill-service-perf/README.md)
+- [Contributing to Polyfill Service](#contribute)
 
 
 <a name="why"></a>
@@ -98,6 +99,8 @@ Start the app server and navigate to `http://localhost:8080/docs/index.html`
 
 **[⬆ back to top](#top)**
 
+
+<a name="contribute"></a>
 ## Contributing to Polyfill Service
 This service uses the [polyfill.io](http://polyfill.io) `npm` package for a set of polyfills and their metadata. We welcome original polyfills or third party polyfills as well.
 
@@ -111,4 +114,5 @@ See [Authoring Polyfills](https://polyfill.io/v2/docs/contributing/authoring-pol
 * Browser support
 * Original vs third party polyfills
 
+**[⬆ back to top](#top)**
 
