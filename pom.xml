@@ -16,7 +16,7 @@
 
     <properties>
         <!-- project info for properties file -->
-        <project.version>${version}</project.version>
+        <project.version>${project.version}</project.version>
         <project.url>https://github.com/reiniergs/polyfill-service</project.url>
         <!-- some versions -->
         <jettyVersion>9.4.0.v20161208</jettyVersion>
@@ -65,6 +65,19 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Shaocong Mo</name>
+            <email>polyfill-service@googlegroups.com</email>
+        </developer>
+        <developer>
+            <name>Reinier Guerra Sicilia</name>
+        </developer>
+        <developer>
+            <name>Bhargav Venkataraman</name>
+        </developer>
+    </developers>
+
     <modules>
         <module>polyfill-service-api</module>
         <module>polyfill-service-rest</module>
@@ -89,14 +102,12 @@
 
     <distributionManagement>
         <repository>
-            <id>repo.auraframework.org</id>
-            <name>repo.auraframework.org-releases</name>
-            <url>http://repo.auraframework.org/libs-release-local</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>repo.auraframework.org</id>
-            <name>repo.auraframework.org-snapshots</name>
-            <url>http://repo.auraframework.org/libs-snapshot-local</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -325,18 +336,12 @@
                     <sourceEncoding>UTF-8</sourceEncoding>
                 </configuration>
             </plugin>
-            <!-- java docs and sources jar -->
+            <!-- generate docs for web app -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
                 <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>aggregate</id>
                         <goals>
@@ -347,19 +352,6 @@
                             <reportOutputDirectory>polyfill-service-web/src/main/webapp</reportOutputDirectory>
                             <destDir>docs</destDir>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -422,6 +414,65 @@
                                 </fileset>
                             </filesets>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>ossrh</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

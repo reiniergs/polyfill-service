@@ -4,9 +4,22 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>repo.auraframework.org</id>
-            <username>${env.PS_REPO_USERNAME}</username>
-            <password>${env.PS_REPO_PASSWORD}</password>
+            <id>ossrh</id>
+            <username>polyfillservice</username>
+            <password>{Ut1ipm/G+EsHapowus/U7YSq9tLIf5q5VNXjy8xtVBQ=}</password>
         </server>
     </servers>
+
+    <profiles>
+        <profile>
+            <id>gpg</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.executable>gpg2</gpg.executable>
+                <gpg.passphrase>Shaocong created this key. Will expire in 2019-06-26. {MTh/1yE4zrMH/rKmrQ4apNUiwCMRdf9KnyRO+EQRVcqpRyg5LS9NpcvORC858G3c}</gpg.passphrase>
+            </properties>
+        </profile>
+    </profiles>
 </settings>
