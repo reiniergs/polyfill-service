@@ -16,5 +16,6 @@ node_modules
 
 # Generated
 */src/main/webapp/docs/
-api/src/main/resources/polyfills/
+polyfill-service-api/src/main/resources/polyfills/
+polyfill-service-api/src/main/resources/config.properties
 npm-debug.log
