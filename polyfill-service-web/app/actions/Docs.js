@@ -5,6 +5,7 @@ export const DOCS = {
     REST_API: 'polyfill-service-rest',
     ABOUT: ''
 };
+
 export const LOAD_DOCS = 'LOAD_DOCS';
 export const loadDocs = (name) => {
     return (dispatch) => {

@@ -6,7 +6,6 @@ import Docs from './../Docs';
 
 export default () => (
     <div>
-        <GithubRibbon />
         <Docs name={DOCS.JAVA_API} />
     </div>
 )

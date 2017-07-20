@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
 
 import { loadDocs } from './../../actions/Docs'; 
-import './styles.css';
+import './styles.scss';
 
 class Docs extends React.Component {
 
@@ -15,7 +15,7 @@ class Docs extends React.Component {
     render() {
         const { content } = this.props;
         return (
-            <ReactMarkdown source={content} />
+            <ReactMarkdown className="markdown" source={content} />
         )
     }
 }
