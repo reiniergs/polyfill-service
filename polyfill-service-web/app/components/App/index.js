@@ -6,11 +6,13 @@ import './styles.scss';
 export default ({children}) => {
     return (
         <div className="app-container">
-            <GlobalHeader/>
+            <GlobalHeader />
             <div className="app-content-container">
                 <div className="app-content">
                     <div className="app-content-layout">
-                        <AppMenu/>
+                        <div className="sidebar">
+                            <AppMenu />
+                        </div>
                         <div className="content">
                             { children }
                         </div>

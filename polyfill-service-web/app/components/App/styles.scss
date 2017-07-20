@@ -2,7 +2,7 @@
 
     .app-content-container {
         position: fixed;
-        top: 50px;
+        top: 54px; // 50px of header + 4px of shadow
         width: 100%;
         height: calc(100% - 50px);
         overflow: auto;
@@ -15,7 +15,12 @@
                 display: flex;
                 flex-direction: row;
 
+                .sidebar {
+                    flex: 0 0 200px;
+                }
+
                 .content {
+                    margin: 0 30px 50px 30px;
                     flex: 1;
                 }
             }
