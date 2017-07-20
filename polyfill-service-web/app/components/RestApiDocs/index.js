@@ -7,6 +7,6 @@ import Docs from './../Docs';
 export default () => (
     <div>
         <GithubRibbon />
-        <Docs name={DOCS.ABOUT} />
+        <Docs name={DOCS.REST_API} />
     </div>
 )

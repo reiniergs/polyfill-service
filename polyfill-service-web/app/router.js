@@ -4,7 +4,8 @@ import { Provider } from 'react-redux';
 import App from './components/App';
 import Features from './components/Features';
 import About from './components/About';
-import ApiReference from './components/ApiReference';
+import RestApiDocs from './components/RestApiDocs';
+import JavaApiDocs from './components/JavaApiDocs';
 import Polyfill from './components/Polyfill';
 
 import ReactGA from 'react-ga';
@@ -21,7 +22,8 @@ const Root = ({ store }) => (
                 <IndexRedirect to="features"/>
                 <Route path="features" component={ Features }/>
                 <Route path="about" component={ About }/>
-                <Route path="reference" component={ ApiReference }/>
+                <Route path="java-api-docs" component={ JavaApiDocs }/>
+                <Route path="rest-api-docs" component={ RestApiDocs }/>
                 <Route path="polyfill/:pName" component={ Polyfill }/>
             </Route>
         </Router>

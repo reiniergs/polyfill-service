@@ -13,7 +13,10 @@ export default class AppMenu extends Component {
                     <Link to="features">Features</Link>
                 </li>
                 <li className="menu-option is-selected">
-                    <Link to="reference">API reference</Link>
+                    <Link to="java-api-docs">Java Api Docs</Link>
+                </li>
+                <li className="menu-option is-selected">
+                    <Link to="rest-api-docs">RESTful Api Docs</Link>
                 </li>
             </ul>
         );
