@@ -9,7 +9,7 @@
     "url": "https://github.com/reiniergs/polyfill-service/issues"
   },
   "scripts": {
-    "prepublish": "npm run build-web",
+    "prepare": "npm run build-web",
     "build-web": "webpack",
     "dev-web": "webpack"
   },
