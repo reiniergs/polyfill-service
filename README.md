@@ -7,7 +7,6 @@ Polyfill Service sends down only the polyfills that your browsers need, because 
 ## Getting Started
 To get started, [clone and build](#running-locally) the service. Polyfill Service is available in two flavors, as a [Java API](/polyfill-service-api/README.md) or [RESTful API](/polyfill-service-rest/README.md). With the Java API, you can customize how you want to fetch polyfills and even narrow down which polyfills to fetch. The REST API provides endpoints for you to work with different URL variables and query parameters. Both APIs fulfill the following conditions:
 * Does not require browsers to download unneeded polyfills
-* Does not require browsers to make blocking HTTP requests
 * Easy to maintain
 * Lightweight and small footprint
 
