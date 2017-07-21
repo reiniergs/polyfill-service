@@ -1,1 +1,0 @@
-!function(t){var i="DOMTokenList"in t&&t.DOMTokenList;if(i){var n=i.prototype.toggle;i.prototype.toggle=function(t){if(1 in arguments){var i=this.contains(t),o=!!arguments[1];if(i&&o||!i&&!o)return o}return n.call(this,t)}}else t.DOMTokenList=_DOMTokenList}(this);

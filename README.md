@@ -1,5 +1,5 @@
 <a name="top"></a>
-#  Polyfill Service
+#  Polyfill Service (v1.1.2)
 Polyfill Service sends down only the polyfills that your browsers need, because browsers deserve the bare minimum.  
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![Coverage Status](https://coveralls.io/repos/github/reiniergs/polyfill-service/badge.svg?branch=codeCoverage)](https://coveralls.io/github/reiniergs/polyfill-service?branch=codeCoverage)

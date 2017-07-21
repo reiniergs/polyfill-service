@@ -20,7 +20,6 @@
 		"Object.create",
 		"Object.defineProperties",
 		"Object.defineProperty",
-		"Object.prototype.hasOwnProperty",
 		"Object.setPrototypeOf",
 		"String.prototype.contains",
 		"Symbol",

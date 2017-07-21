@@ -1,1 +1,0 @@
-Array.prototype.forEach=function(n){if(this===undefined||null===this)throw new TypeError(this+" is not an object");if(!(n instanceof Function))throw new TypeError(n+" is not a function");for(var t=Object(this),i=arguments[1],o=t instanceof String?t.split(""):t,r=Math.max(Math.min(o.length,9007199254740991),0)||0,e=-1;++e<r;)e in o&&n.call(i,o[e],e,t)};

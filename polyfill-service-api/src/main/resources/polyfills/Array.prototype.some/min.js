@@ -1,1 +1,0 @@
-Array.prototype.some=function(n){if(this===undefined||null===this)throw new TypeError(this+" is not an object");if(!(n instanceof Function))throw new TypeError(n+" is not a function");for(var t=Object(this),i=arguments[1],r=t instanceof String?t.split(""):t,o=Math.max(Math.min(r.length,9007199254740991),0)||0,e=-1;++e<o;)if(e in r&&n.call(i,r[e],e,t))return!0;return!1};

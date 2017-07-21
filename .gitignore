@@ -17,7 +17,7 @@ node_modules
 # Generated
 */src/main/webapp/docs/
 
-polyfill-service-api/src/main/resources/polyfills/
+polyfill-service-api/src/main/resources/polyfills
 polyfill-service-api/src/main/resources/config.properties
 
 polyfill-service-web/src/main/webapp/assets/js

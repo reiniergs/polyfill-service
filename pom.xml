@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.polyfillservice</groupId>
     <artifactId>polyfill-service</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -90,12 +90,12 @@
             <dependency>
                 <groupId>org.polyfillservice</groupId>
                 <artifactId>polyfill-service-api</artifactId>
-                <version>1.1.1</version>
+                <version>1.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.polyfillservice</groupId>
                 <artifactId>polyfill-service-rest</artifactId>
-                <version>1.1.1</version>
+                <version>1.1.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -177,8 +177,8 @@
                     <version>1.0</version>
 
                     <configuration>
-                        <nodeVersion>v6.7.0</nodeVersion>
-                        <npmVersion>3.10.3</npmVersion>
+                        <nodeVersion>v8.1.4</nodeVersion>
+                        <npmVersion>5.0.3</npmVersion>
                         <installDirectory>target</installDirectory>
                     </configuration>
 
