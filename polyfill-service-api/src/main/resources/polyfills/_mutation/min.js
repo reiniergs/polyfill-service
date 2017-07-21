@@ -1,1 +1,0 @@
-function _mutation(e){if(e.length){if(1===e.length)return"string"==typeof e[0]?document.createTextNode(e[0]):e[0];for(var t,n=document.createDocumentFragment(),r=e.length,o=-1;++o<r;)t=e[o],n.appendChild("string"==typeof t?document.createTextNode(t):t);return n}throw new Error("DOM Exception 8")}

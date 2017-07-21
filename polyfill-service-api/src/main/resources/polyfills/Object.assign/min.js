@@ -1,1 +1,0 @@
-Object.assign=function(r,t){for(var n,e,o=1;o<arguments.length;++o){e=arguments[o];for(n in e)Object.prototype.hasOwnProperty.call(e,n)&&(r[n]=e[n])}return r};

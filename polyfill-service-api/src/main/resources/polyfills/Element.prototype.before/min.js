@@ -1,1 +1,0 @@
-Document.prototype.before=Element.prototype.before=function(){this.parentNode&&this.parentNode.insertBefore(_mutation(arguments),this)},"Text"in this&&(Text.prototype.before=Element.prototype.before);
