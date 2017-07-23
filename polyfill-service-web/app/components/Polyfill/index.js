@@ -15,7 +15,6 @@ class Polyfill extends React.Component {
         loadMeta(pName);
     }
 
-
     componentWillUpdate(nextProps) {
         const { loadMeta } = this.props;
         const { routeParams: { pName }} = this.props;
@@ -111,5 +110,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Polyfill);
-
-

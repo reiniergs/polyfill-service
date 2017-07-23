@@ -60,7 +60,7 @@ Essentially, what we want from a polyfill delivery system is a way to send a sin
 
 
 
-<a name="running locally"></a>
+<a name="running-locally"></a>
 ### Running Locally
 
 Clone and build the project

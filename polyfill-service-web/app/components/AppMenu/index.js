@@ -18,6 +18,9 @@ export default class AppMenu extends Component {
                 <li className="menu-option is-selected">
                     <Link to="rest-api-docs">RESTful Api Docs</Link>
                 </li>
+                <li className="menu-option is-selected">
+                    <Link to="perf-docs">Measuring Perf</Link>
+                </li>
             </ul>
         );
     }

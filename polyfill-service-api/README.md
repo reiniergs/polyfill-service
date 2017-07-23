@@ -29,9 +29,10 @@ First, import Spring configuration to let Spring bootstraps the API. This can be
 // bean to specify path to custom service configurations
 // can specify which polyfills to serve, etc.
 // see below for how to write this file
+// You may also implement your own PolyfillServiceConfigLocation
 @Bean
 public PolyfillServiceConfigLocation serviceConfigLocation() {
-    return new PolyfillServiceConfigLocation(new File("./src/main/resources/settings/service-config.xml"));
+    return new PolyfillServiceConfigLocation(new File("path/to/service-config.xml"));
 }
 ```
 

@@ -16,12 +16,14 @@
                 flex-direction: row;
 
                 .sidebar {
-                    flex: 0 0 200px;
+                    flex: 0 0 20%;
+                    max-width: 20%;
                 }
 
                 .content {
-                    margin: 0 30px 50px 30px;
-                    flex: 1;
+                    flex: 0 0 80%;
+                    max-width: 80%;
+                    margin-bottom: 50px;
                 }
             }
         }

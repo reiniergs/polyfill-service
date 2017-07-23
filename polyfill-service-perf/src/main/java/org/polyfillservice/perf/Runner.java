@@ -1,10 +1,10 @@
 package org.polyfillservice.perf;
 
+import org.polyfillservice.perf.configurations.RunnerConfig;
 import org.polyfillservice.perf.interfaces.PerfReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
  * performance measurements and reporting.
  */
 @Component
-@ComponentScan(basePackages = {"org.polyfillservice.perf"})
 public class Runner {
 
     @Autowired
@@ -24,7 +23,7 @@ public class Runner {
     }
 
     public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(Runner.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(RunnerConfig.class);
         Runner runner = context.getBean(Runner.class);
         runner.start();
     }

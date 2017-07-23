@@ -28,6 +28,18 @@ export function getPolyfill(name, onSuccess, onError) {
     get(`${API_URL_BASE}/polyfill/${name}`, onSuccess, onError);
 }
 
-export function getDocs(name, onSuccess, onError) {
-    get(`${README_HOST}/${name}/README.md`, onSuccess, onError);
+const ERROR_CONTENT = "Sorry :( Unable to load documentations at this time.";
+export function getDocs(name, onLoad) {
+    get(`${README_HOST}/${name}/README.md`,
+        (content) => {
+            // convert git links to our own routes
+            content = content.replace(/\/polyfill-service-api\/README\.md/g, "#java-api-docs");
+            content = content.replace(/\/polyfill-service-rest\/README\.md/g, "#rest-api-docs");
+            content = content.replace(/\/polyfill-service-perf\/README\.md/g, "#perf-docs");
+            onLoad(content);
+        },
+        () => {
+            onLoad(ERROR_CONTENT);
+        }
+    );
 }
