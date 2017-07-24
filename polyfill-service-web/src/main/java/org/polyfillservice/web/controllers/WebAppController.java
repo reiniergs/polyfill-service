@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by reinier.guerra on 2/22/17.
@@ -25,12 +27,19 @@ public class WebAppController {
     @Autowired
     PolyfillService polyfillService;
 
-    @RequestMapping(value = "/polyfills", method = RequestMethod.GET)
-    public View polyfillApi() {
+    private View polyfillsMetaView;
+
+    @PostConstruct
+    private void init() {
+        // cache all polyfills' meta data view
         Map<String, Polyfill> polyfills = polyfillService.getAllPolyfills();
         List<Map<String, Object>> polyfillsMainMetaData = getPolyfillsMainMetaData(polyfills);
+        this.polyfillsMetaView = new JsonView(polyfillsMainMetaData);
+    }
 
-        return new JsonView(polyfillsMainMetaData);
+    @RequestMapping(value = "/polyfills", method = RequestMethod.GET)
+    public View polyfillApi() {
+        return polyfillsMetaView;
     }
 
     @RequestMapping(value = "/polyfill/{name:.+}", method = RequestMethod.GET)
@@ -49,13 +58,13 @@ public class WebAppController {
     }
 
     private List<Map<String, Object>> getPolyfillsMainMetaData(Map<String, Polyfill> polyfills) {
-        List<Map<String, Object>> polyfillListMetaData = new ArrayList<>();
-
-        for (Polyfill polyfill : polyfills.values()) {
-            polyfillListMetaData.add(this.getPolyfillMainMetaData(polyfill));
-        }
-
-        return polyfillListMetaData;
+        return polyfills.values().stream()
+            // hide all the different locales for Intl
+            .filter(polyfill -> !polyfill.getName().startsWith("Intl.~locale"))
+            // hide private polyfills
+            .filter(polyfill -> !polyfill.getName().startsWith("_"))
+            .map(this::getPolyfillMainMetaData)
+            .collect(Collectors.toList());
     }
 
     private Map<String, Object> getPolyfillMainMetaData(Polyfill polyfill) {
