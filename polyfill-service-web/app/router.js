@@ -6,6 +6,7 @@ import Features from './components/Features';
 import About from './components/About';
 import RestApiDocs from './components/RestApiDocs';
 import JavaApiDocs from './components/JavaApiDocs';
+import PerfDocs from './components/PerfDocs';
 import Polyfill from './components/Polyfill';
 
 import ReactGA from 'react-ga';
@@ -24,6 +25,7 @@ const Root = ({ store }) => (
                 <Route path="about" component={ About }/>
                 <Route path="java-api-docs" component={ JavaApiDocs }/>
                 <Route path="rest-api-docs" component={ RestApiDocs }/>
+                <Route path="perf-docs" component={ PerfDocs }/>
                 <Route path="polyfill/:pName" component={ Polyfill }/>
             </Route>
         </Router>

@@ -3,6 +3,7 @@ import { getDocs } from './api';
 export const DOCS = {
     JAVA_API: 'polyfill-service-api',
     REST_API: 'polyfill-service-rest',
+    PERF: 'polyfill-service-perf',
     ABOUT: ''
 };
 

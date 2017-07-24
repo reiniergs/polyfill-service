@@ -1,14 +1,13 @@
 package org.polyfillservice.perf.configurations;
 
-import org.polyfillservice.api.components.PolyfillServiceConfigFileLocation;
+import org.polyfillservice.api.components.ServiceConfig;
 import org.polyfillservice.api.configurations.PolyfillApiConfig;
-import org.polyfillservice.api.interfaces.PolyfillServiceConfigLocation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,8 +42,23 @@ public class RunnerConfig {
     }
 
     @Bean
-    public PolyfillServiceConfigLocation location() {
-        File configFile = new File("./polyfill-service-perf/src/main/resources/service-config.xml");
-        return new PolyfillServiceConfigFileLocation(configFile);
+    @Primary
+    public ServiceConfig serviceConfig() {
+        List<String> polyfills = Arrays.asList(
+            "CustomEvent",
+            "Event",
+            "Function.name",
+            "Object.assign",
+            "Promise",
+            "Proxy",
+            "Symbol",
+            "WeakMap"
+        );
+        return new ServiceConfig.Builder()
+            .setPolyfills(polyfills)
+            .setGated(true)
+            .setLoadOnUnknownUA(true)
+            .setMinify(true)
+            .build();
     }
 }
