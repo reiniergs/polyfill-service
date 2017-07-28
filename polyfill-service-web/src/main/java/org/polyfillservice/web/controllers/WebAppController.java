@@ -2,6 +2,7 @@ package org.polyfillservice.web.controllers;
 
 import org.polyfillservice.api.components.Polyfill;
 import org.polyfillservice.api.interfaces.PolyfillService;
+import org.polyfillservice.web.services.SupportStatusService;
 import org.polyfillservice.web.views.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,9 @@ public class WebAppController {
     @Autowired
     PolyfillService polyfillService;
 
+    @Autowired
+    SupportStatusService supportStatusService;
+
     private View polyfillsMetaView;
 
     @PostConstruct
@@ -35,6 +38,11 @@ public class WebAppController {
         Map<String, Polyfill> polyfills = polyfillService.getAllPolyfills();
         List<Map<String, Object>> polyfillsMainMetaData = getPolyfillsMainMetaData(polyfills);
         this.polyfillsMetaView = new JsonView(polyfillsMainMetaData);
+    }
+
+    @RequestMapping(value = "/support-status", method = RequestMethod.GET)
+    public View supportStatus() {
+        return new JsonView(supportStatusService.querySupportStatusData());
     }
 
     @RequestMapping(value = "/polyfills", method = RequestMethod.GET)

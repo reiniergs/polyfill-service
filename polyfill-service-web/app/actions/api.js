@@ -43,3 +43,7 @@ export function getDocs(name, onLoad) {
         }
     );
 }
+
+export function getSupportStatus(onSuccess, onError) {
+    get(`${API_URL_BASE}/support-status`, onSuccess, onError);
+}
