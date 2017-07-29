@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { loadPolyfillMeta } from './../../actions/Polyfills';
+import { getTestUrl } from './../../actions/api';
 import Highlight from 'react-highlight';
 import './styles.scss';
 import './foundation-theme.css';
@@ -73,7 +74,10 @@ class Polyfill extends React.Component {
                         </table>
 
                         {/* Source section */}
-                        <h1 className="slds-m-top--medium slds-text-title--caps">Source</h1>
+                        <h1 className="slds-m-top--medium slds-text-title--caps">
+                            Source &nbsp;
+                            <a href={getTestUrl(pName)} target="_blank">(Run Tests)</a>
+                        </h1>
                         <Highlight className='javascript'>
                             { meta.get('sourceRaw') }
                         </Highlight>
