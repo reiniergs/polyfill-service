@@ -90,9 +90,8 @@
 			}
 
 			while (++index < length) {
-					value = arraylike[index];
-
-					array[index] = map ? map.call(scope, value, index) : value;
+				value = arraylike[index];
+				array[index] = map ? map.call(scope, value, index) : value;
 			}
 
 			array.length = length;
