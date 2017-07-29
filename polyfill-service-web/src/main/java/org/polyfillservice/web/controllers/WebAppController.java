@@ -31,6 +31,7 @@ public class WebAppController {
     SupportStatusService supportStatusService;
 
     private View polyfillsMetaView;
+    private View supportStatusDataView;
 
     @PostConstruct
     private void init() {
@@ -38,11 +39,14 @@ public class WebAppController {
         Map<String, Polyfill> polyfills = polyfillService.getAllPolyfills();
         List<Map<String, Object>> polyfillsMainMetaData = getPolyfillsMainMetaData(polyfills);
         this.polyfillsMetaView = new JsonView(polyfillsMainMetaData);
+
+        // cache support status data
+        this.supportStatusDataView = new JsonView(supportStatusService.querySupportStatusData());
     }
 
     @RequestMapping(value = "/support-status", method = RequestMethod.GET)
     public View supportStatus() {
-        return new JsonView(supportStatusService.querySupportStatusData());
+        return supportStatusDataView;
     }
 
     @RequestMapping(value = "/polyfills", method = RequestMethod.GET)
