@@ -1,18 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router';
+import Icon from '../Icon';
 
-export default ({name, sizeMin, sizeRaw}) => {
-    const useTag = '<use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#solution"></use>';
+export default ({ name, sizeMin, sizeRaw }) => {
     return (
         <div className="slds-tile slds-media">
             <div className="slds-media__figure">
-                <span className="slds-icon_container slds-icon-standard-solution">
-                    <svg className="slds-icon" aria-hidden="true" dangerouslySetInnerHTML={{__html: useTag }}/>
-                </span>
+                <Icon iconName="standard:solution" assistiveText={name} />
             </div>
             <div className="slds-media__body">
                 <h3 className="slds-truncate" title="SLDS_038.zip">
-                    <Link to={ `polyfill/${name}` }>{ name }</Link>
+                    <Link to={`polyfill/${name}`}>{name}</Link>
                 </h3>
                 <div className="slds-tile__detail slds-text-body--small">
                     <ul className="slds-list--horizontal slds-has-dividers--right">
