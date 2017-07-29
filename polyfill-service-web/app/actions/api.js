@@ -1,4 +1,5 @@
 const API_URL_BASE = '/api/web';
+const TEST_URL_BASE = '/api/test';
 const README_HOST = 'https://raw.githubusercontent.com/reiniergs/polyfill-service/master/';
 
 export function get(url, onSuccess, onError) {
@@ -46,4 +47,8 @@ export function getDocs(name, onLoad) {
 
 export function getSupportStatus(onSuccess, onError) {
     get(`${API_URL_BASE}/support-status`, onSuccess, onError);
+}
+
+export function getTestUrl(polyfillName) {
+    return `${TEST_URL_BASE}/tests?feature=${polyfillName}`;
 }
