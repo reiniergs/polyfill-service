@@ -9,19 +9,47 @@ function getIconName(name) {
     return name.split(':')[1];
 }
 
+export class IconSvg extends React.Component {
+    render() {
+        const { iconName } = this.props;
+        const svgPath = `assets/icons/${getIconSprite(iconName)}-sprite/svg/symbols.svg#${getIconName(iconName)}`;
+        const useTag = `<use xlink:href="${svgPath}"></use>`;
+
+        return (
+            <svg aria-hidden="true" className={this.getSvgClasses()} dangerouslySetInnerHTML={{__html: useTag}} />
+        );
+    }
+
+    getSvgClasses() {
+        const { className, iconName, iconSize } = this.props;
+        return classnames({
+            'slds-icon': !className,
+            'slds-icon-text-default': getIconSprite(iconName) === 'utility' && !className,
+            'slds-icon--x-small': iconSize === 'x-small',
+            'slds-icon--small': iconSize === 'small',
+            'slds-icon--large': iconSize === 'large'
+        }, className);
+    }
+}
+
 export default class Icon extends React.Component {
     render() {
+        const { assistiveText, iconName, iconSize } = this.props;
         return (
-            <span className={ this.getContainerClasses() } title={ this.props.assistiveText }>
-                <IconSvg iconName={ this.props.iconName } iconSize={ this.props.iconSize }/>
-                <span className="slds-assistive-text">{ this.props.assistiveText }</span>
+            <span className={ this.getContainerClasses() } title={ assistiveText }>
+                <IconSvg iconName={ iconName } iconSize={ iconSize }/>
+                <span className="slds-assistive-text">{ assistiveText }</span>
             </span>
         );
     }
 
     getContainerClasses() {
-        const { className } = this.props;
-        return classnames('slds-icon_container', `slds-icon-${ getIconSprite(this.props.iconName) }-${ getIconName(this.props.iconName) }`, className);
+        const { className, iconName } = this.props;
+        return classnames(
+            'slds-icon_container',
+            `slds-icon-${getIconSprite(iconName)}-${getIconName(iconName)}`,
+            className
+        );
     }
 }
 
@@ -29,21 +57,3 @@ Icon.propTypes = {
     iconName: React.PropTypes.string.isRequired,
     className: React.PropTypes.string
 };
-
-export class IconSvg extends React.Component {
-    render() {
-        let useTag = `<use xlink:href="assets/icons/${ getIconSprite(this.props.iconName) }-sprite/svg/symbols.svg#${ getIconName(this.props.iconName ) }"></use>`;
-        return <svg aria-hidden="true" className={ this.getSvgClasses.call(this) } dangerouslySetInnerHTML={{__html: useTag }}/>
-    }
-
-    getSvgClasses() {
-        return classnames({
-            'slds-icon': !this.props.className,
-            'slds-icon-text-default': getIconSprite(this.props.iconName) === 'utility' && !this.props.className,
-            'slds-icon--x-small': this.props.iconSize === 'x-small',
-            'slds-icon--small': this.props.iconSize === 'small',
-            'slds-icon--large': this.props.iconSize === 'large'
-        }, this.props.className);
-    }
-}
-

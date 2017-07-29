@@ -82,7 +82,8 @@ class Polyfill extends React.Component {
                             { meta.get('sourceRaw') }
                         </Highlight>
 
-                    </div> : null }
+                    </div> : null
+                }
             </div>
         )
     }

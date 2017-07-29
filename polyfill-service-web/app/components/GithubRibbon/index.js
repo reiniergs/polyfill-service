@@ -9,5 +9,5 @@ export default () => {
                 alt="Fork me on GitHub"
             />
         </a>
-    )
+    );
 }

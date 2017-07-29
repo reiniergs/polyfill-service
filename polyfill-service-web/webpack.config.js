@@ -19,18 +19,15 @@ var commonConfig = {
             {
                 test : /\.(js|jsx)?/,
                 loader : 'babel-loader',
-                exclude: [
-                    path.resolve(__dirname, 'node_modules')
-                ]
-
+                exclude: /node_modules/
             },
             {
                 test: /\.hbs$/,
-                loader: "handlebars-loader"
+                loader: 'handlebars-loader'
             },
             {
                 test: /\.(scss|css)$/,
-                loaders: ["style-loader", "css-loader", "sass-loader"]
+                loaders: ['style-loader', 'css-loader', 'sass-loader']
             }
         ]
     },

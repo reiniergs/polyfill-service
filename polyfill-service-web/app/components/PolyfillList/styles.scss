@@ -1,5 +1,24 @@
 .polyfill-list-header {
     padding: 15px 0;
-    border-bottom: 1px solid #ccc;
     margin-bottom: 15px;
+}
+
+.polyfills-table {
+    caption {
+        padding-bottom: 10px;
+    }
+    thead {
+        th {
+            font-weight: bold;
+        }
+    }
+    tr {
+        border-top: 1px solid #d8dde6;
+        border-bottom: 1px solid #d8dde6;
+    }
+    td {
+        white-space: normal;
+        padding: 10px 6px;
+        text-align: left;
+    }
 }

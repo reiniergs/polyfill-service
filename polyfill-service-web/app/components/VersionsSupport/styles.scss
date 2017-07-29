@@ -1,0 +1,27 @@
+[class^='status'] {
+    padding: 1px 4px;
+    display: inline-block;
+    font-size: 80%;
+    border-radius: 3px;
+    margin-right: 2px;
+}
+
+.status {
+    &-missing {
+        background-color: #ECECEC;
+        color: #aaa;
+        font-style: italic;
+    }
+
+    &-polyfilled {
+        background-color: #2BA5FC;
+        color: white;
+        border: 1px dashed white;
+        font-weight: bold;
+    }
+
+    &-native {
+        background-color: #6FFF9D;
+        border: 1px solid #999;
+    }
+}

@@ -1,7 +1,11 @@
-import { getPolyfills, getPolyfill } from './api';
+import {
+    getPolyfills,
+    getPolyfill,
+    getSupportStatus
+} from './api';
 
 export const LOAD_POLYFILLS = 'LOAD_POLYFILLS';
-export const loadPolyfill = () => {
+export const loadPolyfills = () => {
     return (dispatch) => {
         getPolyfills(
             (data) => {
@@ -11,7 +15,7 @@ export const loadPolyfill = () => {
                 });
             }
         );
-    }
+    };
 };
 
 export const QUICK_FILTER_CHANGED = 'QUICK_FILTER_CHANGED';
@@ -19,7 +23,7 @@ export const quickFilterChange = (filterString) => {
     return {
         type: QUICK_FILTER_CHANGED,
         filterString
-    }
+    };
 };
 
 export const LOAD_POLYFILL_META = 'LOAD_POLYFILL_META';
@@ -42,5 +46,19 @@ export const loadPolyfillMeta = (name) => {
                 });
             }
         );
-    }
+    };
+};
+
+export const LOAD_SUPPORT_STATUS = 'LOAD_SUPPORT_STATUS';
+export const loadSupportStatus = () => {
+    return (dispatch) => {
+        getSupportStatus(
+            (data) => {
+                dispatch({
+                    type: LOAD_SUPPORT_STATUS,
+                    supportStatus: JSON.parse(data)
+                });
+            }
+        );
+    };
 };

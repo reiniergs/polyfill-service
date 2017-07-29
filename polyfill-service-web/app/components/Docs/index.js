@@ -6,7 +6,6 @@ import { loadDocs } from './../../actions/Docs';
 import './styles.scss';
 
 class Docs extends React.Component {
-
     componentDidMount() {
         const { name, loadDocs } = this.props;
         loadDocs(name);
@@ -16,7 +15,7 @@ class Docs extends React.Component {
         const { content } = this.props;
         return (
             <ReactMarkdown className="markdown" source={content} />
-        )
+        );
     }
 }
 
@@ -24,13 +23,13 @@ const mapStateToProps = (state, ownProps) => {
     const { name } = ownProps;
     return {
         content: state.Docs.get(name)
-    }
+    };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         loadDocs: (name) => dispatch(loadDocs(name))
-    }
+    };
 };
 
 export default connect(

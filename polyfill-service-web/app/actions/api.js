@@ -45,6 +45,10 @@ export function getDocs(name, onLoad) {
     );
 }
 
+export function getSupportStatus(onSuccess, onError) {
+    get(`${API_URL_BASE}/support-status`, onSuccess, onError);
+}
+
 export function getTestUrl(polyfillName) {
     return `${TEST_URL_BASE}/tests?feature=${polyfillName}`;
 }
