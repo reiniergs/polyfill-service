@@ -59,6 +59,7 @@ public class UADetectorAdapterParserServiceTest {
             { UA.IE11_PHONE_8_1, "ie_mob/11.0.0" },
             { UA.IE11_PHONE_8_1_SDK, "ie_mob/11.0.0" },
             { UA.IE11_RT_8_1, "ie/11.0.0" },
+            { UA.IE11_WIN10, "ie/11.0.0" },
             { UA.IE12, "ie/12.10240.0" },
             { UA.IE13, "ie/13.10586.0" },
             { UA.IE14, "ie/14.14332.0" },
