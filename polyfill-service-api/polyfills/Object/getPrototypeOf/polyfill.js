@@ -5,7 +5,7 @@
 		}
 		if (_getPrototypeOf === undefined) {
 			return object.constructor ? object.constructor.prototype : null;
-        }
+		}
 		return _getPrototypeOf(Object(o));
 	}
 })(Object.getPrototypeOf, Object);
