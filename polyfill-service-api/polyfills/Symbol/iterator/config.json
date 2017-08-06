@@ -16,6 +16,8 @@
 	},
 	"dependencies": [
 		"Object.defineProperty",
+		"String.prototype.codePointAt",
+		"String.fromCodePoint",
 		"Symbol"
 	],
 	"license": "MIT",
