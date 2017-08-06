@@ -5,4 +5,4 @@
         return false;
     }
     return true;
-})(Object.getPrototypeOf);
+})(Object.getPrototypeOf)
