@@ -1,4 +1,7 @@
 {
+    "aliases": [
+        "es6"
+    ],
     "browsers": {
         "chrome": "< 41",
         "firefox": "< 29",
