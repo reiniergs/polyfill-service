@@ -9,7 +9,7 @@
 		"default"
 	],
 	"browsers": {
-		"ie": "6 - 8",
+		"ie": "6 - 11",
 		"firefox": "3.6",
 		"safari": "4",
 		"firefox_mob": "3.6"
