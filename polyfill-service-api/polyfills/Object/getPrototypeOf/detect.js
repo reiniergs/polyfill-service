@@ -1,8 +1,8 @@
-(function(_getPrototypeOf) {
+'getPrototypeOf' in Object && (function() {
     try {
-        _getPrototypeOf('x');
+        Object.getPrototypeOf('x');
+        return true;
     } catch (e) {
         return false;
     }
-    return true;
-})(Object.getPrototypeOf)
+})()
