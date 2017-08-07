@@ -7,7 +7,7 @@
 		"ie_mob": "*",
 		"chrome": "< 54",
 		"ios_chr": "*",
-		"safari": "*",
+		"safari": "< 10.1",
 		"ios_saf": "*",
 		"firefox": "< 47",
 		"firefox_mob": "< 47",
