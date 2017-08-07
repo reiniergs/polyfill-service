@@ -40,6 +40,7 @@ public enum UA {
     IE11_PHONE_8_1("Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0;Touch; rv:11.0; IEMobile/11.0; Microsoft; Virtual) like Gecko"),
     IE11_PHONE_8_1_SDK("Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0; Touch; rv:11; IEMobile/11.0) like Android 4.1.2; compatible) like iPhone OS 7_0_3 Mac OS X WebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.99 Mobile Safari /537.36"),
     IE11_RT_8_1("Mozilla/5.0 (compatible; MSIE 11.0; Windows NT 6.3; ARM; Trident/7.0)"),
+    IE11_WIN10("Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko"),
 
     // Microsoft Edge
     IE12("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240"),
