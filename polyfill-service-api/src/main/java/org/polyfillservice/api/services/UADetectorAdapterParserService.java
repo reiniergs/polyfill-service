@@ -97,6 +97,8 @@ class UADetectorAdapterParserService implements UserAgentParserService {
         // Microsoft Edge spoof itself as Chrome and Safari. Strip those and replace edge with msie
         // so that it's recognized as IE 12+
         uaString = uaString.replaceAll("Chrome.+Edge/", "msie ");
+        // patch to fix some of IE11 ua strings
+        uaString = uaString.replaceAll("(Windows\\sNT)\\s\\d\\d", "$1 6");
 
         return uaString;
     }
