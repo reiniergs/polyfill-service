@@ -1,0 +1,18 @@
+{
+    "aliases": [
+        "es6"
+    ],
+    "browsers": {
+        "chrome": "< 41",
+        "firefox": "< 29",
+        "opera": "< 28",
+        "safari": "< 10",
+        "ie": "*",
+        "ie_mob": "*"
+    },
+    "dependencies": [
+        "Object.defineProperty"
+    ],
+    "license": "MIT",
+    "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCodePoint"
+}
