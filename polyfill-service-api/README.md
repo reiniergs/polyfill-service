@@ -38,28 +38,29 @@ public PolyfillServiceConfigLocation serviceConfigLocation() {
 
 <a name="configurations"></a>
 ### Configurations
-Polyfill Service provides some options to customize the behavior of fetching polyfills.
-- minified
+Polyfill Service provides some options to customize the behavior of loading and fetching polyfills.
+- minified (default: true)
     - whether to minify polyfills
-- gated
+- gated (default: true)
     - whether to gate polyfill with if (polyfill exists)
     - can be global or specific to a polyfill
-- loadOnUnknownUA
+- load-on-unknown-ua (default: true)
     - whether to load polyfills when user agent is unknown
+- debug-mode (default: false)
+    - whether to prepend polyfills with debug info
 - polyfills
-    - polyfills to fetch
+    - when specified, only these polyfills are loaded into memory for fetching, including their dependencies 
+        - these are also the polyfills to fetch when no Query object is supplied
     - can be alias group like es6 that contains multiple polyfills
 
 e.g.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <configurations>
-    <!-- gate all polyfills. default: true -->
     <gated>true</gated>
-    <!-- send minified source. default: true -->
     <minify>true</minify>
-    <!-- load polyfills when user agent is unknown. default: true -->
     <load-on-unknown-ua>true</load-on-unknown-ua>
+    <debug-mode>true</debug-mode>
 
     <polyfills>
         <polyfill>es6</polyfill>
@@ -76,7 +77,9 @@ e.g.
 PolyfillService polyfillService;
 ...
 // fetch with a user agent string and an optional query config object
-// without query object, it will load all the polyfills, filtered by the user agent string
+// without query object, it will load all the polyfills
+// or the polyfills defined in service config
+// filtered by the user agent string
 String output = polyfillService.getPolyfillsSource(userAgentString);
 ```
 
