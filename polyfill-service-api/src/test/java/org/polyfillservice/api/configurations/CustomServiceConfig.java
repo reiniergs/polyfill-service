@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class CustomServiceConfig {
     @Primary
     @Bean
-    public ServiceConfig serviceConfig() {
+    public ServiceConfig customServiceConfig() {
         return new ServiceConfig.Builder()
             .setPolyfills(Arrays.asList("a", "b", "c", "d"))
             .setGated(false)

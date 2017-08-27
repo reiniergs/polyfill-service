@@ -38,9 +38,9 @@ class PreSortPolyfillService implements PolyfillService {
     private Map<String, String> browserBaselines;
     @Resource(name = "aliases")
     private Map<String, List<String>> aliases;
-    @Resource(name = "serviceConfig")
-    private ServiceConfig serviceConfig;
 
+    @Autowired
+    private ServiceConfig serviceConfig;
     @Autowired
     private VersionUtilService versionChecker;
     @Autowired
