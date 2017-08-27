@@ -1,13 +1,15 @@
 package org.polyfillservice.api.configurations;
 
-import org.polyfillservice.api.components.Feature;
 import org.polyfillservice.api.components.Polyfill;
-import org.polyfillservice.api.components.Query;
 import org.polyfillservice.api.components.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by smo on 3/4/17.
@@ -17,15 +19,10 @@ public class PolyfillsConfig {
 
     @Bean
     public ServiceConfig serviceConfig() {
-        return new ServiceConfig.Builder().build();
-    }
-
-    @Bean
-    public Query defaultQuery() {
-        return new Query.Builder(Collections.singletonList(new Feature("all")))
+        return new ServiceConfig.Builder()
             .setMinify(true)
             .setLoadOnUnknownUA(true)
-            .setGatedForAll(true)
+            .setGated(true)
             .build();
     }
 

@@ -1,6 +1,8 @@
 package org.polyfillservice.api.components;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,29 +12,28 @@ import java.util.Set;
  * Config object used to retrieve polyfills
  */
 public class Query {
-    // features to request
-    private List<Feature> features;
-
-    // filters
+    private List<Feature> features = new ArrayList<>();
     private Set<String> excludes = new HashSet<>();
-    private boolean loadOnUnknownUA = true;
-    private boolean minify = true;
-    private boolean gatedForAll = true;
-    private boolean alwaysForAll = false;
 
-    // extra options
-    private boolean includeDependencies = true;
+    // using Boolean object to indicate 3 states: true, false, null(unset)
+    private Boolean shouldMinify;
+    private Boolean shouldGateForAll;
+    private Boolean shouldAlwaysLoadForAll;
+    private Boolean shouldLoadOnUnknownUA;
+    private Boolean shouldIncludeDependencies;
+    private Boolean isDebugMode;
 
     private Query() {}
 
     private Query(Query query) {
         this.features = query.features;
         this.excludes = query.excludes;
-        this.loadOnUnknownUA = query.loadOnUnknownUA;
-        this.minify = query.minify;
-        this.gatedForAll = query.gatedForAll;
-        this.alwaysForAll = query.alwaysForAll;
-        this.includeDependencies = query.includeDependencies;
+        this.shouldMinify = query.shouldMinify;
+        this.shouldGateForAll = query.shouldGateForAll;
+        this.shouldAlwaysLoadForAll = query.shouldAlwaysLoadForAll;
+        this.shouldLoadOnUnknownUA = query.shouldLoadOnUnknownUA;
+        this.shouldIncludeDependencies = query.shouldIncludeDependencies;
+        this.isDebugMode = query.isDebugMode;
     }
 
     public List<Feature> getFeatures() {
@@ -43,69 +44,89 @@ public class Query {
         return this.excludes;
     }
 
-    public boolean shouldLoadOnUnknownUA() {
-        return this.loadOnUnknownUA;
+    public Boolean shouldMinify() {
+        return this.shouldMinify;
     }
 
-    public boolean shouldIncludeDependencies() {
-        return this.includeDependencies;
+    public Boolean shouldGateForAll() {
+        return this.shouldGateForAll;
     }
 
-    public boolean shouldMinify() {
-        return this.minify;
+    public Boolean shouldAlwaysLoadForAll() {
+        return this.shouldAlwaysLoadForAll;
     }
 
-    public boolean isGatedForAll() {
-        return this.gatedForAll;
+    public Boolean shouldLoadOnUnknownUA() {
+        return this.shouldLoadOnUnknownUA;
     }
 
-    public boolean isAlwaysForAll() {
-        return this.alwaysForAll;
+    public Boolean shouldIncludeDependencies() {
+        return this.shouldIncludeDependencies;
+    }
+
+    public Boolean isDebugMode() {
+        return this.isDebugMode;
     }
 
     public static class Builder {
         private Query query;
 
-        public Builder(List<Feature> features) {
+        public Builder() {
             this.query = new Query();
-            this.query.features = features;
         }
 
         public Query build() {
             return new Query(this.query);
         }
 
+        public Builder includeFeatures(Collection<Feature> features) {
+            if (features != null) {
+                this.query.features.addAll(features);
+            }
+            return this;
+        }
+
         public Builder excludeFeatures(String ... features) {
-            return excludeFeatures(Arrays.asList(features));
-        }
-
-        public Builder excludeFeatures(List<String> features) {
-            this.query.excludes.addAll(features);
+            if (features != null) {
+                this.query.excludes.addAll(Arrays.asList(features));
+            }
             return this;
         }
 
-        public Builder setLoadOnUnknownUA(boolean loadOnUnknownUA) {
-            this.query.loadOnUnknownUA = loadOnUnknownUA;
+        public Builder excludeFeatures(Collection<String> features) {
+            if (features != null) {
+                this.query.excludes.addAll(features);
+            }
             return this;
         }
 
-        public Builder setMinify(boolean minify) {
-            this.query.minify = minify;
+        public Builder setMinify(boolean shouldMinify) {
+            this.query.shouldMinify = shouldMinify;
             return this;
         }
 
-        public Builder setAlwaysForAll(boolean alwaysForAll) {
-            this.query.alwaysForAll = alwaysForAll;
+        public Builder setGatedForAll(boolean shouldGateForAll) {
+            this.query.shouldGateForAll = shouldGateForAll;
             return this;
         }
 
-        public Builder setGatedForAll(boolean gatedForAll) {
-            this.query.gatedForAll = gatedForAll;
+        public Builder setAlwaysLoadForAll(boolean shouldAlwaysLoadForAll) {
+            this.query.shouldAlwaysLoadForAll = shouldAlwaysLoadForAll;
             return this;
         }
 
-        public Builder setIncludeDependencies(boolean includeDependencies) {
-            this.query.includeDependencies = includeDependencies;
+        public Builder setLoadOnUnknownUA(boolean shouldLoadOnUnknownUA) {
+            this.query.shouldLoadOnUnknownUA = shouldLoadOnUnknownUA;
+            return this;
+        }
+
+        public Builder setIncludeDependencies(boolean shouldIncludeDependencies) {
+            this.query.shouldIncludeDependencies = shouldIncludeDependencies;
+            return this;
+        }
+
+        public Builder setDebugMode(boolean isDebugMode) {
+            this.query.isDebugMode = isDebugMode;
             return this;
         }
     }

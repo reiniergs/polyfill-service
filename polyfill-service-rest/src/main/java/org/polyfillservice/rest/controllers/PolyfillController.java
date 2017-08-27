@@ -66,15 +66,17 @@ public class PolyfillController {
         boolean isAlwaysForAll = globalFlags.contains(Feature.ALWAYS);
         boolean isGatedForAll = globalFlags.contains(Feature.GATED);
 
-        Query query = new Query.Builder(featuresRequested)
-            .setLoadOnUnknownUA(loadOnUnknown)
+        Query query = new Query.Builder()
+            .includeFeatures(featuresRequested)
             .excludeFeatures(featuresToExclude)
             .setMinify(minify)
-            .setAlwaysForAll(isAlwaysForAll)
+            .setAlwaysLoadForAll(isAlwaysForAll)
             .setGatedForAll(isGatedForAll)
+            .setLoadOnUnknownUA(loadOnUnknown)
+            .setDebugMode(true)
             .build();
 
-        return polyfillService.getPolyfillsSource(uaString, query, true);
+        return polyfillService.getPolyfillsSource(uaString, query);
     }
 
     private List<Feature> getFeatures(Map<String, String> params) {

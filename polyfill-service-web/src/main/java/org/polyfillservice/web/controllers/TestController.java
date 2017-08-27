@@ -59,7 +59,8 @@ public class TestController {
         String uaString = "targeted".equals(mode) ? params.getOrDefault(UA_OVERRIDE, headerUA) : null;
 
         List<Feature> reqFeatureList = Collections.singletonList(new Feature(featureReq));
-        Query query = new Query.Builder(reqFeatureList)
+        Query query = new Query.Builder()
+            .includeFeatures(reqFeatureList)
             .setIncludeDependencies(false)
             .setLoadOnUnknownUA(false)
             .build();

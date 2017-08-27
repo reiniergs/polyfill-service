@@ -1,7 +1,5 @@
 package org.polyfillservice.api.configurations;
 
-import org.polyfillservice.api.components.Feature;
-import org.polyfillservice.api.components.Query;
 import org.polyfillservice.api.components.ServiceConfig;
 import org.polyfillservice.api.interfaces.PolyfillServiceConfigLocation;
 import org.polyfillservice.api.interfaces.ServiceConfigLoaderService;
@@ -11,9 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by reinier.guerra on 1/24/17.
@@ -25,7 +20,8 @@ import java.util.stream.Collectors;
 public class PolyfillApiConfig {
 
     @Autowired
-    ServiceConfigLoaderService serviceConfigLoaderService;
+    private ServiceConfigLoaderService serviceConfigLoaderService;
+
     @Autowired(required = false)
     private PolyfillServiceConfigLocation serviceConfigLocation;
 
@@ -48,20 +44,5 @@ public class PolyfillApiConfig {
     @Bean
     public ServiceConfig serviceConfig() {
         return serviceConfigLoaderService.loadConfig(serviceConfigLocation);
-    }
-
-    // Default query used when query object is not supplied to query service
-    @Bean
-    @Autowired
-    public Query defaultQuery(ServiceConfig serviceConfig) {
-        List<Feature> polyfillRequestList = serviceConfig.getPolyfills().stream()
-            .map(Feature::new)
-            .collect(Collectors.toList());
-
-        return new Query.Builder( polyfillRequestList )
-            .setMinify( serviceConfig.shouldMinify() )
-            .setLoadOnUnknownUA( serviceConfig.shouldLoadOnUnknownUA() )
-            .setGatedForAll( serviceConfig.shouldGate() )
-            .build();
     }
 }

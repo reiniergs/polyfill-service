@@ -56,8 +56,14 @@ public class StdOutPerfReportService implements PerfReportService {
 
     @PostConstruct
     private void init() {
-        rawSourceQuery = new Query.Builder(defaultQuery.getFeatures()).setMinify(false).build();
-        minSourceQuery = new Query.Builder(defaultQuery.getFeatures()).setMinify(true).build();
+        rawSourceQuery = new Query.Builder()
+            .includeFeatures(this.defaultQuery.getFeatures())
+            .setMinify(false)
+            .build();
+        minSourceQuery = new Query.Builder()
+            .includeFeatures(this.defaultQuery.getFeatures())
+            .setMinify(true)
+            .build();
     }
 
     @Override

@@ -57,14 +57,4 @@ public interface PolyfillService {
      * @return source of all requested and valid polyfills
      */
     String getPolyfillsSource(String uaString, Query query);
-
-    /**
-     * Return a string of the sources of requested polyfills
-     * Alias polyfill will expand into specific polyfills.
-     * @param uaString user agent string; can be in normalized format e.g. chrome/53.0.0
-     * @param query config object with information about what polyfills to get
-     * @param isDebugMode whether to add debug information in the header before the polyfills source
-     * @return source of all requested and valid polyfills
-     */
-    String getPolyfillsSource(String uaString, Query query, boolean isDebugMode);
 }
