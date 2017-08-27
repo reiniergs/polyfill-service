@@ -19,11 +19,7 @@ public class PolyfillsConfig {
 
     @Bean
     public ServiceConfig serviceConfig() {
-        return new ServiceConfig.Builder()
-            .setMinify(true)
-            .setLoadOnUnknownUA(true)
-            .setGated(true)
-            .build();
+        return new ServiceConfig.Builder().build();
     }
 
     @Bean
