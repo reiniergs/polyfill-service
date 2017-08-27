@@ -49,6 +49,18 @@ public class PreSortPolyfillServiceCustomServiceConfig {
     }
 
     /**
+     * Polyfill service should fill the empty query object with default values
+     * So this should behave the same as if query is not supplied at all
+     */
+    @Test
+    public void testGetPolyfillsSourceCustomServiceConfigQueryUseDefault() {
+        Query query = new Query.Builder().build();
+        String actual = service.getPolyfillsSource("chrome/30", query);
+        String expected = "(function(undefined) {c.minb.mind.mina.min}).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});";
+        assertEquals(expected, actual);
+    }
+
+    /**
      * Even though service config turns off gated flag, we still should be able to
      * turn it on dynamically with Query object
      */
