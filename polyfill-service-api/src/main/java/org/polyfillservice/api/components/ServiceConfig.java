@@ -8,26 +8,32 @@ import java.util.List;
  * Simple object to hold polyfill service configurations.
  */
 public class ServiceConfig {
-    private List<String> polyfills = Collections.emptyList();
-    private boolean gated = true;
-    private boolean minify = true;
-    private boolean loadOnUnknownUA = true;
 
-    // only construct object via builder
+    private List<String> polyfills = Collections.emptyList();
+    private boolean shouldGate = true;
+    private boolean shouldMinify = true;
+    private boolean shouldLoadOnUnknownUA = true;
+    private boolean isDebugMode = false;
+
+    // default constructor to be used by builder
     private ServiceConfig() {}
-    private ServiceConfig(ServiceConfig serviceConfig) {
-        this.polyfills = serviceConfig.polyfills;
-        this.gated = serviceConfig.gated;
-        this.minify = serviceConfig.minify;
-        this.loadOnUnknownUA = serviceConfig.loadOnUnknownUA;
+
+    // copy constructor to be used by builder
+    private ServiceConfig(ServiceConfig fromBuilder) {
+        this.shouldGate = fromBuilder.shouldGate;
+        this.shouldMinify = fromBuilder.shouldMinify;
+        this.polyfills = fromBuilder.polyfills;
+        this.isDebugMode = fromBuilder.isDebugMode;
+        this.shouldLoadOnUnknownUA = fromBuilder.shouldLoadOnUnknownUA;
     }
 
     public String toString() {
         return "ServiceConfig: {"
                 + "\n\tpolyfills: " + this.polyfills
-                + ",\n\tgated: " + this.gated
-                + ",\n\tminify: " + this.minify
-                + ",\n\tload-on-unknown-ua: " + this.loadOnUnknownUA
+                + ",\n\tshouldGate: " + this.shouldGate
+                + ",\n\tshouldMinify: " + this.shouldMinify
+                + ",\n\tload-on-unknown-ua: " + this.shouldLoadOnUnknownUA
+                + ",\n\tdebug-mode: " + this.isDebugMode
                 + "\n}";
     }
 
@@ -36,15 +42,19 @@ public class ServiceConfig {
     }
 
     public boolean shouldGate() {
-        return this.gated;
+        return this.shouldGate;
     }
 
     public boolean shouldMinify() {
-        return this.minify;
+        return this.shouldMinify;
     }
 
     public boolean shouldLoadOnUnknownUA() {
-        return this.loadOnUnknownUA;
+        return this.shouldLoadOnUnknownUA;
+    }
+
+    public boolean isDebugMode() {
+        return this.isDebugMode;
     }
 
     public static class Builder {
@@ -64,17 +74,22 @@ public class ServiceConfig {
         }
 
         public Builder setGated(boolean gated) {
-            this.serviceConfig.gated = gated;
+            this.serviceConfig.shouldGate = gated;
             return this;
         }
 
         public Builder setMinify(boolean minify) {
-            this.serviceConfig.minify = minify;
+            this.serviceConfig.shouldMinify = minify;
             return this;
         }
 
         public Builder setLoadOnUnknownUA(boolean loadOnUnknownUA) {
-            this.serviceConfig.loadOnUnknownUA = loadOnUnknownUA;
+            this.serviceConfig.shouldLoadOnUnknownUA = loadOnUnknownUA;
+            return this;
+        }
+
+        public Builder setDebugMode(boolean isDebugMode) {
+            this.serviceConfig.isDebugMode = isDebugMode;
             return this;
         }
     }

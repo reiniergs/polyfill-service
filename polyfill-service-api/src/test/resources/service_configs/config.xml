@@ -3,6 +3,7 @@
     <gated>false</gated>
     <minify>false</minify>
     <load-on-unknown-ua>false</load-on-unknown-ua>
+    <debug-mode>true</debug-mode>
     <polyfills>
         <polyfill>a.a</polyfill>
         <polyfill>a.b</polyfill>
