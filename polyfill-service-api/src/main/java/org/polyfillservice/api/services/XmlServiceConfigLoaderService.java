@@ -41,7 +41,10 @@ public class XmlServiceConfigLoaderService implements ServiceConfigLoaderService
         // map fields to tags for different names
         xstream.alias("configurations", ServiceConfig.class);
         xstream.alias("polyfill", String.class);
-        xstream.aliasField("load-on-unknown-ua", ServiceConfig.class, "loadOnUnknownUA");
+        xstream.aliasField("gated", ServiceConfig.class, "shouldGate");
+        xstream.aliasField("minify", ServiceConfig.class, "shouldMinify");
+        xstream.aliasField("load-on-unknown-ua", ServiceConfig.class, "shouldLoadOnUnknownUA");
+        xstream.aliasField("debug-mode", ServiceConfig.class, "isDebugMode");
 
         return xstream;
     }

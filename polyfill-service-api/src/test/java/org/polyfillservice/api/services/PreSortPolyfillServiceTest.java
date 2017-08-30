@@ -3,6 +3,7 @@ package org.polyfillservice.api.services;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.polyfillservice.api.components.Feature;
+import org.polyfillservice.api.components.Polyfill;
 import org.polyfillservice.api.components.Query;
 import org.polyfillservice.api.configurations.PolyfillsConfig;
 import org.polyfillservice.api.configurations.ProjectInfoConfig;
@@ -32,171 +33,181 @@ import static junit.framework.TestCase.assertEquals;
 public class PreSortPolyfillServiceTest {
 
     @Autowired
-    private PolyfillService polyfillService;
+    private PolyfillService service;
 
     @Test
-    public void testSearchByUserAgentMeetVersionRequirements() {
-        List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources("chrome/30", query);
-        String expected = getMockRawSources("c", "b", "d", "a");
-        assertEquals(expected, actual);
+    public void testGetPolyfill() {
+        Polyfill polyfill = service.getPolyfill("a");
+        assertEquals("a", polyfill.getName());
     }
 
     @Test
-    public void testSearchByUserAgentSomeNotMeetVersionRequirement() {
-        List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources("firefox/5", query);
-        String expected = getMockRawSources("c", "a");
-        assertEquals(expected, actual);
+    public void testGetPolyfillsWithNoServiceConfigPolyfillsAndNoQuery() {
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30");
+        String polyfillNames = polyfillListToString(polyfills);
+        assertEquals("", polyfillNames);
     }
 
     @Test
-    public void testUnknownUserAgentShouldReturnEmpty() {
+    public void testGetPolyfillsUserAgentMeetVersionRequirements() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).setLoadOnUnknownUA(false).build();
-        String actual = getPolyfillsRawSources("firefox/1", query);
-        String expected = "";
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("cbda", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testFeaturesAlwaysLoaded() {
+    public void testGetPolyfillsUserAgentSomeNotMeetVersionRequirement() {
+        List<Feature> features = Arrays.asList(new Feature("default"));
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("firefox/5", query);
+        assertEquals("ca", polyfillListToString(polyfills));
+    }
+
+    @Test
+    public void testGetPolyfillsUnknownUserAgent() {
+        List<Feature> features = Arrays.asList(new Feature("default"));
+        Query query = new Query.Builder()
+            .includeFeatures(features)
+            .setLoadOnUnknownUA(false)
+            .build();
+        List<Polyfill> polyfills = service.getPolyfills("firefox/1", query);
+        assertEquals("", polyfillListToString(polyfills));
+    }
+
+    @Test
+    public void testGetPolyfillsFeaturesAlwaysLoaded() {
         List<Feature> features = Arrays.asList(new Feature("default", false, true));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources("firefox/5", query);
-        String expected = getMockRawSources("c", "b", "d", "a");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("firefox/5", query);
+        assertEquals("cbda", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testUserAgentNotMeetBaselineNullifyAlwaysFlag() {
+    public void testGetPolyfillsUserAgentNotMeetBaselineNullifyAlwaysFlag() {
         List<Feature> features = Arrays.asList(new Feature("default", false, true));
-        Query query = new Query.Builder(features).setLoadOnUnknownUA(false).build();
-        String actual = getPolyfillsRawSources("firefox/1", query);
-        String expected = "";
-        assertEquals(expected, actual);
+        Query query = new Query.Builder()
+            .includeFeatures(features)
+            .setLoadOnUnknownUA(false)
+            .build();
+        List<Polyfill> polyfills = service.getPolyfills("firefox/1", query);
+        assertEquals("", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testNoFeaturesShouldReturnEmpty() {
+    public void testGetPolyfillsNoFeatures() {
         List<Feature> features = Collections.emptyList();
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = "";
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testSearchBySingleFeature() {
+    public void testGetPolyfillsSingleFeature() {
         List<Feature> features = Arrays.asList(new Feature("c"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("c", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testSearchByMultipleFeatures() {
+    public void testGetPolyfillsMultipleFeatures() {
         List<Feature> features = Arrays.asList(new Feature("c"), new Feature("e"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c", "e");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("ce", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testSearchBySingleAlias() {
+    public void testGetPolyfillsSingleAlias() {
         List<Feature> features = Arrays.asList(new Feature("foo"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c", "e");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("ce", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testSearchByMultipleAliases() {
+    public void testGetPolyfillsMultipleAliases() {
         List<Feature> features = Arrays.asList(new Feature("default"), new Feature("foo"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c", "e", "b", "d", "a");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("cebda", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testSearchByMixingAliasAndFeature() {
+    public void testGetPolyfillsMixingAliasAndFeature() {
         List<Feature> features = Arrays.asList(new Feature("default"), new Feature("e"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c", "e", "b", "d", "a");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder().includeFeatures(features).build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("cebda", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testExcludesFeatures() {
+    public void testGetPolyfillsExcludesFeatures() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).excludeFeatures("c", "b").build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("d", "a");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder()
+            .includeFeatures(features)
+            .excludeFeatures("c", "b")
+            .build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("da", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testCannotExcludeAlias() {
+    public void testGetPolyfillsCannotExcludeAlias() {
         List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).excludeFeatures("es6").build();
-        String actual = getPolyfillsRawSources(null, query);
-        String expected = getMockRawSources("c", "b", "d", "a");
-        assertEquals(expected, actual);
+        Query query = new Query.Builder()
+            .includeFeatures(features)
+            .excludeFeatures("es6")
+            .build();
+        List<Polyfill> polyfills = service.getPolyfills("chrome/30", query);
+        assertEquals("cbda", polyfillListToString(polyfills));
     }
 
     @Test
-    public void testDoMinify() {
-        List<Feature> features = Arrays.asList(new Feature("default"));
-        Query query = new Query.Builder(features).build();
-        String actual = getPolyfillsMinSources(null, query);
-        String expected = getMockMinSources("c", "b", "d", "a");
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testLoadOnUnknownUA() {
+    public void testGetPolyfillsLoadOnUnknownUA() {
         List<Feature> features = Arrays.asList(new Feature("c"));
-        Query query = new Query.Builder(features).setLoadOnUnknownUA(true).build();
-        String actual = getPolyfillsRawSources("unknown/0.0.0", query);
-        String expected = getMockRawSources("c");
+        Query query = new Query.Builder()
+            .includeFeatures(features)
+            .setLoadOnUnknownUA(true)
+            .build();
+        List<Polyfill> polyfills = service.getPolyfills("unknown/0.0.0", query);
+        assertEquals("c", polyfillListToString(polyfills));
+    }
+
+    @Test
+    public void testGetPolyfillsSourceDefaultServiceConfigWithoutQuery() {
+        String actual = service.getPolyfillsSource("chrome/30");
+        assertEquals("", actual);
+    }
+
+    @Test
+    public void testGetPolyfillsSourceDefaultServiceConfig() {
+        List<Feature> features = Arrays.asList(new Feature("default"));
+        Query query = new Query.Builder().includeFeatures(features).build();
+        String actual = service.getPolyfillsSource("chrome/30", query);
+        String expected = "(function(undefined) {if(!(c.detectSource)){c.min}if(!(b.detectSource)){b.min}if(!(d.detectSource)){d.min}if(!(a.detectSource)){a.min}}).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetPolyfillsSourceQueryOverrideDefault() {
+        List<Feature> features = Arrays.asList(new Feature("default"));
+        Query query = new Query.Builder()
+            .setGatedForAll(false)
+            .includeFeatures(features)
+            .build();
+        String actual = service.getPolyfillsSource("chrome/30", query);
+        String expected = "(function(undefined) {c.minb.mind.mina.min}).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});";
         assertEquals(expected, actual);
     }
 
     /****************************************************************
      * Helpers
      ****************************************************************/
-    private String getMockRawSources(String ... featureNames) {
-        return getMockSources(Arrays.asList(featureNames), false);
-    }
-
-    private String getMockMinSources(String ... featureNames) {
-        return getMockSources(Arrays.asList(featureNames), true);
-    }
-
-    private String getMockSources(List<String> featureNameList, boolean doMinify) {
-        return featureNameList.stream()
-                .map(featureName -> featureName + (doMinify ? ".min" : ".raw"))
-                .collect(Collectors.joining());
-    }
-
-    private String getPolyfillsRawSources(String uaString, Query query) {
-        return getPolyfillsSources(uaString, query, false);
-    }
-
-    private String getPolyfillsMinSources(String uaString, Query query) {
-        return getPolyfillsSources(uaString, query, true);
-    }
-
-    private String getPolyfillsSources(String uaString, Query query, boolean minify) {
-        return polyfillService.getPolyfills(uaString, query).stream()
-                .map(polyfill -> minify ? polyfill.getMinSource() : polyfill.getRawSource())
-                .collect(Collectors.joining());
+    private String polyfillListToString(List<Polyfill> polyfills) {
+        return polyfills.stream()
+            .map(polyfill -> polyfill.getName())
+            .collect(Collectors.joining());
     }
 }

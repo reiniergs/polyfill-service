@@ -3,6 +3,7 @@ package org.polyfillservice.api.services;
 import org.polyfillservice.api.components.Feature;
 import org.polyfillservice.api.components.Polyfill;
 import org.polyfillservice.api.components.Query;
+import org.polyfillservice.api.components.ServiceConfig;
 import org.polyfillservice.api.components.TSort;
 import org.polyfillservice.api.interfaces.PolyfillService;
 import org.polyfillservice.api.interfaces.UserAgent;
@@ -13,7 +14,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,29 +34,39 @@ class PreSortPolyfillService implements PolyfillService {
 
     @Resource(name = "polyfills")
     private Map<String, Polyfill> polyfills;
-
     @Resource(name = "browserBaselines")
     private Map<String, String> browserBaselines;
-
     @Resource(name = "aliases")
     private Map<String, List<String>> aliases;
 
-    @Resource(name = "defaultQuery")
-    private Query defaultQuery;
-
+    @Autowired
+    private ServiceConfig serviceConfig;
     @Autowired
     private VersionUtilService versionChecker;
-
     @Autowired
     private UserAgentParserService userAgentParserService;
-
     @Autowired
     private PolyfillsOutputService polyfillsOutputService;
 
     private List<String> sortedPolyfills;
+    private Query defaultQuery;
 
     @PostConstruct
     public void init() {
+        List<Feature> polyfillRequestList = serviceConfig.getPolyfills().stream()
+            .map(Feature::new)
+            .collect(Collectors.toList());
+
+        this.defaultQuery = new Query.Builder()
+            .includeFeatures(polyfillRequestList)
+            .setMinify(serviceConfig.shouldMinify())
+            .setGatedForAll(serviceConfig.shouldGate())
+            .setAlwaysLoadForAll(false)
+            .setLoadOnUnknownUA(serviceConfig.shouldLoadOnUnknownUA())
+            .setIncludeDependencies(true)
+            .setDebugMode(serviceConfig.isDebugMode())
+            .build();
+
         this.sortedPolyfills = getDependencySortedPolyfills(this.polyfills);
     }
 
@@ -69,28 +86,42 @@ class PreSortPolyfillService implements PolyfillService {
     }
 
     @Override
-    public List<Polyfill> getPolyfills(String uaString, Query query) {
+    public List<Polyfill> getPolyfills(String uaString, Query userQuery) {
         UserAgent userAgent = uaString == null ? null : this.userAgentParserService.parse(uaString);
+        Query query = mergeDefaultOptions(userQuery);
         return getFeatures(userAgent, query).stream()
-                .map(feature -> feature.getPolyfill())
+                .map(Feature::getPolyfill)
                 .collect(Collectors.toList());
     }
 
     @Override
     public String getPolyfillsSource(String uaString) {
-        return getPolyfillsSource(uaString, this.defaultQuery, false);
+        return getPolyfillsSource(uaString, this.defaultQuery);
     }
 
     @Override
-    public String getPolyfillsSource(String uaString, Query query) {
-        return getPolyfillsSource(uaString, query, false);
-    }
-
-    @Override
-    public String getPolyfillsSource(String uaString, Query query, boolean isDebugMode) {
+    public String getPolyfillsSource(String uaString, Query userQuery) {
         UserAgent userAgent = uaString == null ? null : this.userAgentParserService.parse(uaString);
+        Query query = mergeDefaultOptions(userQuery);
         List<Feature> featuresLoaded = getFeatures(userAgent, query);
-        return polyfillsOutputService.getPolyfillsSource(userAgent.toString(), query, featuresLoaded, isDebugMode);
+        return polyfillsOutputService.getPolyfillsSource(userAgent.toString(), query, featuresLoaded);
+    }
+
+    private Query mergeDefaultOptions(Query query) {
+        if (query == this.defaultQuery) {
+            return query;
+        }
+
+        return new Query.Builder()
+            .includeFeatures(query.getFeatures().isEmpty() ? this.defaultQuery.getFeatures() : query.getFeatures())
+            .excludeFeatures(query.getExcludes().isEmpty() ? this.defaultQuery.getExcludes() : query.getExcludes())
+            .setMinify(query.shouldMinify() == null ? this.defaultQuery.shouldMinify() : query.shouldMinify())
+            .setGatedForAll(query.shouldGateForAll() == null ? this.defaultQuery.shouldGateForAll() : query.shouldGateForAll())
+            .setAlwaysLoadForAll(query.shouldAlwaysLoadForAll() == null ? this.defaultQuery.shouldAlwaysLoadForAll() : query.shouldAlwaysLoadForAll())
+            .setLoadOnUnknownUA(query.shouldLoadOnUnknownUA() == null ? this.defaultQuery.shouldLoadOnUnknownUA() : query.shouldLoadOnUnknownUA())
+            .setIncludeDependencies(query.shouldIncludeDependencies() == null ? this.defaultQuery.shouldIncludeDependencies() : query.shouldIncludeDependencies())
+            .setDebugMode(query.isDebugMode() == null ? this.defaultQuery.isDebugMode() : query.isDebugMode())
+            .build();
     }
 
     /**
@@ -108,8 +139,8 @@ class PreSortPolyfillService implements PolyfillService {
 
         Map<String, Feature> featureSet = new HashMap<>();
         for (Feature feature : query.getFeatures()) {
-            if (query.isAlwaysForAll()) feature.setAlways(true);
-            if (query.isGatedForAll()) feature.setGated(true);
+            if (query.shouldAlwaysLoadForAll()) feature.setAlways(true);
+            if (query.shouldGateForAll()) feature.setGated(true);
             featureSet.put(feature.getName(), feature);
         }
 

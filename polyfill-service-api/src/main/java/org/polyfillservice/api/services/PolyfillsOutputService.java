@@ -25,9 +25,8 @@ class PolyfillsOutputService {
     @Resource(name = "projectUrl")
     private String projectUrl;
 
-    public String getPolyfillsSource(String uaString, Query query,
-                                     List<Feature> featuresLoaded, boolean isDebugMode) {
-        String debugInfo = isDebugMode ? getDebugInfo(uaString, query, featuresLoaded): "";
+    public String getPolyfillsSource(String uaString, Query query, List<Feature> featuresLoaded) {
+        String debugInfo = query.isDebugMode() ? getDebugInfo(uaString, query, featuresLoaded): "";
         String sources = getSources(featuresLoaded, query.shouldMinify());
         String separator = !debugInfo.isEmpty() && !sources.isEmpty() ? "\n\n" : "";
         return debugInfo + separator + sources;

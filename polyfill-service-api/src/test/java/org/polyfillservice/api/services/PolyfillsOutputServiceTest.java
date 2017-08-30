@@ -40,9 +40,12 @@ public class PolyfillsOutputServiceTest {
 
     @Test
     public void testRawNoPolyfillsLoaded() {
-        List<Feature> requestedList = Collections.singletonList(new Feature("default"));
-        Query query = new Query.Builder(requestedList).setMinify(false).build();
-        String actual = service.getPolyfillsSource(TEST_UA, query, Collections.emptyList(), true);
+        Query query = new Query.Builder()
+            .includeFeatures(Arrays.asList(new Feature("default")))
+            .setDebugMode(true)
+            .setMinify(false)
+            .build();
+        String actual = service.getPolyfillsSource(TEST_UA, query, Collections.emptyList());
         String expected =
             "/* " + PROJECT_VERSION_LINE +
             "\n * " + PROJECT_URL_LINE +
@@ -56,9 +59,12 @@ public class PolyfillsOutputServiceTest {
 
     @Test
     public void testMinNoPolyfillsLoaded() {
-        List<Feature> requestedList = Collections.singletonList(new Feature("default"));
-        Query query = new Query.Builder(requestedList).setMinify(true).build();
-        String actual = service.getPolyfillsSource(null, query, Collections.emptyList(), true);
+        Query query = new Query.Builder()
+            .includeFeatures(Arrays.asList(new Feature("default")))
+            .setDebugMode(true)
+            .setMinify(true)
+            .build();
+        String actual = service.getPolyfillsSource(null, query, Collections.emptyList());
         String expected = MIN_MESSAGE;
         assertEquals(expected, actual);
     }
@@ -119,8 +125,12 @@ public class PolyfillsOutputServiceTest {
         List<Feature> requestedList = Arrays.asList(featureRequested);
         List<Feature> loadedList = Arrays.asList(featureLoaded1, featureLoaded2);
 
-        Query query = new Query.Builder(requestedList).setMinify(minify).build();
-        String actual = service.getPolyfillsSource(TEST_UA, query, loadedList, isDebugMode);
+        Query query = new Query.Builder()
+            .includeFeatures(requestedList)
+            .setMinify(minify)
+            .setDebugMode(isDebugMode)
+            .build();
+        String actual = service.getPolyfillsSource(TEST_UA, query, loadedList);
 
         assertEquals(expected, actual);
     }
@@ -153,8 +163,12 @@ public class PolyfillsOutputServiceTest {
 
         List<Feature> featureList = Arrays.asList(feature);
 
-        Query query = new Query.Builder(featureList).setMinify(minify).build();
-        String actual = service.getPolyfillsSource(TEST_UA, query, featureList, false);
+        Query query = new Query.Builder()
+            .includeFeatures(featureList)
+            .setMinify(minify)
+            .setDebugMode(false)
+            .build();
+        String actual = service.getPolyfillsSource(TEST_UA, query, featureList);
 
         assertEquals(expected, actual);
     }
